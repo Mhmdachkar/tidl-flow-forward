@@ -241,7 +241,6 @@ function Nav() {
 function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
-  const pillRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const discRef = useRef<HTMLDivElement>(null);
   const discImgRef = useRef<HTMLImageElement>(null);
@@ -251,7 +250,6 @@ function Hero() {
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
     tl.fromTo(bgRef.current, { opacity: 0 }, { opacity: 1, duration: 1.6 }, 0);
-    tl.fromTo(pillRef.current, { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: 1.2 }, 0.4);
     tl.fromTo(
       discRef.current,
       { opacity: 0, scale: 0.88, rotateY: -12, rotateX: 8, x: 40 },
@@ -302,10 +300,6 @@ function Hero() {
         <div className="relative z-10 mx-auto max-w-7xl px-6">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 xl:gap-14">
             <div className="text-left">
-              <div ref={pillRef} className="mb-5 flex justify-start opacity-0">
-                <span className="pill-tag"><span className="dot" /> Personalised longevity · clinician-supervised</span>
-              </div>
-
               <h1 className="font-display text-[clamp(2rem,4.2vw,3.5rem)] leading-[1.08] tracking-tight text-ink">
                 <span className="block"><SplitWords text="Live better." trigger="immediate" delay={0.7} duration={1.6} /></span>
                 <span className="block"><SplitWords text="Longer." wordClassName="text-gradient-clinical" trigger="immediate" delay={0.95} duration={1.6} /></span>
