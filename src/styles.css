@@ -1,0 +1,292 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import "lenis/dist/lenis.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-display: "Fraunces", "Times New Roman", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-clinical: var(--clinical);
+  --color-mint: var(--mint);
+  --color-sand: var(--sand);
+  --color-accent: var(--accent);
+}
+
+:root {
+  /* Clinical, Apple Health / Function Health palette */
+  --background: oklch(0.985 0.003 95);      /* near-white paper */
+  --surface:    oklch(0.975 0.005 95);      /* off-white card */
+  --surface-2:  oklch(0.955 0.008 95);      /* warm pale */
+  --foreground: oklch(0.20  0.015 250);     /* deep ink */
+  --ink:        oklch(0.18  0.02  250);
+  --ink-soft:   oklch(0.36  0.02  250);
+  --muted:      oklch(0.94  0.005 95);
+  --muted-foreground: oklch(0.50 0.01 250);
+  --border:     oklch(0.88  0.01  250 / 0.55);
+  --clinical:   #F3C300;                    /* gold accent */
+  --mint:       #F9DC6B;                    /* light gold */
+  --sand:       oklch(0.86  0.06  85);      /* warm metal accent */
+  --accent:     #F3C300;
+  --radius: 1.25rem;
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+    overflow-y: auto;
+  }
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+  * {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: normal;
+  }
+  ::selection { background: var(--clinical); color: white; }
+}
+
+/* ──────────── Typography ──────────── */
+.font-display { font-family: var(--font-display); font-feature-settings: "ss01"; letter-spacing: normal; font-style: normal; font-weight: 400; }
+.font-mono    { font-family: var(--font-mono); letter-spacing: normal; }
+
+.text-gradient-ink {
+  background: linear-gradient(180deg, oklch(0.30 0.02 250) 0%, oklch(0.55 0.02 250) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.text-gradient-clinical {
+  background: linear-gradient(120deg, #C9A200 0%, #F3C300 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ──────────── Surfaces ──────────── */
+.card-clinical {
+  background: linear-gradient(180deg, #fff 0%, oklch(0.97 0.006 95) 100%);
+  border: 1px solid oklch(0.88 0.01 95 / 0.6);
+  border-radius: var(--radius);
+  box-shadow:
+    0 1px 0 #fff inset,
+    0 1px 2px rgba(0,0,0,0.04),
+    0 10px 40px -20px rgba(243,195,0,0.15);
+}
+
+.glass-light {
+  background: oklch(1 0 0 / 0.7);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(243,195,0,0.25);
+}
+
+.hairline {
+  background: linear-gradient(90deg, transparent, rgba(243,195,0,0.35), transparent);
+  height: 1px;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+.bg-radial-light {
+  background: radial-gradient(60% 50% at 50% 30%, rgba(243,195,0,0.12) 0%, transparent 70%);
+}
+
+/* ──────────── Buttons ──────────── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .85rem 1.4rem; border-radius: 999px;
+  background: linear-gradient(180deg, #1a1a1a, #000000);
+  color: white; font-weight: 500; font-size: .9rem;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.15) inset,
+    0 8px 20px -8px rgba(0,0,0,0.5);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, filter .3s;
+}
+.btn-primary:hover {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 14px 30px -6px rgba(0,0,0,0.55);
+  filter: brightness(1.12);
+}
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .85rem 1.4rem; border-radius: 999px;
+  background: rgba(255,255,255,0.6);
+  color: var(--ink); font-weight: 500; font-size: .9rem;
+  border: 1px solid rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  transition: background .3s, border-color .3s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.95); border-color: rgba(0,0,0,0.25); }
+
+/* ──────────── Nav & footer hovers ──────────── */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.footer-link {
+  display: inline-block;
+  transition: color 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.footer-link:hover {
+  color: white;
+  transform: translateX(4px);
+}
+
+.footer-card {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s, box-shadow 0.35s;
+}
+.footer-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.18);
+}
+
+.social-icon {
+  display: inline-flex;
+  transition: color 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.social-icon:hover {
+  color: white;
+  transform: scale(1.18) translateY(-2px);
+}
+
+.wordmark {
+  cursor: default;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s ease;
+}
+.wordmark:hover {
+  transform: scale(1.025);
+  filter: drop-shadow(0 0 80px rgba(255, 255, 255, 0.22));
+}
+.wordmark-letter {
+  display: inline-block;
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.wordmark:hover .wordmark-letter:nth-child(1) { transform: translateY(-0.07em) rotate(-1deg); transition-delay: 0ms; }
+.wordmark:hover .wordmark-letter:nth-child(2) { transform: translateY(-0.12em); transition-delay: 45ms; }
+.wordmark:hover .wordmark-letter:nth-child(3) { transform: translateY(-0.07em); transition-delay: 90ms; }
+.wordmark:hover .wordmark-letter:nth-child(4) { transform: translateY(-0.12em) rotate(1deg); transition-delay: 135ms; }
+
+/* ──────────── Pills & chips ──────────── */
+.pill-tag {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .4rem .85rem; border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.12);
+  font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+}
+.pill-tag .dot {
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--clinical);
+  box-shadow: 0 0 12px rgba(243,195,0,0.7);
+}
+
+.chip-data {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 14px;
+  padding: .7rem .9rem;
+  box-shadow: 0 12px 30px -12px rgba(0,0,0,0.14);
+}
+
+/* ──────────── Scroll progress ──────────── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 100%;
+  background: linear-gradient(90deg, transparent, #F3C300, transparent);
+  transform-origin: 0 50%; transform: scaleX(0); z-index: 100;
+}
+
+/* ──────────── FX ──────────── */
+.float-y { animation: floatY 6s ease-in-out infinite; }
+@keyframes floatY { 0%,100% { transform: translateY(-6px) } 50% { transform: translateY(6px) } }
+
+/* Soft halo "glow up" for floating data chips */
+.chip-glow::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  border-radius: 28px;
+  background: radial-gradient(closest-side, rgba(243,195,0,0.3), rgba(243,195,0,0) 70%);
+  filter: blur(14px);
+  z-index: -1;
+  opacity: 0.55;
+  animation: chipPulse 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes chipPulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.96); }
+  50%      { opacity: 0.85; transform: scale(1.06); }
+}
+
+/* ──────────── Section cards ──────────── */
+.section-card {
+  border-radius: 1.75rem;
+  overflow: clip;
+  background: var(--color-background);
+}
+.section-card-dark {
+  border-radius: 1.75rem;
+  overflow: clip;
+}
+
+.noise::after {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: 0.025; mix-blend-mode: multiply; pointer-events: none;
+}
