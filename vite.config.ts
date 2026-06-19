@@ -32,6 +32,9 @@ export default defineConfig(({ mode }) => {
       host: "::",
       port: 8080,
     },
+    ssr: {
+      noExternal: ["gsap"],
+    },
     plugins: [
       tailwindcss(),
       tsConfigPaths({ projects: ["./tsconfig.json"] }),

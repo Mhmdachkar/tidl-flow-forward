@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import { gsap } from "@/lib/gsap";
 
 /**
  * HTML phone mockup with independently-animating UI cards.
