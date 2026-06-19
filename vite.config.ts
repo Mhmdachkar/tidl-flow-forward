@@ -26,7 +26,11 @@ export default defineConfig(({ mode }) => {
         "react/jsx-dev-runtime",
         "@tanstack/react-query",
         "@tanstack/query-core",
+        "gsap",
       ],
+    },
+    optimizeDeps: {
+      include: ["gsap", "gsap/ScrollTrigger"],
     },
     server: {
       host: "::",
