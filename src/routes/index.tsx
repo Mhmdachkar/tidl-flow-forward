@@ -1080,11 +1080,11 @@ function RedManSection() {
 
 /* ───────── products ───────── */
 
-type Card = { img: string; tag: string; name: string; sub: string; price: string; contrastPlate?: boolean };
+type Card = { img: string; tag: string; name: string; sub: string; price: string; lightProduct?: boolean };
 const CARDS: Card[] = [
   { img: product1, tag: "Metabolic", name: "Lirosiome", sub: "GLP-1 weight protocol", price: "$249" },
   { img: product4, tag: "Longevity", name: "Tirosane", sub: "Cellular renewal", price: "$329" },
-  { img: product2, tag: "Daily", name: "TIDL Core", sub: "Foundational longevity", price: "$48", contrastPlate: true },
+  { img: product2, tag: "Daily", name: "TIDL Core", sub: "Foundational longevity", price: "$48", lightProduct: true },
   { img: product3, tag: "Hormonal",  name: "TIDL Cycle", sub: "Female hormonal balance", price: "$58" },
 ];
 
@@ -1099,8 +1099,8 @@ function ProductsSection() {
     cards.forEach((card, idx) => {
       const img = card.querySelector<HTMLImageElement>(".pc-img");
       const meta = card.querySelectorAll<HTMLElement>(".pc-meta");
-      const imageFilter = card.dataset.contrastPlate === "true"
-        ? "drop-shadow(0 20px 28px rgba(20,30,60,0.28)) drop-shadow(0 6px 14px rgba(20,30,60,0.2)) drop-shadow(0 0 1px rgba(20,30,60,0.4))"
+      const imageFilter = card.dataset.lightProduct === "true"
+        ? "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))"
         : "drop-shadow(0 22px 28px rgba(20,30,60,0.22))";
 
       // entrance — image floats up first, then meta
@@ -1188,31 +1188,23 @@ function ProductsSection() {
           {CARDS.map((c, i) => (
             <div
               key={i}
-              data-contrast-plate={c.contrastPlate ? "true" : undefined}
+              data-light-product={c.lightProduct ? "true" : undefined}
               className="
                 pcard group relative cursor-pointer shrink-0 sm:shrink
                 w-[62%] xs:w-[58%] sm:w-auto snap-center
               "
             >
               <div className="relative h-44 sm:h-72 mb-4 sm:mb-6 flex items-end justify-center overflow-visible [perspective:900px]">
-                {c.contrastPlate ? (
-                  <div
-                    className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[74%] w-[74%] -translate-x-1/2 -translate-y-[46%] rounded-full"
-                    style={{
-                      background:
-                        "radial-gradient(circle, rgba(20,30,60,0.14) 0%, rgba(20,30,60,0.06) 52%, transparent 76%)",
-                    }}
-                  />
-                ) : null}
                 <div className="absolute inset-x-8 bottom-4 h-5 rounded-full blur-2xl opacity-60 transition-all duration-500 group-hover:opacity-100 group-hover:scale-125"
                      style={{ background: "radial-gradient(closest-side, rgba(243,195,0,0.35), transparent 70%)" }} />
                 <img
                   src={c.img}
                   alt={c.name}
-                  className="pc-img relative z-10 max-h-full max-w-full origin-bottom object-contain will-change-transform transition-[filter] duration-500 group-hover:drop-shadow-[0_28px_36px_rgba(243,195,0,0.25)]"
+                  className="pc-img relative z-10 max-h-full w-auto max-w-full origin-bottom object-contain will-change-transform transition-[filter] duration-500 group-hover:drop-shadow-[0_28px_36px_rgba(243,195,0,0.25)]"
                   style={{
-                    filter: c.contrastPlate
-                      ? "drop-shadow(0 20px 28px rgba(20,30,60,0.28)) drop-shadow(0 6px 14px rgba(20,30,60,0.2)) drop-shadow(0 0 1px rgba(20,30,60,0.4))"
+                    background: "transparent",
+                    filter: c.lightProduct
+                      ? "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))"
                       : "drop-shadow(0 22px 28px rgba(20,30,60,0.22))",
                   }}
                 />
