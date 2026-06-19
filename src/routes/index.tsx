@@ -21,6 +21,7 @@ import product1 from "@/assets/product 1 3d.png";
 import product2 from "@/assets/product 2 3d white.png";
 import product3 from "@/assets/product 3 3d pink.png";
 import product4 from "@/assets/product 4 3d.png";
+import product5 from "@/assets/product 5 3d.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -1084,7 +1085,7 @@ type Card = { img: string; tag: string; name: string; sub: string; price: string
 const CARDS: Card[] = [
   { img: product1, tag: "Metabolic", name: "Lirosiome", sub: "GLP-1 weight protocol", price: "$249" },
   { img: product4, tag: "Longevity", name: "Tirosane", sub: "Cellular renewal", price: "$329" },
-  { img: product2, tag: "Daily",     name: "TIDL Core", sub: "Foundational longevity", price: "$48" },
+  { img: product5, tag: "Daily",     name: "TIDL Core", sub: "Foundational longevity", price: "$48" },
   { img: product3, tag: "Hormonal",  name: "TIDL Cycle", sub: "Female hormonal balance", price: "$58" },
 ];
 
