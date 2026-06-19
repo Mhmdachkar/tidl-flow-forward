@@ -7,7 +7,7 @@ import { MagneticButton } from "@/components/MagneticButton";
 import { PhoneApp } from "@/components/PhoneApp";
 import { PixelButton } from "@/components/PixelButton";
 
-import heroProduct from "@/assets/hero-product.png";
+import hero from "@/assets/hero image 3d.png";
 import heroBg from "@/assets/hero bg.jpeg";
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
@@ -251,8 +251,8 @@ function Hero() {
     tl.fromTo(bgRef.current, { opacity: 0 }, { opacity: 1, duration: 1.6 }, 0);
     tl.fromTo(
       discRef.current,
-      { opacity: 0, scale: 0.88, rotateY: -12, rotateX: 8, x: 40 },
-      { opacity: 1, scale: 1, rotateY: 0, rotateX: 0, x: 0, duration: 2.0, ease: "power4.out" },
+      { opacity: 0, scale: 0.7, rotateY: -18, rotateX: 12, y: 60 },
+      { opacity: 1, scale: 1, rotateY: 0, rotateX: 0, y: 0, duration: 2.4, ease: "power4.out" },
       0.9
     );
     tl.fromTo(paraRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.0 }, 2.4);
@@ -263,20 +263,20 @@ function Hero() {
     }
 
     gsap.to(discImgRef.current, {
-      y: -10, duration: 5.5, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2.6,
+      y: -14, duration: 5.5, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2.6,
     });
 
     const onMove = (e: MouseEvent) => {
       const cx = (e.clientX / window.innerWidth - 0.5);
       const cy = (e.clientY / window.innerHeight - 0.5);
       gsap.to(discImgRef.current, {
-        rotateY: cx * 6, rotateX: -cy * 5, x: cx * 8, duration: 1.4, ease: "power3.out",
+        rotateY: cx * 10, rotateX: -cy * 8, x: cx * 12, duration: 1.4, ease: "power3.out",
       });
     };
     window.addEventListener("mousemove", onMove);
 
     gsap.to(discRef.current, {
-      yPercent: 8, ease: "none",
+      yPercent: 18, ease: "none",
       scrollTrigger: { trigger: sectionRef.current, start: "top top", end: "bottom top", scrub: true },
     });
 
@@ -315,10 +315,14 @@ function Hero() {
               </div>
             </div>
 
-            <div ref={discRef} className="relative mx-auto h-[min(52vw,320px)] w-full max-w-[560px] [perspective:1200px] sm:h-[360px] lg:mx-0 lg:ml-auto lg:h-[400px] lg:max-w-none">
+            <div ref={discRef} className="relative mx-auto h-[min(68vw,380px)] w-full max-w-[560px] [perspective:1400px] sm:h-[440px] lg:mx-0 lg:ml-auto lg:h-[480px] lg:max-w-none">
+              <div
+                className="absolute inset-x-10 bottom-6 h-12 rounded-full blur-3xl"
+                style={{ background: "radial-gradient(closest-side, rgba(243,195,0,0.22), transparent 70%)" }}
+              />
               <div
                 ref={ringRef}
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[min(92vw,380px)] w-[min(92vw,380px)] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[420px] sm:w-[420px] lg:h-[460px] lg:w-[460px]"
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[min(92vw,380px)] w-[min(92vw,380px)] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[520px] sm:w-[520px] lg:h-[560px] lg:w-[560px]"
                 style={{
                   background:
                     "conic-gradient(from 0deg, transparent 0deg, rgba(216,199,154,0.55) 60deg, transparent 130deg, rgba(216,199,154,0.35) 220deg, transparent 320deg)",
@@ -331,9 +335,13 @@ function Hero() {
               />
               <img
                 ref={discImgRef}
-                src={heroProduct}
-                alt="TIDL longevity therapy product"
-                className="absolute inset-0 mx-auto h-full w-full object-contain object-center will-change-transform"
+                src={hero}
+                alt="TIDL longevity product"
+                className="absolute inset-0 mx-auto h-full w-auto max-w-full object-contain will-change-transform"
+                style={{
+                  filter: "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))",
+                  background: "transparent",
+                }}
                 draggable={false}
               />
             </div>
