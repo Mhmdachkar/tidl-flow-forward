@@ -1,621 +1,649 @@
-# 00-project-overview.md
+# 11-current-audit.md
 
-# TIDL Website Project Overview
+# TIDL Current Implementation Audit
 
-## Project Name
-
-TIDL
-
----
-
-# What Is TIDL?
-
-TIDL is a premium telehealth and peptide company.
-
-The company is transitioning from a pain-relief brand into a modern longevity, metabolic health, and prescription telehealth platform.
-
-The experience combines:
-
-* Premium consumer wellness
-* Licensed telemedicine
-* Prescription fulfillment
-* Ongoing care
-* AI-powered recommendations
-* Concierge support
-
-The experience should feel like:
-
-* Apple Health
-* Levels Health
-* WHOOP
-* Hims
-* Eight Sleep
-
-It should NOT feel like:
-
-* Generic healthcare websites
-* Hospital portals
-* SaaS dashboards
-* Fitness apps
-* Startup templates
+**Version:** June 2026
+**Purpose:** Evaluate the current homepage implementation against actual business requirements, client feedback, PRD, wireframes, and launch goals.
 
 ---
 
-# Core Brand Position
+# Executive Summary
 
-The central promise:
+The current website successfully delivers:
 
-> Live better. Longer.
+* Premium visual design.
+* High-quality animation.
+* Strong frontend engineering.
+* Luxury wellness aesthetics.
+* Modern interaction design.
 
-TIDL provides access to physician-guided treatments through a seamless digital experience.
+However, the implementation currently behaves more like:
 
-The customer:
+> A premium wellness brand website.
 
-1. Learns about a treatment.
-2. Completes a short medical intake.
-3. Is reviewed by a licensed physician.
-4. Receives a prescription.
-5. Medicine ships to their home.
-6. Ongoing care continues.
+The client requires:
 
----
+> A legitimate prescription telehealth platform.
 
-# Primary Product
+The visual direction is largely correct.
 
-The hero product is the pre-dosed injection pen.
-
-This product differentiates TIDL from competitors.
-
-The pen:
-
-* Comes pre-measured.
-* Requires no mixing.
-* Requires no calculations.
-* Removes patient anxiety.
-* Improves adherence.
-
-The website must educate users about the pen.
-
-The pen should be treated as the main hero object of the entire brand.
+The user experience, information architecture, conversion flow, and business logic are largely missing.
 
 ---
 
-# Business Model
+# Current Status
 
-TIDL does not manufacture medicine.
-
-TIDL provides:
-
-* Brand
-* Customer experience
-* Education
-* Care journey
-* Data layer
-* AI tools
-* Lifecycle messaging
-
-Clinical operations happen through:
-
-* PrescribeRx
-* LocumTele
-* Pharmacy network
+| Area                     | Score  |
+| ------------------------ | ------ |
+| Visual Design            | 9/10   |
+| Animation                | 8.5/10 |
+| Code Quality             | 7.5/10 |
+| Mobile Experience        | 6/10   |
+| Telehealth Communication | 2/10   |
+| Trust & Legitimacy       | 2/10   |
+| Conversion UX            | 3/10   |
+| Business Alignment       | 3/10   |
 
 ---
 
-# Customer Journey
+# Client Feedback Summary
 
-## Step 1
+The client explicitly stated:
 
-Discover.
+* "UI is directionally solid."
+* "UX is off."
+* "We do not have an app."
+* "There is no way to see checkout."
+* "There is no way to see PDPs."
+* "We don't have a 90 day plan."
+* "There is no video."
+* "Match the functionality of the wireframes."
+* "Use the visual polish of the MAC Energy Figma."
+* "The entire website UX/UI must be completed."
 
-Users land on:
+This means:
 
-* Homepage
-* Category pages
-* Product pages
+The problem is NOT visual design.
 
----
-
-## Step 2
-
-Learn.
-
-Users:
-
-* Explore treatments.
-* Learn about benefits.
-* Understand safety.
+The problem is missing product experience.
 
 ---
 
-## Step 3
+# Major Violations
 
-Quiz & Intake.
+## 1. Fake App Experience
 
-Users complete:
+Current:
 
-* Medical questions.
-* Eligibility screening.
-* Intake forms.
+* Phone section.
+* App screens.
+* Dashboard cards.
+* Mobile application visuals.
 
----
+Client:
 
-## Step 4
+> TIDL does not have an app.
 
-Doctor Review.
+Status:
 
-Licensed providers review.
-
-Doctors prescribe.
-
----
-
-## Step 5
-
-Pharmacy Fulfillment.
-
-Medicine ships.
-
-Tracking updates.
+❌ Must remove.
 
 ---
 
-## Step 6
+## 2. 90 Day Program
 
-Ongoing Care.
+Current:
 
-* Text reminders.
-* Reorders.
-* Concierge.
-* Support.
-* Follow-up.
+* Protocol timeline.
+* 90 day progression.
 
----
+Client:
 
-# User Flows
+> We do not have a 90 day plan.
 
-## First Purchase
+Status:
 
-Landing page.
-
-↓
-
-Quiz.
-
-↓
-
-Doctor review.
-
-↓
-
-Checkout.
-
-↓
-
-Prescription.
-
-↓
-
-Shipment.
-
-↓
-
-Welcome sequence.
+❌ Must remove.
 
 ---
 
-## Reorder Flow
+## 3. Dashboard Experience
 
-Reminder.
+Current:
 
-↓
+* Metrics.
+* Progress widgets.
+* Dashboard cards.
 
-Text.
+Client:
 
-↓
+> TIDL is telehealth.
 
-Dose confirmation.
+Status:
 
-↓
-
-Shipment.
-
----
-
-## Support Flow
-
-Customer contacts support.
-
-Medical issues go to doctors.
-
-Non-medical issues go to concierge.
+❌ Remove.
 
 ---
 
-## Abandoned Quiz
+# Current Homepage Sections
 
-User leaves.
+## Navigation
 
-System remembers progress.
+### Current
 
-User returns.
+* Sticky nav.
+* Large desktop navigation.
+* Hidden mobile navigation.
 
-Resumes exactly where they stopped.
+Problems:
 
----
+* No hamburger.
+* Poor mobile experience.
 
-## B2B Clinic
+Status:
 
-Future phase.
-
-Clinics purchase wholesale.
-
----
-
-# Website Pages
-
-## 1. Homepage
-
-Purpose:
-
-* Sell the brand.
-* Explain the system.
-* Build trust.
-* Drive quiz starts.
+⚠ Needs redesign.
 
 ---
 
-## 2. Category Pages
+## Hero
 
-Examples:
+### Current
 
-* Weight Loss
-* Longevity
-* Hormonal Health
-* Metabolic Health
+* Large typography.
+* Floating disc.
+* Hero imagery.
 
-Each page:
+Problems:
 
-* Explains condition.
-* Shows products.
-* Offers recommendations.
+* Product pen is not hero.
+* No telehealth explanation.
+* No trust indicators.
 
----
+Status:
 
-## 3. Product Detail Pages
-
-Each product receives:
-
-* Benefits.
-* Ingredients.
-* Results.
-* Safety.
-* Pricing.
-* Reviews.
-* FAQ.
-* CTA.
+⚠ Needs restructuring.
 
 ---
 
-## 4. Quiz
+## Marquee
 
-Medical intake.
+Current:
 
-Progressive flow.
+* Generic trust pills.
 
-No dead ends.
+Missing:
 
----
+* Physician reviewed.
+* Licensed providers.
+* Secure checkout.
+* Privacy.
+* Nationwide shipping.
 
-## 5. Checkout
+Status:
 
-Collect payment.
-
-Show:
-
-* Shipping
-* Tax
-* Pricing
-* HSA/FSA support
+⚠ Needs replacement.
 
 ---
 
-## 6. Account
+## Voxel Section
 
-Users can:
+Current:
 
-* View orders.
-* Track shipments.
-* Reorder.
-* Contact support.
+* Cinematic science video.
 
----
+Assessment:
 
-## 7. Patient Portal
+* Visually strong.
+* Can remain.
 
-Medical information.
+Status:
 
-Appointments.
-
-Plans.
-
-Orders.
+✅ Keep.
 
 ---
 
-# Telehealth Infrastructure
+## Human Story Sections
 
-## PrescribeRx
+Current:
 
-Handles:
+* Lifestyle storytelling.
 
-* Intake
-* Medical system
-* Patient portal
-* Clinical knowledge
+Assessment:
+
+* Visually strong.
+* Needs better messaging.
+
+Status:
+
+⚠ Refine.
 
 ---
 
-## LocumTele
+## Product Grid
 
-Provides:
+Current:
 
-* Licensed physicians
-* Prescription review
-* State coverage
+* Ecommerce cards.
+
+Problems:
+
+* Feels like products.
+* Should feel like treatment categories.
+
+Status:
+
+⚠ Rebuild.
+
+---
+
+## Red Man Section
+
+Assessment:
+
+* Strong visual storytelling.
+* Good emotional content.
+
+Status:
+
+✅ Keep and improve.
+
+---
+
+## Phone Section
+
+Assessment:
+
+* Direct conflict with business.
+
+Status:
+
+❌ Remove entirely.
+
+---
+
+## Pen Section
+
+Assessment:
+
+* Correct product.
+* Incorrect placement.
+
+Status:
+
+⚠ Move higher.
+
+---
+
+## Protocol Timeline
+
+Assessment:
+
+* Reads as 90-day treatment.
+
+Status:
+
+❌ Remove.
+
+---
+
+## Metrics Section
+
+Assessment:
+
+* Dashboard feeling.
+
+Status:
+
+❌ Remove.
+
+---
+
+## CTA
+
+Assessment:
+
+* Works.
+
+Status:
+
+✅ Keep.
+
+---
+
+# Missing Homepage Sections
+
+The following required sections do not exist.
+
+---
+
+## How TIDL Works
+
+Required flow:
+
+1. Assessment
+2. Doctor Review
+3. Prescription
+4. Pharmacy
+5. Delivery
+
+Status:
+
+❌ Missing.
+
+---
+
+## Doctor Network
+
+Must show:
+
+* Licensed providers.
+* Board certified.
+* Real doctors.
+
+Status:
+
+❌ Missing.
 
 ---
 
 ## Pharmacy Network
 
-Provides:
+Must explain:
 
-* Compounding
-* Cold-chain shipping
-* Fulfillment
+* Licensed pharmacies.
+* Cold shipping.
+* Prescription fulfillment.
 
----
+Status:
 
-# AI Features
-
-## AI Search
-
-Primary discovery experience.
-
-Users describe:
-
-* Goals
-* Symptoms
-* Outcomes
-
-The AI recommends:
-
-* Treatments
-* Products
-* Protocols
-
-Medical questions always escalate to humans.
+❌ Missing.
 
 ---
 
-## Concierge
+## Reviews
 
-Text messaging.
+Required:
 
-Support.
+* Testimonials.
+* Social proof.
+* Outcomes.
 
-Reorders.
+Status:
 
-Guidance.
-
----
-
-## Lifecycle Messaging
-
-* Welcome.
-* Delivery.
-* Reorder.
-* Winback.
+❌ Missing.
 
 ---
 
-# Rules
+## FAQ
 
-* Every patient sees a real doctor.
-* Every prescription is legitimate.
-* Medical questions never go to AI.
-* Claims require approval.
-* Adults only.
-* Accessibility required.
-* HIPAA-compliant workflows.
-* Privacy first.
+Required:
 
----
+* Shipping.
+* Prescriptions.
+* Approval.
+* States.
 
-# Design Direction
+Status:
 
-The client specifically requested:
-
-> Match the functionality of the wireframes with the UI quality of the MAC Energy Figma.
-
-This means:
-
-## UX:
-
-Use TIDL wireframes.
-
-Use TIDL flows.
-
-Use TIDL requirements.
+❌ Missing.
 
 ---
 
-## UI:
+## Education Video
 
-Use MAC Energy inspiration.
+Required by client.
 
-Examples:
+Status:
 
-* Editorial layouts.
-* Bold typography.
-* Full-screen sections.
-* Cinematic transitions.
-* Layered compositions.
-* Strong visual hierarchy.
-* Immersive scrolling.
+❌ Missing.
 
 ---
 
-# The Website Is NOT
+## Trust Section
 
-❌ A mobile app.
+Must include:
 
-❌ A dashboard.
+* Physician reviewed.
+* HIPAA.
+* Secure checkout.
+* HSA/FSA.
+* Privacy.
 
-❌ A health tracker.
+Status:
 
-❌ A 90-day plan.
-
-❌ A fitness application.
-
-❌ An AI chatbot website.
-
----
-
-# The Website IS
-
-✅ Premium telehealth.
-
-✅ Clinical.
-
-✅ Luxury.
-
-✅ Editorial.
-
-✅ Trustworthy.
-
-✅ Human.
-
-✅ Physician-guided.
+❌ Missing.
 
 ---
 
-# Technology Stack
+# Mobile Audit
 
-Frontend:
+## Navigation
 
-* React
-* TypeScript
-* Tailwind
+No mobile menu.
 
-Animations:
-
-* GSAP
-* ScrollTrigger
-* Lenis
-
-3D:
-
-* React Three Fiber
-* Drei
-
-Forms:
-
-* React Hook Form
-* Zod
-
-Routing:
-
-* TanStack Router
+Critical issue.
 
 ---
 
-# Animation Philosophy
+## Hero
 
-Animations should feel:
+Large spacing.
 
-* Slow
-* Expensive
-* Cinematic
-* Premium
+Too much scrolling.
 
-References:
-
-* Apple
-* Linear
-* Arc Browser
-* Nothing
-
-Avoid:
-
-* Fast motion
-* Bouncy motion
-* Excessive effects
+Weak first screen.
 
 ---
 
-# Mobile Philosophy
+## Images
 
-Mobile-first.
+Some clipping.
 
-Never scale desktop down.
-
-Create dedicated layouts.
-
-Touch-first interactions.
-
-60 FPS.
-
-Large tap targets.
-
-Reduced animation complexity.
+Some excessive padding.
 
 ---
 
-# Success Criteria
+## Product Grid
 
-The final website should make users believe:
-
-1. TIDL is a real medical company.
-2. The process is legitimate.
-3. Doctors are involved.
-4. Treatment is safe.
-5. The pen is superior.
-6. Starting the quiz is easy.
-7. Ongoing care exists.
-
-If the website looks beautiful but does not explain these things, it fails.
+Horizontal scrolling feels unfinished.
 
 ---
 
-# Launch Goal
+## Performance
 
-Timeline:
+Heavy animations on mobile.
 
-* Site live by July.
-* End-to-end flow operational.
-* Quiz functional.
-* Checkout functional.
-* AI search available.
-* Mobile-first experience.
-* Legitscript approval ready.
+No dedicated timelines.
 
 ---
 
-# North Star
+Overall:
+
+6/10.
+
+---
+
+# Code Audit
+
+Current problems:
+
+* 2,400+ line index route.
+* Multiple unrelated sections.
+* Large component coupling.
+* Limited code splitting.
+
+Recommended:
+
+```
+src/components/sections/
+
+HeroSection
+TrustSection
+PenSection
+JourneySection
+DoctorSection
+PharmacySection
+ReviewsSection
+FAQSection
+CTASection
+```
+
+---
+
+# Animation Audit
+
+Current strengths:
+
+* GSAP.
+* ScrollTrigger.
+* Lenis.
+* Three.js.
+
+Current weaknesses:
+
+* Animations are isolated.
+* Sections do not transition together.
+* Mobile animations too heavy.
+
+Recommended:
+
+* Shared timelines.
+* MatchMedia.
+* FLIP transitions.
+* Section-to-section continuity.
+
+---
+
+# Visual Direction Audit
+
+Current design:
+
+* Luxury wellness.
+* Hims.
+* Premium lifestyle.
+
+Required design:
+
+* Apple healthcare.
+* Levels.
+* WHOOP.
+* Premium telehealth.
+
+The site must feel:
+
+* Medical.
+* Trustworthy.
+* Licensed.
+* Scientific.
+
+Without becoming:
+
+* Hospital.
+* Corporate healthcare.
+* Generic blue medical site.
+
+---
+
+# Required Homepage Structure
+
+1. Navigation
+2. Hero
+3. Trust Bar
+4. Pen Section
+5. How TIDL Works
+6. Treatment Categories
+7. Doctor Network
+8. Pharmacy Network
+9. Reviews
+10. Education Video
+11. FAQ
+12. CTA
+13. Footer
+
+---
+
+# Definition of Success
+
+A new visitor must understand:
+
+* What TIDL is.
+* What the treatment is.
+* Why the pen is different.
+* How the process works.
+* Who the doctors are.
+* How the medicine ships.
+* Why the company is legitimate.
+* What happens after purchase.
+
+If those questions are not answered:
+
+The homepage has failed.
+
+---
+
+# Immediate Priorities
+
+## P0
+
+* Remove app.
+* Remove 90-day timeline.
+* Remove dashboard experience.
+* Add mobile menu.
+
+---
+
+## P1
+
+* Add How TIDL Works.
+* Add Doctor section.
+* Add Pharmacy section.
+* Add Trust section.
+
+---
+
+## P2
+
+* Add reviews.
+* Add FAQ.
+* Add video.
+
+---
+
+## P3
+
+* Optimize animations.
+* Refactor components.
+* Improve performance.
+
+---
+
+# Final Conclusion
+
+The current implementation proves that the team can build a premium website.
+
+The next phase is not visual design.
+
+The next phase is building the actual telehealth experience.
 
 The final product should feel like:
 
-> Apple designed a premium telehealth company.
+* Apple-level design.
+* Hims-level conversion.
+* Levels-level trust.
+* WHOOP-level polish.
 
-With:
+Not:
 
-* Hims trust.
-* WHOOP sophistication.
-* Levels clarity.
-* Linear animations.
-* Apple polish.
+* A supplement brand.
+* A wellness app.
+* A dashboard product.
+* A generic ecommerce store.
 
-Not a landing page.
+The homepage is approximately:
 
-A healthcare experience.
+* 80% visual complete.
+* 30% business complete.
+* 25% UX complete.
+
+The remaining work is primarily experience architecture, trust building, conversion design, and telehealth communication.

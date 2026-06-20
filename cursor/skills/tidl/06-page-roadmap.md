@@ -1,4 +1,4 @@
-# 02-information-architecture.md
+# 06-information-architecture.md
 
 # TIDL Information Architecture
 

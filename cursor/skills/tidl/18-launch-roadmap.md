@@ -1,519 +1,760 @@
-# 00-project-overview.md
+# TIDL Launch Roadmap
 
-# TIDL Project Overview
+## Purpose
 
----
+This document defines the exact implementation roadmap required to launch TIDL.
 
-# Project Name
+The goal is:
 
-TIDL
+- launch by deadline
+- satisfy client requirements
+- support LegitScript approval
+- support LocumTele review
+- provide complete telehealth UX
 
----
+This roadmap takes priority over visual improvements.
 
-# Project Type
-
-Premium telehealth platform and prescription wellness brand.
-
----
-
-# Project Mission
-
-TIDL is evolving from a pain relief company into a modern telehealth and longevity platform that connects patients with licensed physicians, legitimate prescriptions, licensed pharmacies, and ongoing care.
-
-The company exists to make advanced treatments easier, safer, and more accessible.
-
-TIDL is not a supplement company.
-
-TIDL is not an ecommerce brand.
-
-TIDL is not a wellness startup.
-
-TIDL is a premium healthcare experience.
+Working software is more important than additional animations.
 
 ---
 
-# The Core Promise
+# Current Status
 
-Learn.
+## Completed
 
-Get evaluated.
+✅ Landing page UI
 
-Get prescribed.
+✅ Premium visual design
 
-Receive treatment.
+✅ GSAP animations
 
-Continue care.
+✅ Clinical design direction
 
----
+✅ Brand identity
 
-# What Makes TIDL Different
+✅ Hero experience
 
-Most competitors sell:
-
-* vials
-* mixing kits
-* complicated dosing
-* unclear sourcing
-
-TIDL focuses on:
-
-* physician-reviewed care
-* pre-dosed medication pens
-* easy administration
-* licensed pharmacies
-* ongoing support
-
-The pen is the hero product.
-
-The pen is the primary differentiator.
-
-The website must continuously explain why the pen is better.
+✅ Product visuals
 
 ---
 
-# Business Model
+## Missing
 
-The customer:
+❌ Quiz
 
-1. Learns about treatment.
-2. Completes a medical intake.
-3. A physician reviews the information.
-4. Treatment is prescribed if appropriate.
-5. Medication is prepared by a pharmacy.
-6. Medication ships to the patient.
-7. Ongoing care continues.
+❌ Product pages
+
+❌ Checkout
+
+❌ Confirmation
+
+❌ Account
+
+❌ Patient portal
+
+❌ Doctor flow
+
+❌ Pharmacy flow
+
+❌ Trust system
+
+❌ FAQ
+
+❌ Reviews
+
+❌ AI search experience
 
 ---
 
-# Customer Journey
+# Priority Levels
 
-```text
-Land on website
-↓
-Learn about treatment
-↓
-Take assessment
+P0 = Launch blocker
+
+P1 = Required for launch
+
+P2 = Post-launch
+
+P3 = Future
+
+---
+
+# PHASE 0
+
+# Homepage Fixes
+
+Priority: P0
+
+The homepage currently contains business contradictions.
+
+---
+
+## Remove App References
+
+Remove:
+
+- Phone app section
+- Dashboard cards
+- App UI
+- App language
+
+Client statement:
+
+> We do not have an app.
+
+---
+
+## Remove 90-Day Program
+
+Remove:
+
+- protocol timeline
+- milestone journey
+- 90-day program language
+
+Replace with:
+
+- ongoing care
+- physician follow-up
+- treatment support
+
+---
+
+## Add Trust Section
+
+Required:
+
+- licensed physicians
+- prescription treatment
+- privacy
+- secure checkout
+
+---
+
+## Add How TIDL Works
+
+Flow:
+
+1. Learn
+2. Assessment
+3. Physician review
+4. Prescription
+5. Pharmacy ships
+6. Ongoing care
+
+---
+
+## Add FAQ
+
+Required.
+
+---
+
+## Add Reviews
+
+Required.
+
+---
+
+## Add Mobile Navigation
+
+Required.
+
+---
+
+# Deliverable
+
+Homepage version 2.
+
+---
+
+# PHASE 1
+
+# Quiz
+
+Priority: P0
+
+The quiz is the most important page.
+
+Nothing else converts without it.
+
+---
+
+Route:
+
+/quiz
+
+---
+
+Goals:
+
+- qualify patients
+- collect medical information
+- educate
+- create trust
+
+---
+
+Requirements:
+
+- progress bar
+- save progress
+- mobile-first
+- large buttons
+- no dead ends
+
+---
+
+Steps:
+
+1. Goal selection
+2. Basic information
+3. Medical history
+4. Lifestyle
+5. Eligibility
+6. Account
+7. Review
+
+---
+
+Output:
+
+Eligibility package.
+
+---
+
+Dependencies:
+
+Checkout.
+
+Doctor flow.
+
+---
+
+Deliverable:
+
+Working assessment.
+
+---
+
+# PHASE 2
+
+# Product Detail Pages
+
+Priority: P0
+
+Routes:
+
+/products/glp-1
+/products/weight-loss
+/products/testosterone
+
+---
+
+Required sections:
+
+- hero
+- benefits
+- how it works
+- physician review
+- safety
+- FAQs
+- reviews
+
+---
+
+Required CTA:
+
+Start Assessment.
+
+---
+
+Avoid:
+
+Add to Cart.
+
+---
+
+Deliverable:
+
+Complete PDP system.
+
+---
+
+# PHASE 3
+
+# Checkout
+
+Priority: P0
+
+Routes:
+
+/checkout
+
+---
+
+Requirements:
+
+- order summary
+- consultation fee
+- treatment fee
+- shipping
+- taxes
+
+---
+
+Payment methods:
+
+- cards
+- HSA
+- FSA
+
+---
+
+Required:
+
+- HIPAA notice
+- consent
+- legal agreements
+
+---
+
+Deliverable:
+
+Functional checkout.
+
+---
+
+# PHASE 4
+
+# Confirmation
+
+Priority: P1
+
+Route:
+
+/confirmation
+
+---
+
+Show:
+
+- order received
+- physician review
+- next steps
+- support
+
+---
+
+Timeline:
+
+Assessment
 ↓
 Doctor review
 ↓
 Prescription
 ↓
-Pharmacy fulfillment
+Pharmacy
 ↓
-Delivery
-↓
-Ongoing care
-↓
-Reorder
-```
+Shipping
 
 ---
 
-# The Website Is The Front Door
+Deliverable:
 
-The website is not the medical platform.
-
-The website is:
-
-* education
-* trust
-* conversion
-* onboarding
-
-The medical systems operate behind the scenes.
+Post-purchase experience.
 
 ---
 
-# The Product
+# PHASE 5
 
-Primary category:
+# Account Portal
 
-GLP-1 weight management.
+Priority: P1
 
-Primary delivery:
+Route:
 
-Pre-dosed injection pen.
-
-Future categories:
-
-* longevity
-* hormone health
-* metabolic health
-* recovery
-* performance
+/account
 
 ---
 
-# Brand Positioning
+Sections:
 
-TIDL sits between:
-
-* premium healthcare
-* longevity medicine
-* telehealth
-
-The brand should feel:
-
-* modern
-* trustworthy
-* clinical
-* premium
-* sophisticated
+- orders
+- status
+- tracking
+- support
+- reorder
 
 ---
 
-# The Experience Should Feel Like
+The account is informational.
 
-Apple.
-
-WHOOP.
-
-Levels Health.
-
-One Medical.
-
-Linear.
-
-Hims.
-
-Modern healthcare.
+Not a medical dashboard.
 
 ---
 
-# The Experience Should Not Feel Like
+Deliverable:
 
-Supplements.
-
-Bodybuilding.
-
-Discount telehealth.
-
-Pharmacy websites.
-
-Hospital websites.
-
-Wellness influencers.
-
-Generic ecommerce.
+Patient account.
 
 ---
 
-# Primary Customer Goals
+# PHASE 6
 
-* lose weight
-* improve health
-* improve longevity
-* receive legitimate treatment
-* avoid complicated injections
-* receive ongoing support
+# Doctor Experience
 
----
+Priority: P1
 
-# The Pen Is The Hero
+Routes:
 
-The pen is:
-
-* easy
-* safe
-* measured
-* premium
-
-The website must repeatedly explain:
-
-* no mixing
-* no measuring
-* no syringes
-* pre-dosed delivery
+/how-it-works
+/physicians
 
 ---
 
-# Core User Flows
+Explain:
 
-## First Purchase
-
-Learn.
-
-Take assessment.
-
-Doctor review.
-
-Prescription.
-
-Delivery.
+- physician review
+- prescription process
+- telehealth laws
 
 ---
 
-## Reorder
+Show:
 
-Receive reminder.
-
-Confirm dose.
-
-Approve shipment.
-
-Receive medication.
+- real doctors
+- credentials
+- states served
 
 ---
 
-## Support
+Deliverable:
 
-Contact concierge.
-
-Medical questions go to physicians.
-
-Order issues go to support.
+Medical trust.
 
 ---
 
-## Incomplete Quiz
+# PHASE 7
 
-Resume where you left off.
+# Pharmacy Flow
 
-Receive reminder.
+Priority: P1
 
-Continue assessment.
+Explain:
 
----
-
-# Telehealth Principles
-
-Every patient sees a real physician.
-
-Every prescription is reviewed.
-
-No automatic approvals.
-
-No guaranteed prescriptions.
-
-No AI diagnosis.
-
-No AI prescriptions.
-
-Medical decisions belong to physicians.
+- prescription
+- fulfillment
+- cold shipping
+- delivery
 
 ---
 
-# Technology Stack
+Required for:
 
-Frontend:
-
-* React
-* TypeScript
-* TanStack Start
-
-Animations:
-
-* GSAP
-* ScrollTrigger
-* Lenis
-
-3D:
-
-* React Three Fiber
-* Drei
-
-Styling:
-
-* Tailwind CSS
-
-Forms:
-
-* React Hook Form
-* Zod
+LegitScript.
 
 ---
 
-# Design Philosophy
+Deliverable:
 
-The interface should feel:
-
-* minimal
-* premium
-* elegant
-* calm
-* expensive
-
-Large typography.
-
-Large spacing.
-
-Editorial layouts.
-
-Slow animation.
-
-Floating objects.
-
-White space.
-
-Soft shadows.
-
-Clinical colors.
+Prescription legitimacy.
 
 ---
 
-# Visual References
+# PHASE 8
 
-The MAC Energy Figma serves only as visual inspiration.
+# AI Search Experience
 
-Use:
+Priority: P2
 
-* bold editorial layouts
-* strong imagery
-* large typography
-* premium pacing
+Routes:
 
-Do not copy:
-
-* colors
-* energy drink branding
-* dark sports aesthetics
+/search
 
 ---
 
-# Color Direction
+Features:
 
-Primary:
+- goal search
+- educational recommendations
+- treatment guidance
 
-* warm white
-* soft gray
-* clinical blue accents
-* subtle gold accents
+---
+
+AI may:
+
+- educate
+
+AI may not:
+
+- diagnose
+
+---
+
+Medical questions:
+
+Escalate to physician.
+
+---
+
+Deliverable:
+
+Search experience.
+
+---
+
+# PHASE 9
+
+# Reviews
+
+Priority: P1
+
+Sections:
+
+- homepage
+- product pages
+
+---
+
+Types:
+
+- testimonials
+- ratings
+- photos
+
+---
 
 Avoid:
 
-* neon colors
-* purple SaaS gradients
-* gaming aesthetics
+fake reviews.
 
 ---
 
-# Motion Philosophy
+# PHASE 10
 
-Animation should feel:
+# FAQ
 
-* cinematic
-* slow
-* premium
+Priority: P1
 
-Inspired by:
+Topics:
 
-* Apple
-* Linear
-* Stripe
-
-Motion should never feel:
-
-* playful
-* bouncy
-* exaggerated
+- physicians
+- prescriptions
+- shipping
+- safety
+- costs
 
 ---
 
-# Mobile First
+# PHASE 11
 
-The entire product is mobile-first.
+# Legal
 
-Most users will enter through:
+Priority: P0
 
-* social ads
-* search
-* AI recommendations
+Routes:
 
-Every page must be designed for mobile first.
-
-Desktop expands the experience.
-
-Desktop does not define the experience.
+/privacy
+/terms
+/medical-disclaimer
 
 ---
 
-# Trust Principles
+Requirements:
 
-The experience must continuously communicate:
-
-* physician reviewed
-* licensed providers
-* prescription treatment
-* secure data
-* legitimate care
-
-Trust is one of the most important conversion factors.
+- HIPAA
+- privacy
+- disclosures
 
 ---
 
-# AI Features
+# PHASE 12
 
-AI is used for:
+# SEO
 
-* search
-* recommendations
-* education
+Priority: P1
 
-AI is not used for:
+Every route requires:
 
-* diagnosis
-* prescriptions
-* medical decisions
+- title
+- description
+- OG image
 
 ---
 
-# Launch Goals
+Schema:
 
-By launch:
-
-* Homepage complete
-* Product pages complete
-* Quiz complete
-* Checkout complete
-* Account portal complete
-* Doctor workflow visible
-* Pharmacy workflow visible
-* AI search visible
-* Mobile experience polished
+- Organization
+- MedicalOrganization
+- FAQ
+- Product
 
 ---
 
-# Success Metrics
+# PHASE 13
 
-The user should think:
+# Performance
 
-"This feels like real healthcare."
+Priority: P1
 
-"I trust this brand."
+Targets:
 
-"This seems medically legitimate."
+Lighthouse:
 
-"This looks premium."
-
-"This feels easier than alternatives."
+95+
 
 ---
 
-# Failure Conditions
+CLS:
 
-The experience has failed if users think:
-
-* this is a supplement company
-* this is a wellness brand
-* this is an app company
-* this is a dashboard product
-* this is an energy drink brand
-* this is generic ecommerce
+<0.1
 
 ---
 
-# Final Vision
+LCP:
 
-TIDL should become the Apple of modern telehealth.
+<2.5s
 
-A premium healthcare experience that combines:
+---
 
-* clinical trust
-* modern technology
-* beautiful design
-* physician-guided care
-* long-term relationships
+INP:
 
-The customer should feel:
+<200ms
 
-"I am receiving legitimate medical care through a beautiful modern experience."
+---
+
+# Mobile Requirements
+
+Every phase:
+
+- mobile first
+- responsive
+- touch friendly
+
+---
+
+# Animation Requirements
+
+Animation enhances.
+
+Animation never blocks.
+
+---
+
+Animation priority:
+
+1. Trust
+2. Clarity
+3. Conversion
+
+---
+
+# Launch Checklist
+
+Homepage:
+□
+
+Quiz:
+□
+
+Product pages:
+□
+
+Checkout:
+□
+
+Confirmation:
+□
+
+Account:
+□
+
+Doctor flow:
+□
+
+Pharmacy flow:
+□
+
+Reviews:
+□
+
+FAQ:
+□
+
+Legal:
+□
+
+SEO:
+□
+
+Mobile:
+□
+
+Performance:
+□
+
+---
+
+# Required Before LegitScript
+
+Required:
+
+- physician explanation
+- prescription flow
+- pharmacy explanation
+- medical disclaimers
+- privacy policy
+- terms
+- secure checkout
+
+---
+
+# Required Before Advertising
+
+Required:
+
+- conversion flow
+- quiz
+- checkout
+- tracking
+- analytics
+
+---
+
+# Required Before Scale
+
+Required:
+
+- account
+- reorder
+- AI search
+- lifecycle messaging
+
+---
+
+# Future Phase
+
+P3
+
+- B2B portal
+- advanced AI
+- personalization
+- clinic dashboard
+- advanced recommendations
+
+---
+
+# Final Goal
+
+A visitor should:
+
+Learn.
+Trust.
+Start assessment.
+Receive physician review.
+Receive medication.
+Continue care.
+
+The website exists to facilitate that journey.
+
+Every feature should support it.
