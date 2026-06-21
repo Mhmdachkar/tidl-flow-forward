@@ -1,21 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Check, ShieldCheck, X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useQuiz } from "@/hooks/use-quiz";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
 import { validateQuizStep } from "@/lib/quiz-schema";
 import { QUIZ_TOTAL_STEPS } from "@/types/quiz";
-import heroImage from "@/assets/hero image 3d.png";
-import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
-
-const HERO_BULLETS = [
-  "Reviewed by licensed physicians",
-  "Personalized to your biology",
-  "Delivered discreetly to your door",
-];
 
 export function QuizModal() {
   const { isOpen, options, closeModal } = useQuizModal();
@@ -82,7 +74,7 @@ export function QuizModal() {
       {/* Backdrop */}
       <div
         style={{
-          transition: "opacity 0.3s ease",
+          transition: "opacity 0.35s ease",
           opacity: isOpen ? 1 : 0,
           pointerEvents: isOpen ? "auto" : "none",
         }}
@@ -91,144 +83,88 @@ export function QuizModal() {
         aria-hidden="true"
       />
 
-      {/* Card wrapper — centers card, absorbs clicks outside */}
+      {/* Wrapper — anchors the sheet to the bottom edge, centered horizontally */}
       <div
-        className="fixed inset-0 z-[91] flex items-center justify-center p-4 sm:p-6"
+        className="fixed inset-0 z-[91] flex items-end justify-center"
         style={{ pointerEvents: isOpen ? "auto" : "none" }}
         aria-modal="true"
         role="dialog"
         aria-label="Health assessment"
       >
-        {/* Animated card — rises up from the bottom */}
+        {/* Sheet — rises up from the bottom, flush with the device edge */}
         <div
           style={{
-            transition:
-              "opacity 0.4s cubic-bezier(0.22,1,0.36,1), transform 0.45s cubic-bezier(0.22,1,0.36,1)",
-            opacity: isOpen ? 1 : 0,
-            transform: isOpen ? "translateY(0)" : "translateY(80px)",
-            maxHeight: "90svh",
+            transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
+            transform: isOpen ? "translateY(0)" : "translateY(100%)",
+            maxHeight: "94svh",
           }}
-          className={`relative flex w-full overflow-hidden rounded-[32px] bg-[#F7F5F1] shadow-[0_40px_100px_rgba(0,0,0,0.5)] lg:min-h-[520px] ${
-            isRecommendation ? "max-w-[640px]" : "max-w-[980px]"
+          className={`relative flex w-full flex-col overflow-hidden rounded-t-[32px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
+            isRecommendation ? "sm:max-w-[600px]" : "sm:max-w-[540px]"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* ── Left hero panel (desktop only, hidden on recommendation) ── */}
-          {!isRecommendation && (
-            <aside className="relative hidden w-[42%] shrink-0 flex-col justify-between overflow-hidden bg-gradient-to-br from-[#2A1F0A] via-[#3D2D0F] to-[#171008] p-9 lg:flex">
-              {/* Top: brand */}
-              <div className="relative z-10">
-                <img src={tidlLogoYellow} alt="TIDL" className="h-7 w-auto" />
-                <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.18em] text-[#F3C300]/80">
-                  Medical assessment
-                </p>
-                <h2 className="mt-3 text-[28px] font-bold leading-[1.15] text-white">
-                  Care designed<br />around you
-                </h2>
-                <p className="mt-3 max-w-[260px] text-[13px] leading-relaxed text-white/65">
-                  A few quick questions help our physicians build the right plan for your goals.
-                </p>
+          {/* Gold progress bar */}
+          <div className="h-1 w-full shrink-0 bg-[#E8E5DF]">
+            <div
+              className="h-full bg-gradient-to-r from-[#C9A200] to-[#F3C300] transition-all duration-500 ease-out"
+              style={{ width: `${quiz.progress}%` }}
+            />
+          </div>
 
-                <ul className="mt-7 space-y-3">
-                  {HERO_BULLETS.map((b) => (
-                    <li key={b} className="flex items-start gap-2.5">
-                      <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#F3C300]/20">
-                        <Check className="h-2.5 w-2.5 text-[#F3C300]" strokeWidth={3} />
-                      </span>
-                      <span className="text-[13px] leading-snug text-white/85">{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Bottom: product image + trust line */}
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 text-[12px] text-white/55">
-                  <ShieldCheck className="h-4 w-4 shrink-0 text-[#F3C300]/80" />
-                  <span>Secure, private &amp; HIPAA-conscious</span>
-                </div>
-              </div>
-
-              {/* Floating product image */}
-              <img
-                src={heroImage}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute -bottom-6 -right-10 z-0 w-[78%] max-w-none opacity-90 drop-shadow-[0_24px_40px_rgba(0,0,0,0.45)]"
-              />
-            </aside>
-          )}
-
-          {/* ── Right content panel ── */}
-          <div className="flex min-w-0 flex-1 flex-col">
-            {/* Gold progress bar */}
-            <div className="h-1 w-full shrink-0 bg-[#E8E5DF]">
-              <div
-                className="h-full bg-gradient-to-r from-[#C9A200] to-[#F3C300] transition-all duration-500 ease-out"
-                style={{ width: `${quiz.progress}%` }}
-              />
-            </div>
-
-            {/* Header */}
-            <div className="flex shrink-0 items-center justify-between px-7 pt-5 pb-1 sm:px-9">
-              {quiz.canGoBack ? (
-                <button
-                  type="button"
-                  onClick={quiz.goBack}
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-[#6B6760] transition-colors hover:bg-[#EDEBE7] hover:text-[#1A1816]"
-                  aria-label="Go back"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </button>
-              ) : (
-                <div className="h-9 w-9" />
-              )}
-
-              <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#9C9890]">
-                {quiz.currentStep} / {QUIZ_TOTAL_STEPS}
-              </span>
-
+          {/* Header */}
+          <div className="flex shrink-0 items-center justify-between px-6 pt-5 pb-1 sm:px-8">
+            {quiz.canGoBack ? (
               <button
                 type="button"
-                onClick={closeModal}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EDEBE7] text-[#6B6760] transition-colors hover:bg-[#E0DDD6] hover:text-[#1A1816]"
-                aria-label="Close assessment"
+                onClick={quiz.goBack}
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[#6B6760] transition-colors hover:bg-[#EDEBE7] hover:text-[#1A1816]"
+                aria-label="Go back"
               >
-                <X className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" />
               </button>
-            </div>
-
-            {/* Content — short steps anchor to the bottom (rises up, no bottom gap);
-                taller input steps stay top-aligned so nothing gets clipped. */}
-            <div
-              className={`flex flex-1 flex-col overflow-y-auto px-7 pt-8 pb-2 sm:px-10 ${
-                isRecommendation || TEXT_INPUT_STEPS.has(quiz.currentStep)
-                  ? "justify-start"
-                  : "justify-end"
-              }`}
-              style={{ scrollbarWidth: "none" } as React.CSSProperties}
-            >
-              <QuizFlow quiz={quiz} />
-            </div>
-
-            {/* Final step keeps a single conversion CTA */}
-            {isRecommendation && (
-              <div className="shrink-0 px-7 pb-4 pt-3 sm:px-10">
-                <button
-                  type="button"
-                  onClick={handleGetPlan}
-                  className="h-14 w-full rounded-2xl bg-[#1A1816] text-[15px] font-semibold text-white transition-opacity hover:opacity-80 active:scale-[0.98]"
-                >
-                  Get my plan →
-                </button>
-              </div>
+            ) : (
+              <div className="h-9 w-9" />
             )}
 
-            {/* Security line */}
-            <p className="shrink-0 pb-4 pt-3 text-center text-[11px] text-[#9C9890]">
-              Secure &amp; private · Physician reviewed
-            </p>
+            <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#9C9890]">
+              {quiz.currentStep} / {QUIZ_TOTAL_STEPS}
+            </span>
+
+            <button
+              type="button"
+              onClick={closeModal}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EDEBE7] text-[#6B6760] transition-colors hover:bg-[#E0DDD6] hover:text-[#1A1816]"
+              aria-label="Close assessment"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
+
+          {/* Content */}
+          <div
+            className="flex flex-1 flex-col overflow-y-auto px-6 pt-6 sm:px-9"
+            style={{ scrollbarWidth: "none" } as React.CSSProperties}
+          >
+            <QuizFlow quiz={quiz} />
+          </div>
+
+          {/* Final step keeps a single conversion CTA */}
+          {isRecommendation && (
+            <div className="shrink-0 px-6 pb-4 pt-3 sm:px-9">
+              <button
+                type="button"
+                onClick={handleGetPlan}
+                className="h-14 w-full rounded-2xl bg-[#1A1816] text-[15px] font-semibold text-white transition-opacity hover:opacity-80 active:scale-[0.98]"
+              >
+                Get my plan →
+              </button>
+            </div>
+          )}
+
+          {/* Security line */}
+          <p className="shrink-0 pb-5 pt-3 text-center text-[11px] text-[#9C9890]">
+            Secure &amp; private · Physician reviewed
+          </p>
         </div>
       </div>
     </>,
