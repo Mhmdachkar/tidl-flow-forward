@@ -7,11 +7,13 @@ import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useQuiz } from "@/hooks/use-quiz";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
 import { validateQuizStep } from "@/lib/quiz-schema";
+import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import { QUIZ_TOTAL_STEPS } from "@/types/quiz";
 
 export function QuizModal() {
   const { isOpen, options, closeModal } = useQuizModal();
   const [mounted, setMounted] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const quiz = useQuiz({
@@ -25,13 +27,13 @@ export function QuizModal() {
     setMounted(true);
   }, []);
 
-  // Body scroll lock
+  // Lock background scroll + pause Lenis while open
   useEffect(() => {
     if (!mounted) return;
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (isOpen) {
+      lockPageScroll();
+      return () => unlockPageScroll();
+    }
   }, [isOpen, mounted]);
 
   // Reset quiz to step 1 whenever modal opens fresh
@@ -47,7 +49,6 @@ export function QuizModal() {
   const isRecommendation = quiz.currentStep === QUIZ_TOTAL_STEPS;
 
   // ── Automatic advance: every step moves forward on its own once valid ──
-  // Steps with typed input get a longer pause so the user can finish typing.
   const TEXT_INPUT_STEPS = new Set([2, 7]);
   useEffect(() => {
     if (!isOpen || isRecommendation) return;
@@ -67,6 +68,21 @@ export function QuizModal() {
     }
   };
 
+  // Route wheel events on the backdrop into the quiz scroll area
+  const handleOverlayWheel = (event: React.WheelEvent) => {
+    const scrollEl = contentRef.current;
+    if (!scrollEl) {
+      event.preventDefault();
+      return;
+    }
+
+    const target = event.target as Node;
+    if (scrollEl.contains(target)) return;
+
+    event.preventDefault();
+    scrollEl.scrollTop += event.deltaY;
+  };
+
   if (!mounted) return null;
 
   return createPortal(
@@ -83,22 +99,22 @@ export function QuizModal() {
         aria-hidden="true"
       />
 
-      {/* Wrapper — anchors the sheet to the bottom edge, centered horizontally */}
+      {/* Wrapper — sheet anchored to bottom, blocks background scroll */}
       <div
-        className="fixed inset-0 z-[91] flex items-end justify-center"
+        className="fixed inset-0 z-[91] flex items-end justify-center overscroll-none"
         style={{ pointerEvents: isOpen ? "auto" : "none" }}
+        onWheel={handleOverlayWheel}
         aria-modal="true"
         role="dialog"
         aria-label="Health assessment"
       >
-        {/* Sheet — rises up from the bottom, flush with the device edge */}
+        {/* Sheet — fixed max height so inner content scrolls, not the page */}
         <div
           style={{
             transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
             transform: isOpen ? "translateY(0)" : "translateY(100%)",
-            maxHeight: "92svh",
           }}
-          className={`relative flex w-full flex-col overflow-hidden rounded-t-[36px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
+          className={`relative flex max-h-[92svh] min-h-0 w-full flex-col overflow-hidden rounded-t-[36px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
             isRecommendation ? "sm:max-w-[760px]" : "sm:max-w-[720px]"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -140,22 +156,23 @@ export function QuizModal() {
             </button>
           </div>
 
-          {/* Content — scrollable with no visible scrollbar.
-              Questions sit at a comfortable reading width inside the wider sheet so it
-              reads as a balanced square; the recommendation uses the full width. */}
-          <div className="no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-7 sm:px-10">
+          {/* Scrollable quiz content — only this area moves */}
+          <div
+            ref={contentRef}
+            className="no-scrollbar min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-6 pt-7 pb-4 sm:px-10"
+          >
             {isRecommendation ? (
               <QuizFlow quiz={quiz} />
             ) : (
-              <div className="mx-auto w-full max-w-[480px]">
+              <div className="mx-auto w-full max-w-[480px] pb-2">
                 <QuizFlow quiz={quiz} />
               </div>
             )}
           </div>
 
-          {/* Final step keeps a single conversion CTA */}
+          {/* Final step CTA */}
           {isRecommendation && (
-            <div className="shrink-0 px-6 pb-4 pt-3 sm:px-9">
+            <div className="shrink-0 px-6 pb-4 pt-2 sm:px-9">
               <button
                 type="button"
                 onClick={handleGetPlan}
@@ -166,8 +183,7 @@ export function QuizModal() {
             </div>
           )}
 
-          {/* Security line */}
-          <p className="shrink-0 pb-5 pt-3 text-center text-[11px] text-[#9C9890]">
+          <p className="shrink-0 pb-5 pt-2 text-center text-[11px] text-[#9C9890]">
             Secure &amp; private · Physician reviewed
           </p>
         </div>

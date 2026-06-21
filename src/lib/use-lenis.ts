@@ -24,6 +24,13 @@ export function useLenisScroll() {
     lenis.on("scroll", onScroll);
     onScroll({ scroll: lenis.scroll, limit: lenis.limit });
 
+    const onScrollLock = (event: Event) => {
+      const locked = (event as CustomEvent<{ locked: boolean }>).detail?.locked;
+      if (locked) lenis.stop();
+      else lenis.start();
+    };
+    window.addEventListener("tidl:scroll-lock", onScrollLock);
+
     const raf = (time: number) => {
       lenis.raf(time * 1000);
     };
@@ -31,6 +38,7 @@ export function useLenisScroll() {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      window.removeEventListener("tidl:scroll-lock", onScrollLock);
       gsap.ticker.remove(raf);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((s) => s.kill());
