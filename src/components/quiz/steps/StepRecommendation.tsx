@@ -52,42 +52,49 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
   const bullets = (goal && GOAL_BULLETS[goal]) ?? DEFAULT_BULLETS;
 
   return (
-    <div className="px-4 pt-4 sm:px-5 sm:pt-5">
-      {/* Hero card — narrower, inset with spacing on top/left/right */}
-      <div className="relative mx-auto max-w-[400px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#2A1F0A] via-[#3D2D0F] to-[#1A1208] shadow-[0_8px_32px_rgba(0,0,0,0.18)]">
-        {treatment.image && (
-          <div className="absolute right-0 top-0 h-full w-[45%] overflow-hidden opacity-70">
-            <img
-              src={treatment.image}
-              alt={treatment.name}
-              className="h-full w-full object-cover object-center mix-blend-luminosity"
-            />
-            <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#2A1F0A] to-transparent" />
+    <div className="pb-2">
+      {/* Inset hero card — ~90% width, 0.5cm from top, rounded like Hims */}
+      <div
+        className="mx-auto w-[90%] overflow-hidden rounded-[20px] bg-gradient-to-br from-[#3D3220] via-[#4A3820] to-[#2A1F0A]"
+        style={{ marginTop: "0.5cm" }}
+      >
+        <div className="relative flex min-h-[200px] items-stretch sm:min-h-[220px]">
+          {/* Text — left */}
+          <div className="relative z-10 flex flex-1 flex-col justify-center px-5 py-6 sm:px-6 sm:py-7">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#F3C300]/90">
+              Your match
+            </p>
+            <h2 className="text-[22px] font-bold leading-[1.15] text-white sm:text-[24px]">
+              You're in the<br />right hands
+            </h2>
+            <ul className="mt-4 space-y-2">
+              {bullets.map((b) => (
+                <li key={b} className="flex items-start gap-2">
+                  <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-[#F3C300]/25">
+                    <Check className="h-2 w-2 text-[#F3C300]" strokeWidth={3} />
+                  </span>
+                  <span className="text-[12px] leading-snug text-white/85">{b}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
 
-        <div className="relative z-10 px-6 py-8 sm:px-7 sm:py-9">
-          <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-[#F3C300]/80">
-            Your match
-          </p>
-          <h2 className="text-[24px] font-bold leading-tight text-white sm:text-[26px]">
-            You're in the<br />right hands
-          </h2>
-          <ul className="mt-5 space-y-2.5">
-            {bullets.map((b) => (
-              <li key={b} className="flex items-start gap-2.5">
-                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#F3C300]/20">
-                  <Check className="h-2.5 w-2.5 text-[#F3C300]" strokeWidth={3} />
-                </span>
-                <span className="text-[13px] leading-snug text-white/85">{b}</span>
-              </li>
-            ))}
-          </ul>
+          {/* Product image — right, contained */}
+          {treatment.image && (
+            <div className="relative w-[38%] shrink-0 sm:w-[40%]">
+              <img
+                src={treatment.image}
+                alt={treatment.name}
+                className="absolute inset-0 h-full w-full object-contain object-right-bottom p-3 pb-0 pr-2 sm:p-4 sm:pr-3"
+              />
+              <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#3D3220] to-transparent" />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Treatment details — aligned with hero width */}
-      <div className="mx-auto max-w-[400px] px-1 py-6 sm:py-7">
+      {/* Treatment details */}
+      <div className="mx-auto mt-6 w-[90%] px-1">
         <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9C9890]">
           Recommended for you
         </p>
