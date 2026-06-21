@@ -9,6 +9,8 @@ import {
 } from "@tanstack/react-router";
 import { type ReactNode } from "react";
 
+import { AuthProvider } from "@/providers/auth-provider";
+
 import appCss from "../styles.css?url";
 import favicon from "@/assets/TIDL_LOGO_BLACK_WHITE.jpg?url";
 
@@ -118,8 +120,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
