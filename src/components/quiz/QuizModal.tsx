@@ -143,7 +143,7 @@ export function QuizModal() {
           {/* Content — scrollable with no visible scrollbar.
               Questions sit at a comfortable reading width inside the wider sheet so it
               reads as a balanced square; the recommendation uses the full width. */}
-          <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pt-7 sm:px-10">
+          <div className="no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-7 sm:px-10">
             {isRecommendation ? (
               <QuizFlow quiz={quiz} />
             ) : (
