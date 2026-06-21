@@ -1,5 +1,4 @@
 import { Check } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 
 import { getRecommendedTreatment } from "@/lib/products";
 import type { GoalId, QuizFormData } from "@/types/quiz";
@@ -53,27 +52,25 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
   const bullets = (goal && GOAL_BULLETS[goal]) ?? DEFAULT_BULLETS;
 
   return (
-    <div className="-mx-6 -mt-7 sm:-mx-10">
-      {/* Hero split panel */}
-      <div className="relative overflow-hidden rounded-t-none rounded-b-2xl bg-gradient-to-br from-[#2A1F0A] via-[#3D2D0F] to-[#1A1208]">
-        {/* Product image — float right */}
+    <div className="px-4 pt-4 sm:px-5 sm:pt-5">
+      {/* Hero card — narrower, inset with spacing on top/left/right */}
+      <div className="relative mx-auto max-w-[400px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#2A1F0A] via-[#3D2D0F] to-[#1A1208] shadow-[0_8px_32px_rgba(0,0,0,0.18)]">
         {treatment.image && (
-          <div className="absolute right-0 top-0 h-full w-1/2 overflow-hidden opacity-70">
+          <div className="absolute right-0 top-0 h-full w-[45%] overflow-hidden opacity-70">
             <img
               src={treatment.image}
               alt={treatment.name}
               className="h-full w-full object-cover object-center mix-blend-luminosity"
             />
-            {/* Fade overlay from left */}
             <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#2A1F0A] to-transparent" />
           </div>
         )}
 
-        <div className="relative z-10 px-7 py-9 sm:px-8 sm:py-10">
+        <div className="relative z-10 px-6 py-8 sm:px-7 sm:py-9">
           <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-[#F3C300]/80">
             Your match
           </p>
-          <h2 className="text-[26px] font-bold leading-tight text-white sm:text-[30px]">
+          <h2 className="text-[24px] font-bold leading-tight text-white sm:text-[26px]">
             You're in the<br />right hands
           </h2>
           <ul className="mt-5 space-y-2.5">
@@ -89,8 +86,8 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
         </div>
       </div>
 
-      {/* Treatment card */}
-      <div className="px-7 py-6 sm:px-8">
+      {/* Treatment details — aligned with hero width */}
+      <div className="mx-auto max-w-[400px] px-1 py-6 sm:py-7">
         <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9C9890]">
           Recommended for you
         </p>
