@@ -10,15 +10,15 @@ const Observer = ObserverPlugin;
 const DOCTORS = [
   { specialty: "METABOLIC HEALTH", name: "Dr. James Park", creds: "MD, ABOM",
     bio: "Expert in preventive medicine and metabolic syndrome management with over a decade of clinical practice.",
-    avatar: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=480&q=80&fit=crop&crop=faces",
+    avatar: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=420&h=560&q=85&fit=crop",
     accent: "#A8D5BA" },
   { specialty: "ENDOCRINOLOGY", name: "Dr. Sarah Mitchell", creds: "MD, FACE, ECNU",
     bio: "Specialises in hormone optimisation and metabolic health with 12+ years of clinical experience.",
-    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=480&q=80&fit=crop&crop=faces",
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=420&h=560&q=85&fit=crop",
     accent: "#B8E0D2" },
   { specialty: "LONGEVITY", name: "Dr. Michael Andrews", creds: "MD, FACP, FP",
     bio: "Focuses on longevity, weight management and whole-person care across all life stages.",
-    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=480&q=80&fit=crop&crop=faces",
+    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=420&h=560&q=85&fit=crop",
     accent: "#F4D4A1" },
 ] as const;
 
@@ -95,12 +95,11 @@ export function ClinicalLeadershipSection() {
       const center = offset === 0;
       const edge   = Math.abs(offset) === 1;
       const pos = {
-        x: offset * 320,
-        rotateY: offset * -24,
-        scale: center ? 1 : edge ? 0.82 : 0.65,
-        opacity: center ? 1 : edge ? 0.7 : 0,
+        x: offset * 340,
+        rotateY: offset * -32,
+        scale: center ? 1 : edge ? 0.78 : 0.52,
+        opacity: center ? 1 : edge ? 0.62 : 0,
         zIndex: center ? 10 : edge ? 5 : 1,
-        filter: center ? "blur(0px)" : "blur(2px)",
       };
       if (first) gsap.set(card, pos);
       else gsap.to(card, { ...pos, duration: 0.85, ease: "expo.out" });
@@ -470,55 +469,208 @@ export function ClinicalLeadershipSection() {
           </div>
 
           {/* 3D carousel */}
-          <div className="relative">
-            <div ref={trackRef} className="relative h-[420px]" style={{ perspective: "1400px", opacity: 0 }}>
+          <div className="relative select-none">
+
+            {/* Left arrow — floats at the left edge of the track */}
+            <button
+              ref={prevBtnRef}
+              onClick={() => setActive(activeIdx - 1)}
+              aria-label="Previous physician"
+              className="absolute left-0 top-[50%] z-30 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95"
+              style={{
+                background: "rgba(255,255,255,0.92)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid rgba(11,27,43,0.1)",
+                boxShadow: "0 8px 32px -10px rgba(11,27,43,0.28)",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B1B2B" strokeWidth="2.2">
+                <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {/* Perspective track */}
+            <div
+              ref={trackRef}
+              className="relative overflow-visible"
+              style={{ height: "330px", perspective: "1600px", perspectiveOrigin: "50% 50%", opacity: 0 }}
+            >
               {DOCTORS.map((doc, i) => (
-                <div key={doc.name} ref={(el) => { cardRefs.current[i] = el; }}
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                  style={{ width: "clamp(280px, 38vw, 460px)", transformStyle: "preserve-3d" }}
-                  aria-hidden={i !== activeIdx}>
-                  <div className="overflow-hidden rounded-[24px]"
-                    style={{ background: "linear-gradient(160deg, #0B1B2B 0%, #1a3654 100%)",
-                      boxShadow: "0 40px 80px -30px rgba(11,27,43,0.5)" }}>
-                    <div className="grid grid-cols-[1fr_1fr]">
-                      <div className="p-6 text-white">
-                        <div className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: doc.accent }}>{doc.specialty}</div>
-                        <div className="mt-3 font-serif text-2xl" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>{doc.name}</div>
-                        <div className="mt-1 text-xs opacity-60">{doc.creds}</div>
-                        <p className="mt-4 text-xs leading-relaxed opacity-75">{doc.bio}</p>
-                        <button className="mt-6 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: doc.accent }}>
-                          View Profile <span>→</span>
-                        </button>
+                <div
+                  key={doc.name}
+                  ref={(el) => { cardRefs.current[i] = el; }}
+                  className="absolute left-1/2 top-1/2 cursor-pointer"
+                  style={{
+                    width: "clamp(300px, 42vw, 520px)",
+                    transform: "translate(-50%, -50%)",
+                    transformStyle: "preserve-3d",
+                    willChange: "transform, opacity",
+                  }}
+                  aria-hidden={i !== activeIdx}
+                  onClick={() => i !== activeIdx && setActive(i)}
+                >
+                  {/* ── Card shell ── */}
+                  <div
+                    className="relative overflow-hidden rounded-[22px]"
+                    style={{
+                      height: "310px",
+                      background: "#0c1b2d",
+                      boxShadow: i === activeIdx
+                        ? "0 80px 120px -40px rgba(11,27,43,0.75), 0 0 0 1px rgba(255,255,255,0.07) inset"
+                        : "0 24px 60px -30px rgba(11,27,43,0.45)",
+                      transition: "box-shadow 0.55s ease",
+                    }}
+                  >
+                    {/* Accent top-edge glow */}
+                    <div
+                      className="pointer-events-none absolute left-0 top-0 h-px w-full"
+                      style={{ background: `linear-gradient(90deg, ${doc.accent}70, ${doc.accent}20, transparent)` }}
+                    />
+
+                    <div className="flex h-full">
+                      {/* LEFT: content */}
+                      <div
+                        className="relative flex flex-col justify-between overflow-hidden px-6 py-6"
+                        style={{
+                          width: "57%",
+                          background: "linear-gradient(168deg, #112236 0%, #0b1a2c 100%)",
+                        }}
+                      >
+                        {/* Subtle corner glow */}
+                        <div
+                          className="pointer-events-none absolute -left-6 -top-6 h-24 w-24 rounded-full"
+                          style={{ background: `radial-gradient(circle, ${doc.accent}18, transparent 70%)`, filter: "blur(12px)" }}
+                        />
+
+                        <div className="relative">
+                          <span
+                            className="text-[8.5px] font-semibold uppercase tracking-[0.3em]"
+                            style={{ color: doc.accent }}
+                          >
+                            {doc.specialty}
+                          </span>
+
+                          <h3
+                            className="mt-2 leading-[1.1] text-white"
+                            style={{
+                              fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                              fontSize: "clamp(1.35rem, 2vw, 1.7rem)",
+                            }}
+                          >
+                            {doc.name}
+                          </h3>
+
+                          <p
+                            className="mt-1 text-[10.5px] font-medium"
+                            style={{ color: "rgba(255,255,255,0.38)" }}
+                          >
+                            {doc.creds}
+                          </p>
+
+                          <p
+                            className="mt-4 text-[11.5px] leading-relaxed"
+                            style={{ color: "rgba(255,255,255,0.58)" }}
+                          >
+                            {doc.bio}
+                          </p>
+                        </div>
+
+                        <div className="relative">
+                          {/* Bottom accent hairline */}
+                          <div
+                            className="mb-3 h-px"
+                            style={{
+                              width: "36px",
+                              background: `linear-gradient(90deg, ${doc.accent}80, transparent)`,
+                            }}
+                          />
+                          <Link
+                            to="/quiz"
+                            className="inline-flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.24em] transition-opacity hover:opacity-70"
+                            style={{ color: doc.accent }}
+                          >
+                            View Profile
+                            <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                              <path d="M2 6h8M6 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </Link>
+                        </div>
                       </div>
-                      <div className="relative" style={{ background: doc.accent }}>
-                        <img src={doc.avatar} alt={doc.name} className="h-full w-full object-cover" loading="lazy" />
+
+                      {/* RIGHT: photo panel */}
+                      <div
+                        className="relative flex-1 overflow-hidden"
+                        style={{ background: doc.accent }}
+                      >
+                        {/* Left-edge blend so photo merges into dark panel */}
+                        <div
+                          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8"
+                          style={{ background: "linear-gradient(90deg, #0c1b2d, transparent)" }}
+                        />
+                        {/* Bottom fade so photo feels cut-in */}
+                        <div
+                          className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 h-20"
+                          style={{ background: `linear-gradient(to top, ${doc.accent}, transparent)` }}
+                        />
+
+                        <img
+                          src={doc.avatar}
+                          alt={doc.name}
+                          className="absolute inset-0 h-full w-full object-cover"
+                          style={{ objectPosition: "top center" }}
+                          loading="lazy"
+                          draggable={false}
+                        />
                       </div>
                     </div>
                   </div>
+
+                  {/* Floor shadow / reflection */}
+                  <div
+                    aria-hidden="true"
+                    className="mx-8 h-8 rounded-b-3xl"
+                    style={{
+                      background: "linear-gradient(to bottom, rgba(11,27,43,0.18), transparent)",
+                      filter: "blur(6px)",
+                    }}
+                  />
                 </div>
               ))}
             </div>
 
-            <div className="mt-8 flex items-center justify-center gap-6">
-              <button ref={prevBtnRef} onClick={() => setActive(activeIdx - 1)} aria-label="Previous"
-                className="flex h-11 w-11 items-center justify-center rounded-full"
-                style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(11,27,43,0.1)",
-                  boxShadow: "0 6px 18px -6px rgba(11,27,43,0.18)" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B1B2B" strokeWidth="2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-              <div className="flex items-center gap-2">
-                {DOCTORS.map((_, i) => (
-                  <button key={i} onClick={() => setActive(i)} aria-label={`Doctor ${i + 1}`}
-                    className="h-1.5 rounded-full transition-all duration-500"
-                    style={{ width: i === activeIdx ? 24 : 6, background: i === activeIdx ? "#3B6FA0" : "rgba(11,27,43,0.2)" }} />
-                ))}
-              </div>
-              <button ref={nextBtnRef} onClick={() => setActive(activeIdx + 1)} aria-label="Next"
-                className="flex h-11 w-11 items-center justify-center rounded-full"
-                style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(11,27,43,0.1)",
-                  boxShadow: "0 6px 18px -6px rgba(11,27,43,0.18)" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B1B2B" strokeWidth="2"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
+            {/* Right arrow — floats at the right edge of the track */}
+            <button
+              ref={nextBtnRef}
+              onClick={() => setActive(activeIdx + 1)}
+              aria-label="Next physician"
+              className="absolute right-0 top-[50%] z-30 flex h-12 w-12 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95"
+              style={{
+                background: "rgba(255,255,255,0.92)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid rgba(11,27,43,0.1)",
+                boxShadow: "0 8px 32px -10px rgba(11,27,43,0.28)",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B1B2B" strokeWidth="2.2">
+                <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {/* Dot indicators */}
+            <div className="mt-6 flex items-center justify-center gap-2">
+              {DOCTORS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  aria-label={`Physician ${i + 1}`}
+                  className="h-1.5 rounded-full"
+                  style={{
+                    width: i === activeIdx ? "22px" : "6px",
+                    background: i === activeIdx ? "#3B6FA0" : "rgba(11,27,43,0.18)",
+                    transition: "width 0.4s ease, background 0.4s ease",
+                  }}
+                />
+              ))}
             </div>
           </div>
         </div>
