@@ -6,6 +6,7 @@ import { ArrowLeft, Check, ShieldCheck, X } from "lucide-react";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useQuiz } from "@/hooks/use-quiz";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
+import { validateQuizStep } from "@/lib/quiz-schema";
 import { QUIZ_TOTAL_STEPS } from "@/types/quiz";
 import heroImage from "@/assets/hero image 3d.png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
@@ -53,21 +54,26 @@ export function QuizModal() {
 
   const isRecommendation = quiz.currentStep === QUIZ_TOTAL_STEPS;
 
-  const handleContinue = () => {
-    if (isRecommendation) {
-      const success = quiz.completeAndCheckout();
-      if (success) {
-        closeModal();
-        void navigate({ to: "/checkout" });
-      }
-      return;
-    }
-    quiz.goNext();
-  };
+  // ── Automatic advance: every step moves forward on its own once valid ──
+  // Steps with typed input get a longer pause so the user can finish typing.
+  const TEXT_INPUT_STEPS = new Set([2, 7]);
+  useEffect(() => {
+    if (!isOpen || isRecommendation) return;
+    const result = validateQuizStep(quiz.currentStep, quiz.data);
+    if (!result.success) return;
+    const delay = TEXT_INPUT_STEPS.has(quiz.currentStep) ? 700 : 340;
+    const t = setTimeout(() => quiz.goNext(), delay);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, isRecommendation, quiz.currentStep, quiz.data]);
 
-  // Step 1 (goal selection) auto-advances on click — no continue button
-  const AUTO_ADVANCE_STEPS = new Set([1]);
-  const needsButton = !AUTO_ADVANCE_STEPS.has(quiz.currentStep);
+  const handleGetPlan = () => {
+    const success = quiz.completeAndCheckout();
+    if (success) {
+      closeModal();
+      void navigate({ to: "/checkout" });
+    }
+  };
 
   if (!mounted) return null;
 
@@ -93,16 +99,16 @@ export function QuizModal() {
         role="dialog"
         aria-label="Health assessment"
       >
-        {/* Animated card */}
+        {/* Animated card — rises up from the bottom */}
         <div
           style={{
             transition:
-              "opacity 0.35s cubic-bezier(0.34,1.2,0.64,1), transform 0.35s cubic-bezier(0.34,1.2,0.64,1)",
+              "opacity 0.4s cubic-bezier(0.22,1,0.36,1), transform 0.45s cubic-bezier(0.22,1,0.36,1)",
             opacity: isOpen ? 1 : 0,
-            transform: isOpen ? "scale(1) translateY(0)" : "scale(0.94) translateY(24px)",
+            transform: isOpen ? "translateY(0)" : "translateY(80px)",
             maxHeight: "90svh",
           }}
-          className={`relative flex w-full overflow-hidden rounded-[32px] bg-[#F7F5F1] shadow-[0_40px_100px_rgba(0,0,0,0.5)] lg:h-[640px] ${
+          className={`relative flex w-full overflow-hidden rounded-[32px] bg-[#F7F5F1] shadow-[0_40px_100px_rgba(0,0,0,0.5)] lg:min-h-[520px] ${
             isRecommendation ? "max-w-[640px]" : "max-w-[980px]"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -192,31 +198,34 @@ export function QuizModal() {
               </button>
             </div>
 
-            {/* Scrollable content — vertically centered so no empty bottom gap */}
+            {/* Content — short steps anchor to the bottom (rises up, no bottom gap);
+                taller input steps stay top-aligned so nothing gets clipped. */}
             <div
-              className={`flex flex-1 flex-col overflow-y-auto px-7 py-6 sm:px-10 sm:py-8 ${
-                isRecommendation ? "justify-start" : "justify-center"
+              className={`flex flex-1 flex-col overflow-y-auto px-7 pt-8 pb-2 sm:px-10 ${
+                isRecommendation || TEXT_INPUT_STEPS.has(quiz.currentStep)
+                  ? "justify-start"
+                  : "justify-end"
               }`}
               style={{ scrollbarWidth: "none" } as React.CSSProperties}
             >
-              <QuizFlow quiz={quiz} onAutoAdvance={() => quiz.goNext()} />
+              <QuizFlow quiz={quiz} />
             </div>
 
-            {/* Continue button */}
-            {needsButton && (
-              <div className="shrink-0 px-7 pb-5 pt-2 sm:px-10">
+            {/* Final step keeps a single conversion CTA */}
+            {isRecommendation && (
+              <div className="shrink-0 px-7 pb-4 pt-3 sm:px-10">
                 <button
                   type="button"
-                  onClick={handleContinue}
+                  onClick={handleGetPlan}
                   className="h-14 w-full rounded-2xl bg-[#1A1816] text-[15px] font-semibold text-white transition-opacity hover:opacity-80 active:scale-[0.98]"
                 >
-                  {isRecommendation ? "Get my plan →" : "Continue"}
+                  Get my plan →
                 </button>
               </div>
             )}
 
             {/* Security line */}
-            <p className="shrink-0 pb-5 text-center text-[11px] text-[#9C9890]">
+            <p className="shrink-0 pb-4 pt-3 text-center text-[11px] text-[#9C9890]">
               Secure &amp; private · Physician reviewed
             </p>
           </div>
