@@ -591,3 +591,144 @@ within the first few seconds.
 Desktop should enhance the experience.
 
 Mobile should define the experience.
+
+---
+
+# Implementation Gaps Found During Audit (Jun 2026)
+
+The following rules were missing from this spec but identified during the
+mobile pass on Phase 3 sections.
+
+---
+
+## Pinned Scroll Sections
+
+Any section using `ScrollTrigger pin: true` must be wrapped in
+`gsap.matchMedia()`.
+
+Desktop (≥ 1024px):
+
+Pinned experience enabled.
+
+Mobile (< 1024px):
+
+Pin disabled. Replace with a vertical, scrollable alternative layout.
+Sections affected: `HowItWorksSection`, `DoctorSection`.
+
+---
+
+## gsap.matchMedia() Pattern
+
+```javascript
+const mm = gsap.matchMedia();
+
+mm.add("(min-width: 1024px)", () => {
+  // full desktop animation with pin / scrub / parallax
+  return () => ctx.revert(); // cleanup inside matchMedia
+});
+
+mm.add("(max-width: 1023px)", () => {
+  // lightweight entrance animations only
+  return () => ctx.revert();
+});
+
+return () => mm.revert(); // main cleanup
+```
+
+Always call `mm.revert()` in the useEffect return.
+
+---
+
+## Cursor Spotlight
+
+Cursor spotlights (mousemove + quickTo) must only initialise on desktop.
+
+```javascript
+const isTouch = window.matchMedia("(max-width: 1023px)").matches;
+if (cursorRef.current && !isTouch) {
+  // set up quickTo / mousemove listener
+}
+```
+
+Never waste GPU on a cursor effect that touch users cannot trigger.
+
+---
+
+## iOS Safe Area Insets
+
+Any overlay that covers the full viewport (e.g. AgeGate, modals) must
+respect iPhone notch and home-indicator safe areas.
+
+```css
+padding-bottom: env(safe-area-inset-bottom, 0px);
+padding-top:    env(safe-area-inset-top, 0px);
+```
+
+---
+
+## Minimum Body Text
+
+Explicit list of banned sizes for all readable body copy (not UI labels):
+
+Never use: 12px, 13px, 14px, 15px.
+
+Minimum: 16px.
+
+Labels (eyebrows, tags, tracking text) may be 10–11px because they are
+all-caps with wide letter-spacing and are not prose.
+
+---
+
+## Section Padding on Mobile
+
+Maximum vertical section padding on mobile:
+
+```
+pt-12 to pt-16   (48–64px)
+pb-12 to pb-16   (48–64px)
+```
+
+Never use `pt-24`, `pt-32`, `py-28` etc. on mobile without responsive
+overrides:
+
+```jsx
+className="pt-12 lg:pt-24"
+```
+
+---
+
+## Touch Tap Target
+
+All interactive elements (buttons, accordion triggers, links) must be:
+
+Minimum height: 48px.
+
+Minimum width: 48px.
+
+Add `min-height: 48px` or equivalent Tailwind `min-h-[48px]` when the
+natural size might be smaller.
+
+---
+
+## Marquee Performance
+
+Infinite GSAP marquee tracks must have:
+
+```css
+will-change: transform;
+```
+
+Applied to the inner moving element so the GPU layer is promoted before
+animation begins.
+
+---
+
+## Viewport Height Unit
+
+Use `svh` (small viewport height) not `vh` for any full-screen
+height declarations.
+
+```
+h-[100svh]   ← correct for mobile Safari
+h-screen     ← may be wrong on iOS (includes address bar)
+```

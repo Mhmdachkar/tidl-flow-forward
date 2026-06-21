@@ -221,15 +221,16 @@ export function AgeGate() {
       <div
         ref={contentRef}
         style={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          maxWidth: 440,
-          width: "100%",
-          padding: "0 32px",
-          gap: 0,
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        maxWidth: 440,
+        width: "100%",
+        padding: "0 24px",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        gap: 0,
         }}
       >
         {/* Logo */}

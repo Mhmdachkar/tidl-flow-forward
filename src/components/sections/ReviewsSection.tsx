@@ -133,7 +133,8 @@ export function ReviewsSection() {
     const ctx = gsap.context(() => {
       // ── cursor spotlight ────────────────────────────────────────────────
       const cur = cursorRef.current;
-      if (cur) {
+      const isTouch = window.matchMedia("(max-width: 1023px)").matches;
+      if (cur && !isTouch) {
         const qx = gsap.quickTo(cur, "x", { duration: 0.85, ease: "power3.out" });
         const qy = gsap.quickTo(cur, "y", { duration: 0.85, ease: "power3.out" });
         const onMove = (e: MouseEvent) => {
@@ -258,7 +259,7 @@ export function ReviewsSection() {
       />
 
       {/* ── header zone ─────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-[1360px] px-8 pt-24 pb-10 sm:px-10 lg:px-16">
+      <div className="relative z-10 mx-auto max-w-[1360px] px-6 pt-12 pb-8 sm:px-10 sm:pt-16 lg:px-16 lg:pt-24 lg:pb-10">
 
         {/* eyebrow */}
         <div className="mb-10 flex items-center gap-4">
@@ -297,7 +298,7 @@ export function ReviewsSection() {
           {/* stat counters */}
           <div
             ref={statsRef}
-            className="flex flex-row gap-8 pb-2 lg:flex-col lg:gap-6"
+            className="flex flex-col gap-4 pb-2 sm:flex-row sm:gap-8 lg:flex-col lg:gap-6"
           >
             {STATS.map((s, i) => (
               <div key={s.label}>
@@ -331,8 +332,8 @@ export function ReviewsSection() {
       </div>
 
       {/* ── card wall ───────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-[1360px] px-8 py-14 sm:px-10 lg:px-16">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="relative z-10 mx-auto max-w-[1360px] px-6 py-8 sm:px-10 sm:py-12 lg:px-16 lg:py-14">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {REVIEWS.map((r, i) => (
             <div
               key={r.id}
@@ -381,7 +382,7 @@ export function ReviewsSection() {
               <p
                 className="mb-4"
                 style={{
-                  fontSize: 13,
+                  fontSize: 16,
                   lineHeight: 1.6,
                   color: "rgba(22,22,22,0.62)",
                   fontStyle: "italic",
@@ -475,7 +476,7 @@ export function ReviewsSection() {
       </div>
 
       {/* ── footer rule ─────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-[1360px] px-8 pb-14 sm:px-10 lg:px-16">
+      <div className="relative z-10 mx-auto max-w-[1360px] px-6 pb-10 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14">
         <div className="mt-10 h-px" style={{ background: "rgba(22,22,22,0.1)" }} />
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
           <span

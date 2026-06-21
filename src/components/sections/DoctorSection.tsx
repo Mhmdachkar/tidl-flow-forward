@@ -125,10 +125,77 @@ export function ClinicalLeadershipSection() {
         }
       }
 
-      // ── PINNED SCROLLYTELLING ───────────────────────────────────
+      // ── MARQUEE infinite scroll (all breakpoints) ──────────────
+      if (marqueeRef.current) {
+        const inner = marqueeRef.current.firstElementChild as HTMLElement | null;
+        if (inner) {
+          gsap.to(inner, { xPercent: -50, duration: 30, ease: "none", repeat: -1 });
+        }
+        gsap.to(marqueeRef.current, {
+          xPercent: -5, ease: "none",
+          scrollTrigger: { trigger: marqueeRef.current, start: "top bottom", end: "bottom top", scrub: 1 },
+        });
+      }
+
+      // ── STATS counters (all breakpoints) ───────────────────────
+      const statsEl = root.querySelector(".cl-stats");
+      if (statsEl && !reduced) {
+        gsap.from(statsEl.querySelectorAll(".cl-stat"), {
+          opacity: 0, y: 40, duration: 0.8, stagger: 0.1, ease: "expo.out",
+          scrollTrigger: { trigger: statsEl, start: "top 85%" },
+        });
+        STATS.forEach((s, i) => {
+          const span = statRefs.current[i];
+          if (!span) return;
+          const proxy = { v: 0 };
+          gsap.to(proxy, {
+            v: s.value, duration: 2, ease: "power3.out",
+            scrollTrigger: { trigger: statsEl, start: "top 85%" },
+            onUpdate: () => { span.textContent = `${Math.round(proxy.v)}${s.suffix}`; },
+          });
+        });
+      }
+
+      // ── Cursor spotlight — desktop only ─────────────────────────
+      const cursor = cursorRef.current;
+      const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+      if (cursor && !isMobile) {
+        const qx = gsap.quickTo(cursor, "x", { duration: 0.8, ease: "power3.out" });
+        const qy = gsap.quickTo(cursor, "y", { duration: 0.8, ease: "power3.out" });
+        const onMove = (e: MouseEvent) => {
+          const r = root.getBoundingClientRect();
+          qx(e.clientX - r.left - 250);
+          qy(e.clientY - r.top - 250);
+        };
+        root.addEventListener("mousemove", onMove);
+        return () => root.removeEventListener("mousemove", onMove);
+      }
+    }, root);
+
+    // ── Mobile: entrance for stacked doctor cards ───────────────
+    const mm = gsap.matchMedia();
+
+    mm.add("(max-width: 1023px)", () => {
+      const mobileCards = rootRef.current?.querySelectorAll<HTMLElement>(".cl-mobile-doc");
+      mobileCards?.forEach((card: HTMLElement, i: number) => {
+        gsap.from(card, {
+          opacity: 0,
+          y: 48,
+          duration: 0.85,
+          ease: "expo.out",
+          delay: i * 0.06,
+          scrollTrigger: { trigger: card, start: "top 88%" },
+        });
+      });
+    });
+
+    // ── Desktop: pinned scrollytelling ──────────────────────────
+    mm.add("(min-width: 1024px)", () => {
       const pin   = pinWrapRef.current;
       const cards = cardRefs.current.filter((c): c is HTMLDivElement => !!c);
       const metas = metaRefs.current.filter((m): m is HTMLDivElement => !!m);
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (pin && cards.length && !reduced) {
         cards.forEach((c, i) => {
@@ -176,55 +243,11 @@ export function ClinicalLeadershipSection() {
           },
         });
       }
-
-      // ── MARQUEE infinite scroll ─────────────────────────────────
-      if (marqueeRef.current) {
-        const inner = marqueeRef.current.firstElementChild as HTMLElement | null;
-        if (inner) {
-          gsap.to(inner, { xPercent: -50, duration: 30, ease: "none", repeat: -1 });
-        }
-        gsap.to(marqueeRef.current, {
-          xPercent: -5, ease: "none",
-          scrollTrigger: { trigger: marqueeRef.current, start: "top bottom", end: "bottom top", scrub: 1 },
-        });
-      }
-
-      // ── STATS counters ──────────────────────────────────────────
-      const statsEl = root.querySelector(".cl-stats");
-      if (statsEl && !reduced) {
-        gsap.from(statsEl.querySelectorAll(".cl-stat"), {
-          opacity: 0, y: 40, duration: 0.8, stagger: 0.1, ease: "expo.out",
-          scrollTrigger: { trigger: statsEl, start: "top 85%" },
-        });
-        STATS.forEach((s, i) => {
-          const span = statRefs.current[i];
-          if (!span) return;
-          const proxy = { v: 0 };
-          gsap.to(proxy, {
-            v: s.value, duration: 2, ease: "power3.out",
-            scrollTrigger: { trigger: statsEl, start: "top 85%" },
-            onUpdate: () => { span.textContent = `${Math.round(proxy.v)}${s.suffix}`; },
-          });
-        });
-      }
-
-      // ── Cursor spotlight ────────────────────────────────────────
-      const cursor = cursorRef.current;
-      if (cursor) {
-        const qx = gsap.quickTo(cursor, "x", { duration: 0.8, ease: "power3.out" });
-        const qy = gsap.quickTo(cursor, "y", { duration: 0.8, ease: "power3.out" });
-        const onMove = (e: MouseEvent) => {
-          const r = root.getBoundingClientRect();
-          qx(e.clientX - r.left - 250);
-          qy(e.clientY - r.top - 250);
-        };
-        root.addEventListener("mousemove", onMove);
-        return () => root.removeEventListener("mousemove", onMove);
-      }
-    }, root);
+    });
 
     return () => {
       ctx.revert();
+      mm.revert();
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
@@ -259,8 +282,8 @@ export function ClinicalLeadershipSection() {
       />
 
       {/* ── HERO INTRO ─────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-[1360px] px-8 pb-24 pt-32">
-        <div className="cl-eyebrow mb-12 flex items-center gap-4">
+      <div className="relative z-10 mx-auto max-w-[1360px] px-6 pb-12 pt-14 sm:px-8 lg:pb-24 lg:pt-32">
+        <div className="cl-eyebrow mb-8 flex items-center gap-4 lg:mb-12">
           <span
             className="text-[11px] font-medium uppercase"
             style={{ letterSpacing: "0.32em", color: "#2d4a3e" }}
@@ -279,7 +302,7 @@ export function ClinicalLeadershipSection() {
               className="cl-headline leading-[0.92]"
               style={{
                 fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
-                fontSize: "clamp(56px, 7.2vw, 132px)",
+                fontSize: "clamp(38px, 7.2vw, 132px)",
                 fontWeight: 400,
                 letterSpacing: "-0.025em",
               }}
@@ -374,8 +397,88 @@ export function ClinicalLeadershipSection() {
         </div>
       </div>
 
-      {/* ── PINNED SCROLLYTELLING ─────────────────────────────── */}
-      <div ref={pinWrapRef} className="relative z-10 min-h-screen">
+      {/* ══ MOBILE: stacked doctor cards (< 1024px) ═══════════════ */}
+      <div className="block lg:hidden px-5 pb-12 space-y-6">
+        <div className="mb-6 flex items-center gap-3 px-1">
+          <span className="text-[10px] font-medium uppercase" style={{ letterSpacing: "0.3em", color: "#2d4a3e" }}>
+            §02 — Meet the physicians
+          </span>
+        </div>
+
+        {DOCTORS.map((doc, i) => (
+          <div
+            key={doc.name}
+            className="cl-mobile-doc overflow-hidden"
+            style={{ borderRadius: 10, border: "1px solid rgba(22,22,22,0.09)", background: "#faf9f7" }}
+          >
+            {/* photo */}
+            <div
+              className="relative w-full"
+              style={{
+                aspectRatio: "3/2",
+                backgroundImage: `url(${doc.photo})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center top",
+              }}
+            >
+              <div
+                className="absolute inset-x-0 bottom-0"
+                style={{ height: "50%", background: "linear-gradient(transparent, rgba(0,0,0,0.55))" }}
+              />
+              <span
+                className="absolute bottom-4 left-4 text-white"
+                style={{
+                  fontFamily: '"Instrument Serif","Fraunces",Georgia,serif',
+                  fontSize: 22,
+                  lineHeight: 1.2,
+                }}
+              >
+                {doc.name}
+              </span>
+              <span
+                className="absolute bottom-4 right-4 text-[10px] uppercase tracking-[0.2em] text-white/70"
+              >
+                {doc.creds}
+              </span>
+            </div>
+
+            {/* info */}
+            <div className="p-5">
+              <p className="mb-3 text-[11px] uppercase tracking-[0.2em]" style={{ color: "#2d4a3e" }}>
+                {doc.role}
+              </p>
+              <p className="mb-4 leading-relaxed" style={{ fontSize: 16, color: "rgba(22,22,22,0.68)" }}>
+                {doc.bio}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {doc.focus.map((f) => (
+                  <span
+                    key={f}
+                    className="rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.12em]"
+                    style={{ background: "rgba(45,74,62,0.07)", color: "#2d4a3e", border: "1px solid rgba(45,74,62,0.15)" }}
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-baseline gap-2 pt-4" style={{ borderTop: "1px solid rgba(22,22,22,0.08)" }}>
+                <span
+                  className="leading-none"
+                  style={{ fontFamily: '"Instrument Serif","Fraunces",Georgia,serif', fontSize: 36, color: "#161616" }}
+                >
+                  {doc.years}
+                </span>
+                <span className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "rgba(22,22,22,0.5)" }}>
+                  years in practice
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ══ DESKTOP: pinned scrollytelling (≥ 1024px) ═════════════ */}
+      <div ref={pinWrapRef} className="relative z-10 hidden min-h-screen lg:block">
         <div className="mx-auto grid h-screen max-w-[1360px] grid-cols-1 items-center gap-10 px-8 lg:grid-cols-[1fr_1fr] lg:gap-20">
 
           {/* Left: overlapping meta blocks */}
@@ -593,7 +696,7 @@ export function ClinicalLeadershipSection() {
       </div>
 
       {/* ── STATS ─────────────────────────────────────────────── */}
-      <div className="cl-stats relative z-10 mx-auto max-w-[1360px] px-8 py-24">
+      <div className="cl-stats relative z-10 mx-auto max-w-[1360px] px-6 py-12 sm:px-8 lg:py-24">
         <div className="mb-12 flex items-end justify-between">
           <div>
             <p
@@ -653,7 +756,7 @@ export function ClinicalLeadershipSection() {
               >
                 0{s.suffix}
               </span>
-              <p className="text-[14px]" style={{ color: "rgba(22,22,22,0.65)" }}>
+              <p className="text-[16px]" style={{ color: "rgba(22,22,22,0.65)" }}>
                 {s.label}
               </p>
             </div>

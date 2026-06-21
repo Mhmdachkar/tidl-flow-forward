@@ -200,9 +200,9 @@ function FAQItem({
         aria-hidden={!isOpen}
       >
         <p
-          className="px-5 pb-7 pl-[calc(1.25rem+48px+1.25rem)]"
+          className="px-5 pb-7 pl-5 sm:pl-[calc(1.25rem+48px+1.25rem)]"
           style={{
-            fontSize: 15,
+            fontSize: 16,
             lineHeight: 1.65,
             color: "rgba(22,22,22,0.62)",
             maxWidth: 680,
@@ -234,9 +234,10 @@ export function FAQSection() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const ctx = gsap.context(() => {
-      // ── cursor spotlight ──────────────────────────────────────────────
+      // ── cursor spotlight — desktop only ──────────────────────────────
       const cur = cursorRef.current;
-      if (cur) {
+      const isTouch = window.matchMedia("(max-width: 1023px)").matches;
+      if (cur && !isTouch) {
         const qx = gsap.quickTo(cur, "x", { duration: 0.9, ease: "power3.out" });
         const qy = gsap.quickTo(cur, "y", { duration: 0.9, ease: "power3.out" });
         const onMove = (e: MouseEvent) => {
@@ -349,10 +350,10 @@ export function FAQSection() {
         }}
       />
 
-      <div className="relative z-10 mx-auto max-w-[1360px] px-8 pt-24 pb-28 sm:px-10 lg:px-16">
+      <div className="relative z-10 mx-auto max-w-[1360px] px-6 pt-12 pb-16 sm:px-8 sm:pt-16 sm:pb-20 lg:px-16 lg:pt-24 lg:pb-28">
 
         {/* ── header ─────────────────────────────────────────────────── */}
-        <div className="mb-16 grid grid-cols-1 gap-16 lg:grid-cols-[1fr_1.6fr]">
+        <div className="mb-10 grid grid-cols-1 gap-8 lg:mb-16 lg:gap-16 lg:grid-cols-[1fr_1.6fr]">
 
           {/* left — sticky headline */}
           <div className="lg:sticky lg:top-28 lg:self-start">
@@ -396,7 +397,7 @@ export function FAQSection() {
             <p
               className="mt-8 max-w-xs"
               style={{
-                fontSize: 14,
+                fontSize: 16,
                 lineHeight: 1.65,
                 color: "rgba(22,22,22,0.55)",
               }}

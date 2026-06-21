@@ -254,7 +254,7 @@ export function PharmacySection() {
       <div aria-hidden className="grain-dot pointer-events-none absolute inset-0 -z-0 opacity-60" />
 
       {/* ── chapter mark ── */}
-      <div className="relative mx-auto max-w-[1400px] px-6 pt-32 sm:px-10 lg:px-16">
+      <div className="relative mx-auto max-w-[1400px] px-6 pt-14 sm:px-10 sm:pt-20 lg:px-16 lg:pt-32">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-6 sm:flex sm:items-end sm:justify-between">
           <SlideIn from="left" distance={40}>
             <p className="eyebrow flex items-center gap-3">
@@ -272,7 +272,7 @@ export function PharmacySection() {
       </div>
 
       {/* ── editorial headline ── */}
-      <div className="relative mx-auto max-w-[1400px] px-6 pt-20 sm:px-10 lg:px-16">
+      <div className="relative mx-auto max-w-[1400px] px-6 pt-10 sm:px-10 sm:pt-16 lg:px-16 lg:pt-20">
         <motion.div
           aria-hidden
           style={{ y: ghostY }}
@@ -305,11 +305,11 @@ export function PharmacySection() {
             </p>
           </SlideIn>
         </div>
-        <div className="hairline-grow mt-24" />
+        <div className="hairline-grow mt-10 lg:mt-24" />
       </div>
 
       {/* ── editorial split: fulfillment photo + pen hero ── */}
-      <div className="relative mx-auto max-w-[1400px] px-6 py-28 sm:px-10 lg:px-16">
+      <div className="relative mx-auto max-w-[1400px] px-6 py-12 sm:px-10 sm:py-20 lg:px-16 lg:py-28">
         <div className="grid gap-10 lg:grid-cols-12">
           <SlideIn from="left" distance={120} duration={1.8} className="lg:col-span-7">
             <MaskReveal
