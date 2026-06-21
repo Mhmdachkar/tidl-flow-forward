@@ -14,11 +14,11 @@ export function QuizField({ label, hint, error, children, className }: QuizField
   return (
     <div className={cn("space-y-2", className)}>
       <div>
-        <p className="text-sm font-medium text-foreground">{label}</p>
-        {hint ? <p className="mt-1 text-sm text-muted-foreground">{hint}</p> : null}
+        <p className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#7A766D]">{label}</p>
+        {hint ? <p className="mt-1 text-[13px] text-[#7A766D]">{hint}</p> : null}
       </div>
       {children}
-      {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+      {error ? <p className="text-[13px] font-medium text-red-500">{error}</p> : null}
     </div>
   );
 }
@@ -30,11 +30,11 @@ interface QuizStepIntroProps {
 
 export function QuizStepIntro({ title, description }: QuizStepIntroProps) {
   return (
-    <div className="mb-8 space-y-3">
-      <h1 className="font-display text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+    <div className="mb-7 space-y-2.5 text-center">
+      <h1 className="text-[22px] font-semibold leading-snug tracking-tight text-[#1A1816] sm:text-[24px]">
         {title}
       </h1>
-      <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+      <p className="mx-auto max-w-sm text-[14px] leading-relaxed text-[#7A766D]">
         {description}
       </p>
     </div>
@@ -60,10 +60,10 @@ export function QuizYesNo({ value, onChange, error }: QuizYesNoProps) {
             type="button"
             onClick={() => onChange(option.id)}
             className={cn(
-              "min-h-[56px] rounded-2xl border px-4 py-3 text-sm font-medium transition-all",
+              "min-h-[56px] rounded-2xl border px-4 py-3 text-[15px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A200]/40",
               value === option.id
-                ? "border-foreground bg-surface text-foreground shadow-sm"
-                : "border-border bg-surface/70 text-muted-foreground hover:border-foreground/30 hover:bg-surface hover:text-foreground",
+                ? "border-[#1A1816] bg-[#1A1816] text-white shadow-sm"
+                : "border-[#DDD9D1] bg-white text-[#1A1816] hover:border-[#BFBBAF] hover:shadow-sm",
             )}
             aria-pressed={value === option.id}
           >
@@ -71,7 +71,7 @@ export function QuizYesNo({ value, onChange, error }: QuizYesNoProps) {
           </button>
         ))}
       </div>
-      {error ? <p className="text-sm font-medium text-red-600">{error}</p> : null}
+      {error ? <p className="text-[13px] font-medium text-red-500">{error}</p> : null}
     </div>
   );
 }

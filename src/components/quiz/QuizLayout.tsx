@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { QuizProgress } from "@/components/quiz/QuizProgress";
-import { QUIZ_STEP_LABELS, QUIZ_TOTAL_STEPS } from "@/types/quiz";
+import { QUIZ_TOTAL_STEPS } from "@/types/quiz";
 
 interface QuizLayoutProps {
   currentStep: number;
@@ -12,6 +11,7 @@ interface QuizLayoutProps {
   onBack?: () => void;
   canGoBack?: boolean;
   footer?: ReactNode;
+  wide?: boolean;
 }
 
 export function QuizLayout({
@@ -21,62 +21,76 @@ export function QuizLayout({
   onBack,
   canGoBack = false,
   footer,
+  wide = false,
 }: QuizLayoutProps) {
   return (
-    <div className="min-h-svh bg-background text-foreground flex flex-col">
-      {/* Sticky header */}
-      <header className="sticky top-0 z-10 shrink-0 border-b border-border/60 bg-background/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <div className="flex items-center gap-3">
+    <div className="flex min-h-svh flex-col items-center justify-center bg-[#0F0E0C] px-4 py-8 sm:py-10">
+      {/* Card */}
+      <div
+        className={`relative flex w-full flex-col overflow-hidden rounded-[28px] bg-[#F7F5F1] shadow-[0_32px_80px_rgba(0,0,0,0.5)] ${
+          wide ? "max-w-2xl" : "max-w-[480px]"
+        }`}
+      >
+        {/* Progress bar at very top */}
+        <div className="h-1 w-full bg-[#E8E5DF]">
+          <div
+            className="h-full bg-gradient-to-r from-[#C9A200] to-[#F3C300] transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          />
+        </div>
+
+        {/* Card header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-1">
+          <div className="flex items-center gap-2">
             {canGoBack && onBack ? (
               <button
                 type="button"
                 onClick={onBack}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface transition-colors hover:bg-surface-2"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-[#6B6760] transition-colors hover:bg-[#EDEBE7] hover:text-[#1A1816]"
                 aria-label="Go back"
               >
                 <ArrowLeft className="h-4 w-4" />
               </button>
             ) : (
-              <Link
-                to="/"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-sm font-medium transition-colors hover:bg-surface-2"
-                aria-label="Back to home"
-              >
-                T
-              </Link>
+              <div className="h-8 w-8" />
             )}
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Medical assessment
-              </p>
-              <p className="font-display text-lg font-medium">
-                Step {currentStep} of {QUIZ_TOTAL_STEPS}
-              </p>
-            </div>
           </div>
-          <p className="hidden text-sm text-muted-foreground sm:block">
-            {QUIZ_STEP_LABELS[currentStep]}
-          </p>
+
+          {/* Step counter */}
+          <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-[#9C9890]">
+            {currentStep} / {QUIZ_TOTAL_STEPS}
+          </span>
+
+          {/* Close */}
+          <Link
+            to="/"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EDEBE7] text-[#6B6760] transition-colors hover:bg-[#E0DDD6] hover:text-[#1A1816]"
+            aria-label="Close and return home"
+          >
+            <X className="h-4 w-4" />
+          </Link>
         </div>
-        <QuizProgress value={progress} />
-        <div className="hairline" />
-      </header>
 
-      {/* Scrollable content */}
-      <main className="flex-1">
-        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">{children}</div>
-      </main>
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-7 pb-4 pt-5 sm:px-8 sm:pt-6">
+          {children}
+        </div>
 
-      {/* Sticky footer */}
-      <div className="sticky bottom-0 z-10 border-t border-border/60 bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-4 sm:px-6">
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground sm:text-sm">
-            <ShieldCheck className="h-4 w-4 shrink-0 text-clinical" />
-            <span>A physician reviews every assessment. Secure and private.</span>
+        {/* Footer */}
+        {footer && (
+          <div className="px-7 pb-7 pt-3 sm:px-8 sm:pb-8">
+            {footer}
           </div>
-          {footer}
-        </div>
+        )}
+
+        {/* Security line */}
+        <p className="pb-5 text-center text-[11px] text-[#9C9890]">
+          Secure & private · Physician reviewed
+        </p>
       </div>
     </div>
   );

@@ -35,18 +35,18 @@ export function StepPhysicianNotice({ acknowledged, error, onChange }: StepPhysi
         description="Treatment eligibility is determined by your doctor — not by an automated system."
       />
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {TRUST_POINTS.map((point) => (
           <div
             key={point.title}
-            className="flex gap-4 rounded-2xl border border-border bg-surface px-5 py-4"
+            className="flex gap-4 rounded-2xl border border-[#DDD9D1] bg-white px-5 py-4"
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-2">
-              <point.icon className="h-5 w-5 text-foreground" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EDEBE7]">
+              <point.icon className="h-4.5 w-4.5 text-[#1A1816]" />
             </div>
             <div>
-              <p className="font-medium text-foreground">{point.title}</p>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{point.description}</p>
+              <p className="text-[14px] font-semibold text-[#1A1816]">{point.title}</p>
+              <p className="mt-0.5 text-[13px] leading-relaxed text-[#7A766D]">{point.description}</p>
             </div>
           </div>
         ))}
@@ -56,28 +56,28 @@ export function StepPhysicianNotice({ acknowledged, error, onChange }: StepPhysi
         type="button"
         onClick={() => onChange(!acknowledged)}
         className={cn(
-          "mt-8 flex w-full items-start gap-3 rounded-2xl border px-5 py-4 text-left transition-all",
+          "mt-6 flex w-full items-start gap-3 rounded-2xl border px-5 py-4 text-left transition-all duration-150",
           acknowledged
-            ? "border-foreground bg-surface shadow-sm"
-            : "border-border bg-surface/70 hover:border-foreground/30",
+            ? "border-[#1A1816] bg-white shadow-sm"
+            : "border-[#DDD9D1] bg-white hover:border-[#BFBBAF]",
         )}
         aria-pressed={acknowledged}
       >
         <span
           className={cn(
-            "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border",
-            acknowledged ? "border-foreground bg-foreground text-background" : "border-border",
+            "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border text-[12px]",
+            acknowledged ? "border-[#1A1816] bg-[#1A1816] text-white" : "border-[#BFBBAF]",
           )}
         >
           {acknowledged ? "✓" : ""}
         </span>
-        <span className="text-sm leading-relaxed text-foreground">
+        <span className="text-[13px] leading-relaxed text-[#1A1816]">
           I understand that a licensed physician will review my information and determine treatment
           eligibility.
         </span>
       </button>
 
-      {error ? <p className="mt-4 text-sm font-medium text-red-600">{error}</p> : null}
+      {error ? <p className="mt-3 text-[13px] font-medium text-red-500">{error}</p> : null}
     </section>
   );
 }

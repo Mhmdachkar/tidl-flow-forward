@@ -20,18 +20,23 @@ export function QuizOptionCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full rounded-2xl border px-5 py-4 text-left transition-all",
-        "min-h-[56px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+        "w-full rounded-2xl border px-5 py-4 text-left transition-all duration-150",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A200]/40",
         selected
-          ? "quiz-option-selected border-[#C9A200] bg-surface shadow-[0_0_0_1px_#C9A200,0_4px_24px_-6px_rgba(243,195,0,0.25)]"
-          : "border-border bg-surface/70 hover:border-[#C9A200]/50 hover:bg-surface",
+          ? "border-[#1A1816] bg-[#1A1816] text-white shadow-sm"
+          : "border-[#DDD9D1] bg-white text-[#1A1816] hover:border-[#BFBBAF] hover:shadow-sm",
         className,
       )}
       aria-pressed={selected}
     >
-      <span className="block text-base font-medium text-foreground">{label}</span>
+      <span className="block text-[15px] font-medium leading-snug">{label}</span>
       {description ? (
-        <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+        <span
+          className={cn(
+            "mt-1 block text-[13px] leading-relaxed",
+            selected ? "text-white/70" : "text-[#7A766D]",
+          )}
+        >
           {description}
         </span>
       ) : null}
