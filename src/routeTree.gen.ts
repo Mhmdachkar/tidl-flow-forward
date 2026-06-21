@@ -9,38 +9,365 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WeightLossRouteImport } from './routes/weight-loss'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RecoveryRouteImport } from './routes/recovery'
+import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as PerformanceRouteImport } from './routes/performance'
+import { Route as MetabolicRouteImport } from './routes/metabolic'
+import { Route as LongevityRouteImport } from './routes/longevity'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as HormonalRouteImport } from './routes/hormonal'
+import { Route as ConfirmationRouteImport } from './routes/confirmation'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as AccountRouteRouteImport } from './routes/account/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
+import { Route as ProductsSlugRouteImport } from './routes/products/$slug'
+import { Route as AccountTreatmentRouteImport } from './routes/account/treatment'
+import { Route as AccountSupportRouteImport } from './routes/account/support'
+import { Route as AccountSettingsRouteImport } from './routes/account/settings'
+import { Route as AccountReorderRouteImport } from './routes/account/reorder'
+import { Route as AccountOrdersRouteImport } from './routes/account/orders'
 
+const WeightLossRoute = WeightLossRouteImport.update({
+  id: '/weight-loss',
+  path: '/weight-loss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecoveryRoute = RecoveryRouteImport.update({
+  id: '/recovery',
+  path: '/recovery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerformanceRoute = PerformanceRouteImport.update({
+  id: '/performance',
+  path: '/performance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetabolicRoute = MetabolicRouteImport.update({
+  id: '/metabolic',
+  path: '/metabolic',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LongevityRoute = LongevityRouteImport.update({
+  id: '/longevity',
+  path: '/longevity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HormonalRoute = HormonalRouteImport.update({
+  id: '/hormonal',
+  path: '/hormonal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmationRoute = ConfirmationRouteImport.update({
+  id: '/confirmation',
+  path: '/confirmation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRouteRoute = AccountRouteRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
+const ProductsSlugRoute = ProductsSlugRouteImport.update({
+  id: '/products/$slug',
+  path: '/products/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountTreatmentRoute = AccountTreatmentRouteImport.update({
+  id: '/treatment',
+  path: '/treatment',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
+const AccountSupportRoute = AccountSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
+const AccountSettingsRoute = AccountSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
+const AccountReorderRoute = AccountReorderRouteImport.update({
+  id: '/reorder',
+  path: '/reorder',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
+const AccountOrdersRoute = AccountOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteRouteWithChildren
+  '/checkout': typeof CheckoutRoute
+  '/confirmation': typeof ConfirmationRoute
+  '/hormonal': typeof HormonalRoute
+  '/login': typeof LoginRoute
+  '/longevity': typeof LongevityRoute
+  '/metabolic': typeof MetabolicRoute
+  '/performance': typeof PerformanceRoute
+  '/quiz': typeof QuizRoute
+  '/recovery': typeof RecoveryRoute
+  '/signup': typeof SignupRoute
+  '/weight-loss': typeof WeightLossRoute
+  '/account/orders': typeof AccountOrdersRoute
+  '/account/reorder': typeof AccountReorderRoute
+  '/account/settings': typeof AccountSettingsRoute
+  '/account/support': typeof AccountSupportRoute
+  '/account/treatment': typeof AccountTreatmentRoute
+  '/products/$slug': typeof ProductsSlugRoute
+  '/account/': typeof AccountIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRoute
+  '/confirmation': typeof ConfirmationRoute
+  '/hormonal': typeof HormonalRoute
+  '/login': typeof LoginRoute
+  '/longevity': typeof LongevityRoute
+  '/metabolic': typeof MetabolicRoute
+  '/performance': typeof PerformanceRoute
+  '/quiz': typeof QuizRoute
+  '/recovery': typeof RecoveryRoute
+  '/signup': typeof SignupRoute
+  '/weight-loss': typeof WeightLossRoute
+  '/account/orders': typeof AccountOrdersRoute
+  '/account/reorder': typeof AccountReorderRoute
+  '/account/settings': typeof AccountSettingsRoute
+  '/account/support': typeof AccountSupportRoute
+  '/account/treatment': typeof AccountTreatmentRoute
+  '/products/$slug': typeof ProductsSlugRoute
+  '/account': typeof AccountIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRouteRouteWithChildren
+  '/checkout': typeof CheckoutRoute
+  '/confirmation': typeof ConfirmationRoute
+  '/hormonal': typeof HormonalRoute
+  '/login': typeof LoginRoute
+  '/longevity': typeof LongevityRoute
+  '/metabolic': typeof MetabolicRoute
+  '/performance': typeof PerformanceRoute
+  '/quiz': typeof QuizRoute
+  '/recovery': typeof RecoveryRoute
+  '/signup': typeof SignupRoute
+  '/weight-loss': typeof WeightLossRoute
+  '/account/orders': typeof AccountOrdersRoute
+  '/account/reorder': typeof AccountReorderRoute
+  '/account/settings': typeof AccountSettingsRoute
+  '/account/support': typeof AccountSupportRoute
+  '/account/treatment': typeof AccountTreatmentRoute
+  '/products/$slug': typeof ProductsSlugRoute
+  '/account/': typeof AccountIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/checkout'
+    | '/confirmation'
+    | '/hormonal'
+    | '/login'
+    | '/longevity'
+    | '/metabolic'
+    | '/performance'
+    | '/quiz'
+    | '/recovery'
+    | '/signup'
+    | '/weight-loss'
+    | '/account/orders'
+    | '/account/reorder'
+    | '/account/settings'
+    | '/account/support'
+    | '/account/treatment'
+    | '/products/$slug'
+    | '/account/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/checkout'
+    | '/confirmation'
+    | '/hormonal'
+    | '/login'
+    | '/longevity'
+    | '/metabolic'
+    | '/performance'
+    | '/quiz'
+    | '/recovery'
+    | '/signup'
+    | '/weight-loss'
+    | '/account/orders'
+    | '/account/reorder'
+    | '/account/settings'
+    | '/account/support'
+    | '/account/treatment'
+    | '/products/$slug'
+    | '/account'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/checkout'
+    | '/confirmation'
+    | '/hormonal'
+    | '/login'
+    | '/longevity'
+    | '/metabolic'
+    | '/performance'
+    | '/quiz'
+    | '/recovery'
+    | '/signup'
+    | '/weight-loss'
+    | '/account/orders'
+    | '/account/reorder'
+    | '/account/settings'
+    | '/account/support'
+    | '/account/treatment'
+    | '/products/$slug'
+    | '/account/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRouteRoute: typeof AccountRouteRouteWithChildren
+  CheckoutRoute: typeof CheckoutRoute
+  ConfirmationRoute: typeof ConfirmationRoute
+  HormonalRoute: typeof HormonalRoute
+  LoginRoute: typeof LoginRoute
+  LongevityRoute: typeof LongevityRoute
+  MetabolicRoute: typeof MetabolicRoute
+  PerformanceRoute: typeof PerformanceRoute
+  QuizRoute: typeof QuizRoute
+  RecoveryRoute: typeof RecoveryRoute
+  SignupRoute: typeof SignupRoute
+  WeightLossRoute: typeof WeightLossRoute
+  ProductsSlugRoute: typeof ProductsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/weight-loss': {
+      id: '/weight-loss'
+      path: '/weight-loss'
+      fullPath: '/weight-loss'
+      preLoaderRoute: typeof WeightLossRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recovery': {
+      id: '/recovery'
+      path: '/recovery'
+      fullPath: '/recovery'
+      preLoaderRoute: typeof RecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/performance': {
+      id: '/performance'
+      path: '/performance'
+      fullPath: '/performance'
+      preLoaderRoute: typeof PerformanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metabolic': {
+      id: '/metabolic'
+      path: '/metabolic'
+      fullPath: '/metabolic'
+      preLoaderRoute: typeof MetabolicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/longevity': {
+      id: '/longevity'
+      path: '/longevity'
+      fullPath: '/longevity'
+      preLoaderRoute: typeof LongevityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hormonal': {
+      id: '/hormonal'
+      path: '/hormonal'
+      fullPath: '/hormonal'
+      preLoaderRoute: typeof HormonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirmation': {
+      id: '/confirmation'
+      path: '/confirmation'
+      fullPath: '/confirmation'
+      preLoaderRoute: typeof ConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +375,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/': {
+      id: '/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
+    '/products/$slug': {
+      id: '/products/$slug'
+      path: '/products/$slug'
+      fullPath: '/products/$slug'
+      preLoaderRoute: typeof ProductsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/treatment': {
+      id: '/account/treatment'
+      path: '/treatment'
+      fullPath: '/account/treatment'
+      preLoaderRoute: typeof AccountTreatmentRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
+    '/account/support': {
+      id: '/account/support'
+      path: '/support'
+      fullPath: '/account/support'
+      preLoaderRoute: typeof AccountSupportRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
+    '/account/settings': {
+      id: '/account/settings'
+      path: '/settings'
+      fullPath: '/account/settings'
+      preLoaderRoute: typeof AccountSettingsRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
+    '/account/reorder': {
+      id: '/account/reorder'
+      path: '/reorder'
+      fullPath: '/account/reorder'
+      preLoaderRoute: typeof AccountReorderRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
+    '/account/orders': {
+      id: '/account/orders'
+      path: '/orders'
+      fullPath: '/account/orders'
+      preLoaderRoute: typeof AccountOrdersRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
   }
 }
 
+interface AccountRouteRouteChildren {
+  AccountOrdersRoute: typeof AccountOrdersRoute
+  AccountReorderRoute: typeof AccountReorderRoute
+  AccountSettingsRoute: typeof AccountSettingsRoute
+  AccountSupportRoute: typeof AccountSupportRoute
+  AccountTreatmentRoute: typeof AccountTreatmentRoute
+  AccountIndexRoute: typeof AccountIndexRoute
+}
+
+const AccountRouteRouteChildren: AccountRouteRouteChildren = {
+  AccountOrdersRoute: AccountOrdersRoute,
+  AccountReorderRoute: AccountReorderRoute,
+  AccountSettingsRoute: AccountSettingsRoute,
+  AccountSupportRoute: AccountSupportRoute,
+  AccountTreatmentRoute: AccountTreatmentRoute,
+  AccountIndexRoute: AccountIndexRoute,
+}
+
+const AccountRouteRouteWithChildren = AccountRouteRoute._addFileChildren(
+  AccountRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRouteRoute: AccountRouteRouteWithChildren,
+  CheckoutRoute: CheckoutRoute,
+  ConfirmationRoute: ConfirmationRoute,
+  HormonalRoute: HormonalRoute,
+  LoginRoute: LoginRoute,
+  LongevityRoute: LongevityRoute,
+  MetabolicRoute: MetabolicRoute,
+  PerformanceRoute: PerformanceRoute,
+  QuizRoute: QuizRoute,
+  RecoveryRoute: RecoveryRoute,
+  SignupRoute: SignupRoute,
+  WeightLossRoute: WeightLossRoute,
+  ProductsSlugRoute: ProductsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

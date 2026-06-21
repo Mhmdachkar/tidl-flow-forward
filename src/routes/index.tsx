@@ -636,7 +636,8 @@ function VoxelSection() {
   return (
     <section id="science" ref={sectionRef} className="relative h-[100svh] overflow-hidden bg-[#0d1117]">
       <video ref={videoRef} src={voxel} muted playsInline loop preload="metadata"
-        className="absolute inset-0 h-full w-full object-cover opacity-90" />
+        className="absolute inset-0 h-full w-full object-cover opacity-90"
+        suppressHydrationWarning />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
       <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/0" />
 
