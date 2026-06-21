@@ -166,14 +166,14 @@ export function SiteNav({ dark = true }: SiteNavProps) {
       {/* Backdrop */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-[55] bg-black/50 backdrop-blur-sm"
           onClick={() => setMenuOpen(false)}
         />
       )}
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 z-50 flex h-full w-72 max-w-[90vw] flex-col bg-[#111] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`fixed right-0 top-0 z-[60] flex h-full w-72 max-w-[90vw] flex-col bg-[#111] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

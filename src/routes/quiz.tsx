@@ -37,14 +37,6 @@ function QuizPage() {
     initialGoal: goal,
   });
 
-  if (!quiz.hydrated) {
-    return (
-      <div className="flex min-h-svh items-center justify-center bg-background text-muted-foreground">
-        Loading assessment...
-      </div>
-    );
-  }
-
   const isFinalStep = quiz.currentStep === quiz.totalSteps;
   const primaryLabel = isFinalStep ? "Continue to Checkout" : "Continue";
 

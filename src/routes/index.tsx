@@ -296,7 +296,7 @@ function Nav() {
       {/* Mobile / full menu drawer */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-[55]"
           onClick={() => setMenuOpen(false)}
         >
           {/* Backdrop */}
@@ -305,7 +305,7 @@ function Nav() {
       )}
 
       <div
-        className={`fixed right-0 top-0 z-50 flex h-full w-72 max-w-[90vw] flex-col bg-[#111] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`fixed right-0 top-0 z-[60] flex h-full w-72 max-w-[90vw] flex-col bg-[#111] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
