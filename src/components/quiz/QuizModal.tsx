@@ -96,10 +96,10 @@ export function QuizModal() {
           style={{
             transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
             transform: isOpen ? "translateY(0)" : "translateY(100%)",
-            maxHeight: "94svh",
+            maxHeight: "92svh",
           }}
-          className={`relative flex w-full flex-col overflow-hidden rounded-t-[32px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
-            isRecommendation ? "sm:max-w-[600px]" : "sm:max-w-[540px]"
+          className={`relative flex w-full flex-col overflow-hidden rounded-t-[36px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
+            isRecommendation ? "sm:max-w-[760px]" : "sm:max-w-[720px]"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -140,12 +140,17 @@ export function QuizModal() {
             </button>
           </div>
 
-          {/* Content */}
-          <div
-            className="flex flex-1 flex-col overflow-y-auto px-6 pt-6 sm:px-9"
-            style={{ scrollbarWidth: "none" } as React.CSSProperties}
-          >
-            <QuizFlow quiz={quiz} />
+          {/* Content — scrollable with no visible scrollbar.
+              Questions sit at a comfortable reading width inside the wider sheet so it
+              reads as a balanced square; the recommendation uses the full width. */}
+          <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pt-7 sm:px-10">
+            {isRecommendation ? (
+              <QuizFlow quiz={quiz} />
+            ) : (
+              <div className="mx-auto w-full max-w-[480px]">
+                <QuizFlow quiz={quiz} />
+              </div>
+            )}
           </div>
 
           {/* Final step keeps a single conversion CTA */}

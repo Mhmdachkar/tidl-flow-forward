@@ -53,7 +53,7 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
   const bullets = (goal && GOAL_BULLETS[goal]) ?? DEFAULT_BULLETS;
 
   return (
-    <div className="-mx-6 -mt-6 sm:-mx-9">
+    <div className="-mx-6 -mt-7 sm:-mx-10">
       {/* Hero split panel */}
       <div className="relative overflow-hidden rounded-t-none rounded-b-2xl bg-gradient-to-br from-[#2A1F0A] via-[#3D2D0F] to-[#1A1208]">
         {/* Product image — float right */}
