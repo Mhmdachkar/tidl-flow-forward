@@ -1,34 +1,24 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
 import { gsap } from "@/lib/gsap";
+import { ScrollTrigger, Observer } from "gsap/all";
+
+gsap.registerPlugin(ScrollTrigger, Observer);
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-
 const DOCTORS = [
-  {
-    specialty: "METABOLIC HEALTH",
-    name: "Dr. James Park",
-    creds: "MD, ABOM",
+  { specialty: "METABOLIC HEALTH", name: "Dr. James Park", creds: "MD, ABOM",
     bio: "Expert in preventive medicine and metabolic syndrome management with over a decade of clinical practice.",
-    avatar: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=320&q=80&fit=crop&crop=faces",
-    avatarBg: "linear-gradient(160deg, #c7e0ff 0%, #edf4ff 100%)",
-  },
-  {
-    specialty: "ENDOCRINOLOGY",
-    name: "Dr. Sarah Mitchell",
-    creds: "MD, FACE, ECNU",
+    avatar: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=480&q=80&fit=crop&crop=faces",
+    accent: "#A8D5BA" },
+  { specialty: "ENDOCRINOLOGY", name: "Dr. Sarah Mitchell", creds: "MD, FACE, ECNU",
     bio: "Specialises in hormone optimisation and metabolic health with 12+ years of clinical experience.",
-    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=320&q=80&fit=crop&crop=faces",
-    avatarBg: "linear-gradient(160deg, #c7f0dc 0%, #edfff5 100%)",
-  },
-  {
-    specialty: "LONGEVITY",
-    name: "Dr. Michael Andrews",
-    creds: "MD, FACP, FP",
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=480&q=80&fit=crop&crop=faces",
+    accent: "#B8E0D2" },
+  { specialty: "LONGEVITY", name: "Dr. Michael Andrews", creds: "MD, FACP, FP",
     bio: "Focuses on longevity, weight management and whole-person care across all life stages.",
-    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=320&q=80&fit=crop&crop=faces",
-    avatarBg: "linear-gradient(160deg, #ffe9c2 0%, #fffaef 100%)",
-  },
+    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=480&q=80&fit=crop&crop=faces",
+    accent: "#F4D4A1" },
 ] as const;
 
 const STANDARDS = [
@@ -38,200 +28,281 @@ const STANDARDS = [
 ] as const;
 
 const METRICS = [
-  { target: 60,  suffix: "+",  unit: "Years",     label: "Combined experience" },
+  { target: 60,  suffix: "+",  unit: "Years",      label: "Combined experience" },
   { target: 100, suffix: "+",  unit: "Physicians", label: "Across the U.S." },
   { target: 50,  suffix: "",   unit: "States",     label: "Licensed to practice" },
   { target: 15,  suffix: "K+", unit: "Patients",   label: "Helped and counting" },
 ] as const;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Splits a string into individually-animatable <span.char> elements. */
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function CharSplit({ text }: { text: string }) {
   return (
-    <span aria-label={text} style={{ display: "block" }}>
+    <span className="inline-block">
       {text.split(" ").map((word, wi) => (
-        <span
-          key={wi}
-          style={{ display: "inline-block", overflow: "hidden", verticalAlign: "bottom", marginRight: "0.25em" }}
-        >
+        <span key={wi} className="inline-block whitespace-nowrap" style={{ perspective: 800 }}>
           {word.split("").map((ch, ci) => (
-            <span key={`${wi}-${ci}`} className="char" style={{ display: "inline-block" }} aria-hidden="true">
+            <span key={ci} className="char inline-block will-change-transform" style={{ transformStyle: "preserve-3d" }}>
               {ch}
             </span>
           ))}
+          {wi < text.split(" ").length - 1 && <span className="inline-block">&nbsp;</span>}
         </span>
       ))}
     </span>
   );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export function DoctorSection() {
-  const sectionRef    = useRef<HTMLElement>(null);
-  const imgPanelRef   = useRef<HTMLDivElement>(null);
-  const imgInnerRef   = useRef<HTMLImageElement>(null);
-  const badgeRef      = useRef<HTMLDivElement>(null);
-  const sigPathRef    = useRef<SVGPathElement>(null);
-  const carouselRef   = useRef<HTMLDivElement>(null);
-  const cardRefs      = useRef<(HTMLDivElement | null)[]>([]);
-  const metricRefs    = useRef<(HTMLSpanElement | null)[]>([]);
-  const prevBtnRef    = useRef<HTMLButtonElement>(null);
-  const nextBtnRef    = useRef<HTMLButtonElement>(null);
-  const atomSvgRef    = useRef<SVGSVGElement>(null);
-  const hairline0Ref  = useRef<HTMLSpanElement>(null);
-  const hairline1Ref  = useRef<HTMLSpanElement>(null);
+// ─── Component ───────────────────────────────────────────────────────────────
+export function ClinicalLeadershipSection() {
+  const sectionRef  = useRef<HTMLElement>(null);
+  const imgPanelRef = useRef<HTMLDivElement>(null);
+  const imgInnerRef = useRef<HTMLImageElement>(null);
+  const badgeRef    = useRef<HTMLDivElement>(null);
+  const sigPathRef  = useRef<SVGPathElement>(null);
+  const trackRef    = useRef<HTMLDivElement>(null);
+  const cardRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const metricRefs  = useRef<(HTMLSpanElement | null)[]>([]);
+  const barRefs     = useRef<(HTMLSpanElement | null)[]>([]);
+  const prevBtnRef  = useRef<HTMLButtonElement>(null);
+  const nextBtnRef  = useRef<HTMLButtonElement>(null);
+  const atomSvgRef  = useRef<SVGSVGElement>(null);
+  const hairline0   = useRef<HTMLSpanElement>(null);
+  const hairline1   = useRef<HTMLSpanElement>(null);
+  const glowRef     = useRef<HTMLDivElement>(null);
 
   const [activeIdx, setActiveIdx] = useState(1);
-  const activeIdxRef        = useRef(1);
-  const firstCarouselRender = useRef(true);
+  const activeIdxRef = useRef(1);
+  const firstRender  = useRef(true);
 
-  // Keep ref and state in sync so stable callbacks read the latest value
-  const setActive = (idx: number) => {
-    activeIdxRef.current = idx;
-    setActiveIdx(idx);
-  };
+  const setActive = useCallback((idx: number) => {
+    const clamped = (idx + DOCTORS.length) % DOCTORS.length;
+    activeIdxRef.current = clamped;
+    setActiveIdx(clamped);
+  }, []);
 
-  // ── 1. Carousel positions ─────────────────────────────────────────────────
+  // ── 1. Coverflow carousel layout ──────────────────────────────────────────
   useEffect(() => {
-    const cards = cardRefs.current.filter((c): c is HTMLDivElement => c !== null);
+    const cards = cardRefs.current.filter((c): c is HTMLDivElement => !!c);
     if (!cards.length) return;
-
-    const isFirst = firstCarouselRender.current;
-    firstCarouselRender.current = false;
+    const first = firstRender.current;
+    firstRender.current = false;
 
     cards.forEach((card, i) => {
-      const offset   = i - activeIdx;
-      const isCenter = offset === 0;
-      const isEdge   = Math.abs(offset) === 1;
+      let offset = i - activeIdx;
+      if (offset > DOCTORS.length / 2) offset -= DOCTORS.length;
+      if (offset < -DOCTORS.length / 2) offset += DOCTORS.length;
+      const center = offset === 0;
+      const edge   = Math.abs(offset) === 1;
       const pos = {
-        x:       offset * 300,
-        rotateY: offset * -22,
-        scale:   isCenter ? 1 : isEdge ? 0.82 : 0.65,
-        opacity: isCenter ? 1 : isEdge ? 0.72 : 0,
-        zIndex:  isCenter ? 10 : isEdge ? 5 : 1,
+        x: offset * 320,
+        rotateY: offset * -24,
+        scale: center ? 1 : edge ? 0.82 : 0.65,
+        opacity: center ? 1 : edge ? 0.7 : 0,
+        zIndex: center ? 10 : edge ? 5 : 1,
+        filter: center ? "blur(0px)" : "blur(2px)",
       };
-      if (isFirst) gsap.set(card, pos);
-      else         gsap.to(card, { ...pos, duration: 0.75, ease: "power3.inOut" });
+      if (first) gsap.set(card, pos);
+      else gsap.to(card, { ...pos, duration: 0.85, ease: "expo.out" });
     });
   }, [activeIdx]);
 
-  // ── 2. Magnetic arrow buttons ─────────────────────────────────────────────
+  // ── 2. Magnetic buttons ────────────────────────────────────────────────────
   useEffect(() => {
-    const attach = (btn: HTMLButtonElement | null) => {
-      if (!btn) return () => {};
-      const qx = gsap.quickTo(btn, "x", { duration: 0.4, ease: "power3.out" });
-      const qy = gsap.quickTo(btn, "y", { duration: 0.4, ease: "power3.out" });
-      const onMove  = (e: MouseEvent) => {
+    const cleanups: Array<() => void> = [];
+    const magnet = (btn: HTMLElement | null, strength = 0.45) => {
+      if (!btn) return;
+      const qx = gsap.quickTo(btn, "x", { duration: 0.5, ease: "power3.out" });
+      const qy = gsap.quickTo(btn, "y", { duration: 0.5, ease: "power3.out" });
+      const onMove = (e: MouseEvent) => {
         const r = btn.getBoundingClientRect();
-        qx((e.clientX - r.left - r.width  / 2) * 0.5);
-        qy((e.clientY - r.top  - r.height / 2) * 0.5);
+        qx((e.clientX - r.left - r.width / 2) * strength);
+        qy((e.clientY - r.top - r.height / 2) * strength);
       };
       const onLeave = () => { qx(0); qy(0); };
-      btn.addEventListener("mousemove",  onMove);
+      btn.addEventListener("mousemove", onMove);
       btn.addEventListener("mouseleave", onLeave);
-      return () => {
-        btn.removeEventListener("mousemove",  onMove);
+      cleanups.push(() => {
+        btn.removeEventListener("mousemove", onMove);
         btn.removeEventListener("mouseleave", onLeave);
         gsap.killTweensOf(btn);
-      };
+      });
     };
-    const c1 = attach(prevBtnRef.current);
-    const c2 = attach(nextBtnRef.current);
-    return () => { c1(); c2(); };
+    magnet(prevBtnRef.current);
+    magnet(nextBtnRef.current);
+    return () => cleanups.forEach(c => c());
   }, []);
 
-  // ── 3. Entrance animations ────────────────────────────────────────────────
+  // ── 3. Hero image 3D tilt + parallax glow follow ──────────────────────────
+  useEffect(() => {
+    const panel = imgPanelRef.current;
+    const inner = imgInnerRef.current;
+    const glow  = glowRef.current;
+    if (!panel || !inner) return;
+
+    const rxQ = gsap.quickTo(panel, "rotationX", { duration: 0.8, ease: "power3.out" });
+    const ryQ = gsap.quickTo(panel, "rotationY", { duration: 0.8, ease: "power3.out" });
+    const ixQ = gsap.quickTo(inner, "x", { duration: 0.9, ease: "power3.out" });
+    const iyQ = gsap.quickTo(inner, "y", { duration: 0.9, ease: "power3.out" });
+
+    gsap.set(panel, { transformPerspective: 1200, transformStyle: "preserve-3d" });
+
+    const onMove = (e: MouseEvent) => {
+      const r = panel.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      ryQ(px * 10);
+      rxQ(-py * 8);
+      ixQ(px * -24);
+      iyQ(py * -24);
+    };
+    const onLeave = () => { rxQ(0); ryQ(0); ixQ(0); iyQ(0); };
+    panel.addEventListener("mousemove", onMove);
+    panel.addEventListener("mouseleave", onLeave);
+
+    // ← FIX: declare cleanups before the glow block that pushes into it
+    const cleanups: Array<() => void> = [];
+    const sec = sectionRef.current;
+    if (sec && glow) {
+      const glowQX = gsap.quickTo(glow, "x", { duration: 1.2, ease: "power3.out" });
+      const glowQY = gsap.quickTo(glow, "y", { duration: 1.2, ease: "power3.out" });
+      const onSecMove = (e: MouseEvent) => {
+        const r = sec.getBoundingClientRect();
+        glowQX(e.clientX - r.left - r.width / 2);
+        glowQY(e.clientY - r.top - r.height / 2);
+      };
+      sec.addEventListener("mousemove", onSecMove);
+      cleanups.push(() => {
+        sec.removeEventListener("mousemove", onSecMove);
+        gsap.killTweensOf(glow);
+      });
+    }
+
+    return () => {
+      panel.removeEventListener("mousemove", onMove);
+      panel.removeEventListener("mouseleave", onLeave);
+      gsap.killTweensOf(panel);
+      gsap.killTweensOf(inner);
+      cleanups.forEach(c => c());
+    };
+  }, []);
+
+  // ── 4. Auto-rotate + drag/wheel for carousel ──────────────────────────────
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const obs = Observer.create({
+      target: track,
+      type: "wheel,touch,pointer",
+      preventDefault: false,
+      tolerance: 50,
+      onLeft: () => setActive(activeIdxRef.current + 1),
+      onRight: () => setActive(activeIdxRef.current - 1),
+    });
+    const autoplay = window.setInterval(() => setActive(activeIdxRef.current + 1), 5500);
+    return () => { obs.kill(); clearInterval(autoplay); };
+  }, [setActive]);
+
+  // ── 5. Master scroll choreography ─────────────────────────────────────────
   useEffect(() => {
     const sec = sectionRef.current;
     if (!sec) return;
-
-    const reduced = typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const ctx = gsap.context(() => {
-      const chars   = Array.from(sec.querySelectorAll<HTMLElement>(".dr2-headline .char"));
-      const eyebrow = sec.querySelector<HTMLElement>(".dr2-eyebrow");
-      const bodyEl  = sec.querySelector<HTMLElement>(".dr2-body");
-      const sigEl   = sec.querySelector<HTMLElement>(".dr2-sig");
-      const stdItems = Array.from(sec.querySelectorAll<HTMLElement>(".dr2-std"));
-      const statsEl  = sec.querySelector<HTMLElement>(".dr2-stats");
+      const chars   = gsap.utils.toArray<HTMLElement>(".dr2-headline .char");
+      const eyebrow = sec.querySelector(".dr2-eyebrow");
+      const bodyEl  = sec.querySelector(".dr2-body");
+      const sigEl   = sec.querySelector(".dr2-sig");
+      const stdItems= gsap.utils.toArray<HTMLElement>(".dr2-std");
+      const statsEl = sec.querySelector(".dr2-stats");
 
       if (reduced) {
-        const all = [eyebrow, bodyEl, sigEl, imgPanelRef.current,
-          badgeRef.current, carouselRef.current, ...stdItems, statsEl,
-        ].filter((el): el is HTMLElement => el !== null);
-        gsap.from(all, {
+        gsap.from([eyebrow, bodyEl, sigEl, imgPanelRef.current, badgeRef.current,
+          trackRef.current, ...stdItems, statsEl].filter(Boolean) as Element[], {
           opacity: 0, duration: 0.5, stagger: 0.04,
           scrollTrigger: { trigger: sec, start: "top 82%" },
         });
         return;
       }
 
-      // ── initial hidden states ──
-      gsap.set(chars,               { yPercent: 110, rotateX: -40, opacity: 0 });
-      gsap.set([eyebrow, bodyEl, sigEl], { opacity: 0, y: 20 });
+      // initial states
+      gsap.set(chars, { yPercent: 110, rotateX: -55, opacity: 0 });
+      gsap.set([eyebrow, bodyEl, sigEl], { opacity: 0, y: 24 });
       gsap.set(imgPanelRef.current, { clipPath: "inset(0 0 100% 0 round 28px)" });
-      gsap.set(imgInnerRef.current, { scale: 1.14 });
-      gsap.set(badgeRef.current,    { opacity: 0, y: 38 });
-      gsap.set(stdItems,            { opacity: 0, x: -14 });
-      gsap.set(hairline0Ref.current,{ scaleX: 0, transformOrigin: "left" });
-      gsap.set(hairline1Ref.current,{ scaleX: 0, transformOrigin: "left" });
-      gsap.set(statsEl,             { opacity: 0, y: 24 });
+      gsap.set(imgInnerRef.current, { scale: 1.25 });
+      gsap.set(badgeRef.current, { opacity: 0, y: 40, scale: 0.92 });
+      gsap.set(stdItems, { opacity: 0, x: -18 });
+      gsap.set([hairline0.current, hairline1.current], { scaleX: 0, transformOrigin: "left center" });
+      gsap.set(statsEl, { opacity: 0, y: 30 });
 
-      // ── master entrance timeline ──
+      // Master intro timeline
       const tl = gsap.timeline({
         defaults: { ease: "power3.out" },
-        scrollTrigger: { trigger: sec, start: "top 78%" },
+        scrollTrigger: { trigger: sec, start: "top 75%" },
+      });
+      tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.5 }, 0)
+        .to(chars, { yPercent: 0, rotateX: 0, opacity: 1, duration: 1.1,
+                     stagger: { each: 0.012, from: "start" }, ease: "expo.out" }, 0.08)
+        .to(bodyEl, { opacity: 1, y: 0, duration: 0.55 }, 0.55)
+        .to(hairline0.current, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.6)
+        .to(sigEl,  { opacity: 1, y: 0, duration: 0.5 }, 0.7)
+        .to(imgPanelRef.current, { clipPath: "inset(0 0 0% 0 round 28px)", duration: 1.5, ease: "expo.out" }, 0.1)
+        .to(imgInnerRef.current, { scale: 1, duration: 1.6, ease: "expo.out" }, 0.1)
+        .to(badgeRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 1.15)
+        .to(hairline1.current, { scaleX: 1, duration: 0.6 }, 0.55)
+        .to(stdItems, { opacity: 1, x: 0, duration: 0.5, stagger: 0.08 }, 0.6)
+        .to(trackRef.current, { opacity: 1, duration: 0.6 }, 0.8)
+        .to(statsEl, { opacity: 1, y: 0, duration: 0.6 }, 1.2);
+
+      // Signature draw-on
+      if (sigPathRef.current) {
+        const len = sigPathRef.current.getTotalLength();
+        gsap.set(sigPathRef.current, { strokeDasharray: len, strokeDashoffset: len });
+        tl.to(sigPathRef.current, { strokeDashoffset: 0, duration: 1.7, ease: "power2.inOut" }, 0.8);
+      }
+
+      // Scrub parallax: image rises as section scrolls
+      gsap.to(imgInnerRef.current, {
+        yPercent: -12, ease: "none",
+        scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+      gsap.to(badgeRef.current, {
+        yPercent: -30, ease: "none",
+        scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1.2 },
       });
 
-      tl.to(eyebrow,  { opacity: 1, y: 0, duration: 0.45 }, 0);
-      tl.to(chars,    { yPercent: 0, rotateX: 0, opacity: 1, duration: 1.05, stagger: 0.011, ease: "expo.out" }, 0.1);
-      tl.to(bodyEl,   { opacity: 1, y: 0, duration: 0.5 }, 0.52);
-      tl.to(hairline0Ref.current, { scaleX: 1, duration: 0.5 }, 0.62);
-      tl.to(sigEl,    { opacity: 1, y: 0, duration: 0.45 }, 0.68);
+      // Floating ambient loop on badge
+      gsap.to(badgeRef.current, { y: "+=8", duration: 3.2, yoyo: true, repeat: -1, ease: "sine.inOut", delay: 2 });
 
-      // image reveal (clip-path mask + inner parallax scale)
-      tl.to(imgPanelRef.current, { clipPath: "inset(0 0 0% 0 round 28px)", duration: 1.35, ease: "expo.out" }, 0.08);
-      tl.to(imgInnerRef.current, { scale: 1, duration: 1.4, ease: "expo.out" }, 0.08);
-      tl.to(badgeRef.current,    { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }, 1.1);
-
-      // standards list
-      tl.to(hairline1Ref.current, { scaleX: 1, duration: 0.45 }, 0.55);
-      tl.to(stdItems,  { opacity: 1, x: 0, duration: 0.4, stagger: 0.07 }, 0.58);
-
-      // carousel
-      tl.to(carouselRef.current, { opacity: 1, duration: 0.5 }, 0.76);
-
-      // stats bar
-      tl.to(statsEl, { opacity: 1, y: 0, duration: 0.5 }, 1.15);
-
-      // signature SVG draw-on
-      const sigPath = sigPathRef.current;
-      if (sigPath) {
-        const len = sigPath.getTotalLength();
-        gsap.set(sigPath, { strokeDasharray: len, strokeDashoffset: len });
-        tl.to(sigPath, { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut" }, 0.78);
-      }
-
-      // atom continuous rotation
+      // Atom rotation
       if (atomSvgRef.current) {
-        gsap.to(atomSvgRef.current, { rotation: 360, duration: 28, ease: "none", repeat: -1 });
+        gsap.to(atomSvgRef.current, { rotation: 360, duration: 32, ease: "none", repeat: -1, transformOrigin: "50% 50%" });
       }
 
-      // stats count-up
+      // Headline char hover wave
+      chars.forEach((c) => {
+        c.addEventListener("mouseenter", () => {
+          gsap.fromTo(c, { y: 0 }, { y: -8, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 });
+        });
+      });
+
+      // Stats counters + progress bars
       METRICS.forEach(({ target, suffix }, i) => {
         const span = metricRefs.current[i];
+        const bar  = barRefs.current[i];
         if (!span) return;
         const proxy = { v: 0 };
         gsap.to(proxy, {
-          v: target,
-          duration: 2,
-          ease: "power2.out",
-          scrollTrigger: { trigger: statsEl, start: "top 86%" },
+          v: target, duration: 2.2, ease: "power3.out",
+          scrollTrigger: { trigger: statsEl, start: "top 85%" },
           onUpdate: () => { span.textContent = `${Math.round(proxy.v)}${suffix}`; },
         });
+        if (bar) {
+          gsap.fromTo(bar, { scaleX: 0 }, {
+            scaleX: 1, duration: 1.6, ease: "expo.out", transformOrigin: "left center",
+            scrollTrigger: { trigger: statsEl, start: "top 85%" },
+          });
+        }
       });
     }, sec);
 
@@ -239,416 +310,172 @@ export function DoctorSection() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden py-24 sm:py-28 lg:py-32"
-      style={{ background: "#F4F6F9" }}
-    >
-      {/* Radial glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(1200px 600px at 70% 0%, rgba(59,130,246,0.06), transparent 60%)" }}
-      />
+    <section ref={sectionRef} className="relative overflow-hidden py-24 md:py-32"
+      style={{ background: "#F4F6F9", color: "#0B1B2B" }}>
+      {/* Cursor-follow radial glow */}
+      <div ref={glowRef} aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -z-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60"
+        style={{ background: "radial-gradient(circle, rgba(59,111,160,0.18) 0%, rgba(59,111,160,0) 60%)", filter: "blur(40px)" }} />
 
-      <div className="relative mx-auto max-w-[1440px] px-6 sm:px-8 lg:px-10">
-
-        {/* ─── Zone 1: Hero two-column ───────────────────────────────────── */}
-        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-8">
-
-          {/* Left copy */}
-          <div className="lg:col-span-5">
-
-            {/* Eyebrow */}
-            <div className="dr2-eyebrow mb-6 flex items-center gap-2.5">
-              <span className="relative inline-flex h-2 w-2 shrink-0" aria-hidden="true">
-                <span
-                  className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-70"
-                  style={{ backgroundColor: "#3B6FA0" }}
-                />
-                <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: "#3B6FA0" }} />
-              </span>
-              <span
-                className="text-[11px] font-semibold uppercase tracking-[0.22em]"
-                style={{ color: "#3B6FA0" }}
-              >
-                Clinical Leadership
-              </span>
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
+        {/* ─── Zone 1 ───────────────────────────────────────────────── */}
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="flex flex-col">
+            <div className="dr2-eyebrow mb-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: "#3B6FA0" }}>
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#3B6FA0" }} />
+              Clinical Leadership
             </div>
 
-            {/* Headline */}
-            <h2
-              className="dr2-headline font-display leading-[0.95]"
-              style={{ color: "#0B1B2B", fontSize: "clamp(2.5rem, 5vw, 5rem)", letterSpacing: "-0.02em" }}
-            >
-              <CharSplit text="Real doctors." />
-              <CharSplit text="Real oversight." />
+            <h2 className="dr2-headline font-serif text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[1.02] tracking-[-0.02em]"
+              style={{ fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif' }}>
+              <span className="block overflow-hidden"><CharSplit text="Real doctors." /></span>
+              <span className="block overflow-hidden"><CharSplit text="Real oversight." /></span>
             </h2>
 
-            {/* Body */}
-            <p
-              className="dr2-body mt-6 max-w-[420px] leading-relaxed"
-              style={{ color: "#41566B", fontSize: "clamp(0.9rem, 1.1vw, 1.05rem)" }}
-            >
-              Every treatment plan is reviewed by board-certified physicians with
-              deep expertise in metabolic health, endocrinology, and preventive care.
+            <p className="dr2-body mt-8 max-w-md text-base leading-relaxed" style={{ color: "rgba(11,27,43,0.7)" }}>
+              Every treatment plan is reviewed by board-certified physicians with deep expertise in metabolic health, endocrinology, and preventive care.
             </p>
 
-            {/* Hairline 0 */}
-            <span
-              ref={hairline0Ref}
-              className="my-7 block h-px"
-              style={{ background: "rgba(11,27,43,0.12)" }}
-              aria-hidden="true"
-            />
+            <span ref={hairline0} className="my-10 block h-px w-40" style={{ background: "rgba(11,27,43,0.18)" }} />
 
-            {/* Signature */}
             <div className="dr2-sig flex items-center gap-4">
-              <svg viewBox="0 0 180 56" className="h-11 w-auto shrink-0" fill="none" aria-hidden="true">
-                <path
-                  ref={sigPathRef}
-                  d="M6 40 C16 22, 34 10, 54 28 S82 46, 108 24 C124 14, 148 18, 172 36 M130 34 C142 42, 156 44, 170 38 M56 48 L66 44"
-                  stroke="#0B1B2B"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg width="64" height="32" viewBox="0 0 64 32" fill="none">
+                <path ref={sigPathRef} d="M2 22 C 10 4, 22 30, 32 14 S 54 26, 62 10" stroke="#0B1B2B" strokeWidth="1.5" strokeLinecap="round" fill="none" />
               </svg>
               <div>
-                <p className="text-sm font-semibold" style={{ color: "#0B1B2B" }}>Dr. Michael Andrews</p>
-                <p className="text-xs"                style={{ color: "#41566B" }}>Chief Medical Officer</p>
+                <div className="text-sm font-semibold">Dr. Michael Andrews</div>
+                <div className="text-xs" style={{ color: "rgba(11,27,43,0.55)" }}>Chief Medical Officer</div>
               </div>
             </div>
           </div>
 
           {/* Right image panel */}
-          <div className="relative lg:col-span-7">
-            <div
-              ref={imgPanelRef}
-              className="relative overflow-hidden"
-              style={{ borderRadius: "28px", aspectRatio: "16/10" }}
-            >
-              <img
-                ref={imgInnerRef}
-                src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&q=80&fit=crop"
-                alt="TIDL physician team — board-certified doctors in a clinical setting"
-                className="h-full w-full object-cover"
-                loading="lazy"
-                width={1200}
-                height={750}
-              />
+          <div className="relative">
+            <div ref={imgPanelRef} className="relative aspect-[4/3] overflow-hidden rounded-[28px]"
+              style={{ boxShadow: "0 30px 80px -30px rgba(11,27,43,0.35)" }}>
+              <img ref={imgInnerRef} src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&q=80"
+                alt="Clinical oversight" className="h-full w-full object-cover will-change-transform" loading="lazy" />
             </div>
 
-            {/* Glass badge */}
-            <div
-              ref={badgeRef}
-              className="absolute -bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-full px-5 py-3"
-              style={{
-                background: "rgba(255,255,255,0.88)",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(255,255,255,0.9)",
-                boxShadow: "0 8px 24px -12px rgba(11,27,43,0.18)",
-              }}
-            >
-              <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M10 2L3 5v5c0 4.2 2.8 7.5 7 8.5C17 17.5 20 14.2 20 10V5l-7-3z"
-                  stroke="#3B6FA0" strokeWidth="1.5" strokeLinejoin="round" />
-                <path d="M7 10l2 2 4-4" stroke="#3B6FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <div ref={badgeRef} className="absolute -bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em]"
+              style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(20px)",
+                border: "1px solid rgba(11,27,43,0.08)", boxShadow: "0 18px 50px -18px rgba(11,27,43,0.3)", color: "#0B1B2B" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3B6FA0" strokeWidth="2">
+                <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="12" r="10" />
               </svg>
-              <span className="text-[10.5px] font-semibold uppercase tracking-[0.2em]" style={{ color: "#0B1B2B" }}>
-                Board-Certified · Licensed · Patient-Focused
-              </span>
+              Board-Certified · Licensed · Patient-Focused
             </div>
           </div>
         </div>
 
-        {/* ─── Zone 2: Standards + 3D Carousel ───────────────────────────── */}
-        <div className="mt-24 grid items-start gap-8 lg:grid-cols-12 lg:mt-28">
-
-          {/* Standards list */}
-          <div className="lg:col-span-3">
-            <div className="mb-5 flex items-center gap-3">
-              <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.22em]" style={{ color: "#3B6FA0" }}>
-                Our Standard
-              </span>
-              <span
-                ref={hairline1Ref}
-                className="block h-px flex-1"
-                style={{ background: "rgba(11,27,43,0.12)" }}
-                aria-hidden="true"
-              />
+        {/* ─── Zone 2 ───────────────────────────────────────────────── */}
+        <div className="mt-32 grid gap-16 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+          <div>
+            <div className="mb-8 flex items-center gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "#3B6FA0" }}>Our Standard</span>
+              <span ref={hairline1} className="block h-px w-16" style={{ background: "rgba(59,111,160,0.4)" }} />
             </div>
 
             {STANDARDS.map((s, i) => (
-              <button
-                key={s.num}
-                className="dr2-std w-full border-l-2 py-4 pl-4 text-left"
-                style={{
-                  borderLeftColor: i === activeIdx ? "#3B6FA0" : "rgba(11,27,43,0.1)",
-                  transition: "border-color 0.3s ease",
-                }}
-                onClick={() => setActive(i)}
-                aria-pressed={activeIdx === i}
-              >
-                <p
-                  className="text-[9.5px] font-semibold uppercase tracking-[0.2em]"
-                  style={{ color: i === activeIdx ? "#3B6FA0" : "#41566B", transition: "color 0.3s" }}
-                >
-                  {s.num}
-                </p>
-                <p
-                  className="mt-1 text-sm font-semibold"
-                  style={{ color: i === activeIdx ? "#0B1B2B" : "#41566B", transition: "color 0.3s" }}
-                >
-                  {s.title}
-                </p>
-                <p
-                  className="mt-1 text-xs leading-relaxed"
-                  style={{ color: "#41566B", opacity: i === activeIdx ? 1 : 0.6, transition: "opacity 0.3s" }}
-                >
-                  {s.desc}
-                </p>
+              <button key={s.num} onClick={() => setActive(i)} aria-pressed={activeIdx === i}
+                className="dr2-std group block w-full border-l-2 py-5 pl-6 text-left transition-all duration-500"
+                style={{ borderColor: activeIdx === i ? "#3B6FA0" : "rgba(11,27,43,0.1)" }}>
+                <div className="text-xs font-mono" style={{ color: activeIdx === i ? "#3B6FA0" : "rgba(11,27,43,0.4)" }}>{s.num}</div>
+                <div className="mt-1 text-lg font-semibold">{s.title}</div>
+                <div className="mt-1 text-sm" style={{ color: "rgba(11,27,43,0.6)" }}>{s.desc}</div>
               </button>
             ))}
           </div>
 
           {/* 3D carousel */}
-          <div className="relative flex flex-col items-center lg:col-span-9">
-
-            {/* Track */}
-            <div
-              ref={carouselRef}
-              role="region"
-              aria-roledescription="carousel"
-              aria-label="Physician profiles"
-              className="relative flex w-full items-center justify-center"
-              style={{ perspective: "1200px", height: "300px", opacity: 0 }}
-            >
+          <div className="relative">
+            <div ref={trackRef} className="relative h-[420px]" style={{ perspective: "1400px", opacity: 0 }}>
               {DOCTORS.map((doc, i) => (
-                <div
-                  key={doc.name}
-                  ref={el => { cardRefs.current[i] = el; }}
-                  className="absolute"
-                  style={{ width: "clamp(300px, 42vw, 520px)" }}
-                  aria-hidden={i !== activeIdx}
-                >
-                  {/* Dark glass card */}
-                  <div
-                    className="relative flex h-[280px] overflow-hidden rounded-3xl"
-                    style={{
-                      background: "linear-gradient(145deg, #0f2236 0%, #0B1B2B 100%)",
-                      border: "1px solid rgba(255,255,255,0.07)",
-                      boxShadow: "0 40px 80px -40px rgba(11,27,43,0.5), 0 1px 0 rgba(255,255,255,0.07) inset",
-                    }}
-                  >
-                    {/* Content */}
-                    <div className="flex min-w-0 flex-1 flex-col justify-between p-6">
-                      <div>
-                        <p
-                          className="text-[9px] font-semibold uppercase tracking-[0.26em]"
-                          style={{ color: "#3B6FA0" }}
-                        >
-                          {doc.specialty}
-                        </p>
-                        <h3
-                          className="mt-2 font-display text-[1.45rem] leading-tight text-white"
-                        >
-                          {doc.name}
-                        </h3>
-                        <p className="mt-0.5 text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.42)" }}>
-                          {doc.creds}
-                        </p>
-                        <p className="mt-3 text-[13px] leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
-                          {doc.bio}
-                        </p>
+                <div key={doc.name} ref={(el) => { cardRefs.current[i] = el; }}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                  style={{ width: "clamp(280px, 38vw, 460px)", transformStyle: "preserve-3d" }}
+                  aria-hidden={i !== activeIdx}>
+                  <div className="overflow-hidden rounded-[24px]"
+                    style={{ background: "linear-gradient(160deg, #0B1B2B 0%, #1a3654 100%)",
+                      boxShadow: "0 40px 80px -30px rgba(11,27,43,0.5)" }}>
+                    <div className="grid grid-cols-[1fr_1fr]">
+                      <div className="p-6 text-white">
+                        <div className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: doc.accent }}>{doc.specialty}</div>
+                        <div className="mt-3 font-serif text-2xl" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>{doc.name}</div>
+                        <div className="mt-1 text-xs opacity-60">{doc.creds}</div>
+                        <p className="mt-4 text-xs leading-relaxed opacity-75">{doc.bio}</p>
+                        <button className="mt-6 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: doc.accent }}>
+                          View Profile <span>→</span>
+                        </button>
                       </div>
-                      <Link
-                        to="/quiz"
-                        className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] transition-opacity hover:opacity-70"
-                        style={{ color: "#3B6FA0" }}
-                      >
-                        View Profile
-                        <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                          <path d="M2 6h8M6 3l3 3-3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </Link>
-                    </div>
-
-                    {/* Avatar panel */}
-                    <div
-                      className="relative w-[42%] shrink-0 overflow-hidden"
-                      style={{ background: doc.avatarBg }}
-                    >
-                      {/* Decorative wave */}
-                      <svg
-                        className="absolute inset-0 h-full w-full"
-                        viewBox="0 0 200 280"
-                        fill="none"
-                        aria-hidden="true"
-                        preserveAspectRatio="none"
-                      >
-                        <path d="M0 120 C50 100, 110 140, 200 120 L200 280 L0 280 Z" fill="rgba(11,27,43,0.06)" />
-                        <path d="M0 160 C60 142, 130 178, 200 160" stroke="rgba(59,111,160,0.22)" strokeWidth="1.5" />
-                      </svg>
-                      <img
-                        src={doc.avatar}
-                        alt={doc.name}
-                        className="absolute bottom-0 left-1/2 h-[88%] w-full -translate-x-1/2 object-cover object-top"
-                        loading="lazy"
-                        width={200}
-                        height={248}
-                      />
+                      <div className="relative" style={{ background: doc.accent }}>
+                        <img src={doc.avatar} alt={doc.name} className="h-full w-full object-cover" loading="lazy" />
+                      </div>
                     </div>
                   </div>
-
-                  {/* Floor shadow */}
-                  <div
-                    aria-hidden="true"
-                    className="mx-6 h-3 rounded-b-3xl"
-                    style={{ background: "linear-gradient(to bottom, rgba(11,27,43,0.1), transparent)", filter: "blur(4px)" }}
-                  />
                 </div>
               ))}
             </div>
 
-            {/* Arrow + dot controls */}
-            <div className="mt-6 flex items-center gap-4">
-              <button
-                ref={prevBtnRef}
-                onClick={() => setActive(Math.max(0, activeIdx - 1))}
-                disabled={activeIdx === 0}
-                aria-label="Previous physician"
-                className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity disabled:pointer-events-none disabled:opacity-30"
-                style={{
-                  background: "rgba(255,255,255,0.85)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(11,27,43,0.1)",
-                  boxShadow: "0 4px 14px -6px rgba(11,27,43,0.16)",
-                }}
-              >
-                <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M10 4L6 8l4 4" stroke="#0B1B2B" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+            <div className="mt-8 flex items-center justify-center gap-6">
+              <button ref={prevBtnRef} onClick={() => setActive(activeIdx - 1)} aria-label="Previous"
+                className="flex h-11 w-11 items-center justify-center rounded-full"
+                style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(11,27,43,0.1)",
+                  boxShadow: "0 6px 18px -6px rgba(11,27,43,0.18)" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B1B2B" strokeWidth="2"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
-
-              <div className="flex items-center gap-1.5" role="tablist" aria-label="Select physician">
+              <div className="flex items-center gap-2">
                 {DOCTORS.map((_, i) => (
-                  <button
-                    key={i}
-                    role="tab"
-                    aria-selected={i === activeIdx}
-                    onClick={() => setActive(i)}
-                    aria-label={DOCTORS[i].name}
-                    className="h-1.5 rounded-full"
-                    style={{
-                      width: i === activeIdx ? "22px" : "6px",
-                      background: i === activeIdx ? "#3B6FA0" : "rgba(11,27,43,0.2)",
-                      transition: "width 0.35s ease, background 0.35s ease",
-                    }}
-                  />
+                  <button key={i} onClick={() => setActive(i)} aria-label={`Doctor ${i + 1}`}
+                    className="h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: i === activeIdx ? 24 : 6, background: i === activeIdx ? "#3B6FA0" : "rgba(11,27,43,0.2)" }} />
                 ))}
               </div>
-
-              <button
-                ref={nextBtnRef}
-                onClick={() => setActive(Math.min(DOCTORS.length - 1, activeIdx + 1))}
-                disabled={activeIdx === DOCTORS.length - 1}
-                aria-label="Next physician"
-                className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity disabled:pointer-events-none disabled:opacity-30"
-                style={{
-                  background: "rgba(255,255,255,0.85)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(11,27,43,0.1)",
-                  boxShadow: "0 4px 14px -6px rgba(11,27,43,0.16)",
-                }}
-              >
-                <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 4l4 4-4 4" stroke="#0B1B2B" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <button ref={nextBtnRef} onClick={() => setActive(activeIdx + 1)} aria-label="Next"
+                className="flex h-11 w-11 items-center justify-center rounded-full"
+                style={{ background: "rgba(255,255,255,0.9)", border: "1px solid rgba(11,27,43,0.1)",
+                  boxShadow: "0 6px 18px -6px rgba(11,27,43,0.18)" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B1B2B" strokeWidth="2"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
             </div>
           </div>
         </div>
 
-        {/* ─── Zone 3: Stats bar ────────────────────────────────────────── */}
-        <div className="dr2-stats mt-12 lg:mt-16">
-          <div
-            className="flex flex-wrap items-center gap-y-6 rounded-3xl px-6 py-6 sm:px-8 lg:flex-nowrap"
-            style={{
-              background: "rgba(255,255,255,0.68)",
-              backdropFilter: "blur(24px)",
-              border: "1px solid rgba(255,255,255,0.85)",
-              boxShadow: "0 20px 60px -40px rgba(11,27,43,0.16)",
-            }}
-          >
-            {/* Atom SVG mark */}
-            <div className="shrink-0 pr-6">
-              <svg
-                ref={atomSvgRef}
-                viewBox="0 0 64 64"
-                fill="none"
-                className="h-10 w-10"
-                aria-hidden="true"
-              >
-                <ellipse cx="32" cy="32" rx="29" ry="11" stroke="#3B6FA0" strokeWidth="1.3" />
-                <ellipse cx="32" cy="32" rx="29" ry="11" stroke="#3B6FA0" strokeWidth="1.3" transform="rotate(60 32 32)" />
-                <ellipse cx="32" cy="32" rx="29" ry="11" stroke="#3B6FA0" strokeWidth="1.3" transform="rotate(120 32 32)" />
-                <circle cx="32" cy="32" r="3.5" fill="#3B6FA0" />
-                <circle cx="61" cy="32" r="2"   fill="#3B6FA0" />
-                <circle cx="17.5" cy="6.5" r="2" fill="#3B6FA0" />
-                <circle cx="17.5" cy="57.5" r="2" fill="#3B6FA0" />
-              </svg>
-            </div>
+        {/* ─── Zone 3: Stats ───────────────────────────────────────── */}
+        <div className="dr2-stats mt-28 grid gap-10 rounded-[28px] p-10 md:grid-cols-[auto_1fr_auto] md:items-center"
+          style={{ background: "rgba(255,255,255,0.6)", backdropFilter: "blur(20px)",
+            border: "1px solid rgba(11,27,43,0.06)", boxShadow: "0 30px 80px -40px rgba(11,27,43,0.25)" }}>
+          <svg ref={atomSvgRef} width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="6" fill="#3B6FA0" />
+            <ellipse cx="32" cy="32" rx="28" ry="10" stroke="#3B6FA0" strokeWidth="1.2" />
+            <ellipse cx="32" cy="32" rx="28" ry="10" stroke="#3B6FA0" strokeWidth="1.2" transform="rotate(60 32 32)" />
+            <ellipse cx="32" cy="32" rx="28" ry="10" stroke="#3B6FA0" strokeWidth="1.2" transform="rotate(120 32 32)" />
+          </svg>
 
-            {/* Metrics */}
+          <div className="grid gap-8 md:grid-cols-4">
             {METRICS.map((m, i) => (
-              <Fragment key={m.label}>
-                <span
-                  className="hidden h-8 w-px shrink-0 lg:block"
-                  style={{ background: "rgba(11,27,43,0.11)", margin: "0 1.5rem" }}
-                  aria-hidden="true"
-                />
-                <div className="min-w-0 py-1">
-                  <p
-                    className="font-display leading-none"
-                    style={{ color: "#0B1B2B", fontSize: "clamp(1.45rem, 2vw, 2rem)" }}
-                  >
-                    <span ref={el => { metricRefs.current[i] = el; }}>0{m.suffix}</span>
-                    {" "}
-                    <span className="font-sans text-sm font-medium" style={{ color: "#41566B" }}>
-                      {m.unit}
-                    </span>
-                  </p>
-                  <p className="mt-1 text-[9px] uppercase tracking-[0.2em]" style={{ color: "#3B6FA0" }}>
-                    {m.label}
-                  </p>
+              <div key={m.label}>
+                <div className="flex items-baseline gap-1">
+                  <span ref={(el) => { metricRefs.current[i] = el; }} className="font-serif text-4xl" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>0{m.suffix}</span>
+                  <span className="text-xs uppercase tracking-wider" style={{ color: "rgba(11,27,43,0.55)" }}>{m.unit}</span>
                 </div>
-              </Fragment>
-            ))}
-
-            {/* Care philosophy */}
-            <Fragment>
-              <span
-                className="hidden h-8 w-px shrink-0 lg:block"
-                style={{ background: "rgba(11,27,43,0.11)", margin: "0 1.5rem" }}
-                aria-hidden="true"
-              />
-              <div className="min-w-0 py-1">
-                <p
-                  className="font-display leading-tight"
-                  style={{ color: "#0B1B2B", fontSize: "clamp(1.05rem, 1.4vw, 1.3rem)" }}
-                >
-                  You first.<br />Always.
-                </p>
-                <p className="mt-1 text-[9px] uppercase tracking-[0.2em]" style={{ color: "#3B6FA0" }}>
-                  Care Philosophy
-                </p>
+                <div className="mt-2 h-[2px] w-full overflow-hidden rounded-full" style={{ background: "rgba(11,27,43,0.08)" }}>
+                  <span ref={(el) => { barRefs.current[i] = el; }} className="block h-full w-full" style={{ background: "#3B6FA0" }} />
+                </div>
+                <div className="mt-2 text-xs" style={{ color: "rgba(11,27,43,0.6)" }}>{m.label}</div>
               </div>
-            </Fragment>
+            ))}
+          </div>
+
+          <div className="border-l pl-6" style={{ borderColor: "rgba(11,27,43,0.08)" }}>
+            <div className="font-serif text-xl leading-tight" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>You first.<br/>Always.</div>
+            <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: "#3B6FA0" }}>Care Philosophy</div>
           </div>
         </div>
-
       </div>
     </section>
   );
 }
+
+// alias so existing import in index.tsx keeps working
+export { ClinicalLeadershipSection as DoctorSection };
