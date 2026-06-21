@@ -14,6 +14,7 @@ import { useAuthModal } from "@/providers/auth-modal-provider";
 
 import hero from "@/assets/hero image 3d.png";
 import heroBg from "@/assets/hero bg.jpeg";
+import heroMobileBg from "@/assets/hero_section_mobileview.jpeg";
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 import footerLogo from "@/assets/tidl_logo.png";
@@ -615,9 +616,20 @@ function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="hero relative overflow-hidden bg-background pt-[calc(5.5rem+0.5cm)] pb-8 lg:pb-10">
+    <section ref={sectionRef} className="hero relative flex min-h-[88svh] flex-col overflow-hidden bg-background pt-[calc(5.5rem+1.5cm)] pb-8 lg:block lg:min-h-0 lg:pb-10 lg:pt-[calc(5.5rem+0.5cm)]">
+      {/* Mobile-only background image */}
+      <div className="absolute inset-0 lg:hidden">
+        <img
+          src={heroMobileBg}
+          alt=""
+          className="h-full w-full object-cover object-[center_bottom]"
+          draggable={false}
+        />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-background" />
+      </div>
+
       <div className="relative overflow-visible">
-        <div ref={bgRef} className="absolute inset-0 opacity-0">
+        <div ref={bgRef} className="absolute inset-0 hidden opacity-0 lg:block">
           <img
             src={heroBg}
             alt=""
@@ -637,10 +649,13 @@ function Hero() {
               </h1>
 
               <p ref={paraRef} className="mt-5 max-w-md text-sm leading-relaxed text-ink-soft opacity-0 sm:text-base">
-                A clinical operating system pairing diagnostic-grade biomarkers with metabolic, hormonal and longevity therapies delivered to your door.
+                Clinical-grade biomarkers paired<br className="sm:hidden" />
+                with metabolic, hormonal<br className="sm:hidden" />
+                and longevity therapies<br className="sm:hidden" />
+                delivered to your door.
               </p>
 
-              <div ref={ctaRef} className="mt-7 flex flex-wrap items-center justify-start gap-3">
+              <div ref={ctaRef} className="mt-7 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <MagneticButton as="button" onClick={() => openModal()} className="btn-primary">
                   Start your assessment →
                 </MagneticButton>
@@ -648,7 +663,7 @@ function Hero() {
               </div>
             </div>
 
-            <div ref={discRef} className="relative mx-auto h-[min(68vw,380px)] w-full max-w-[560px] [perspective:1400px] sm:h-[440px] lg:mx-0 lg:ml-auto lg:h-[480px] lg:max-w-none">
+            <div ref={discRef} className="relative mx-auto hidden h-[min(68vw,380px)] w-full max-w-[560px] [perspective:1400px] sm:h-[440px] lg:mx-0 lg:ml-auto lg:block lg:h-[480px] lg:max-w-none">
               <div
                 className="absolute inset-x-10 bottom-6 h-12 rounded-full blur-3xl"
                 style={{ background: "radial-gradient(closest-side, rgba(243,195,0,0.22), transparent 70%)" }}
