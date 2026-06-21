@@ -1,30 +1,100 @@
-import { ChevronRight, LogOut, Menu, User, X } from "lucide-react";
+import {
+  BookOpenText,
+  ChevronRight,
+  CircleHelp,
+  FlaskConical,
+  Gauge,
+  HeartPulse,
+  LifeBuoy,
+  LogOut,
+  Menu,
+  Scale,
+  Sparkles,
+  User,
+  Workflow,
+  X,
+} from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 
 import { useAuth } from "@/providers/auth-provider";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
+import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 
-const NAV_LINKS = [
-  { label: "Weight loss", to: "/weight-loss" as const },
-  { label: "Longevity", to: "/longevity" as const },
-  { label: "Hormonal", to: "/hormonal" as const },
-  { label: "Performance", to: "/performance" as const },
+const EXPLORE_ITEMS = [
+  {
+    title: "Weight Loss",
+    description: "Personalized plans and treatment options",
+    to: "/weight-loss" as const,
+    icon: Scale,
+  },
+  {
+    title: "Longevity",
+    description: "Support healthy aging and wellness",
+    to: "/longevity" as const,
+    icon: Sparkles,
+  },
+  {
+    title: "Hormonal Health",
+    description: "Balance and optimization programs",
+    to: "/hormonal" as const,
+    icon: HeartPulse,
+  },
+  {
+    title: "Performance",
+    description: "Improve energy and lifestyle",
+    to: "/performance" as const,
+    icon: Gauge,
+  },
 ];
 
-const PRODUCT_LINKS = [
-  { label: "Lirosiome — GLP-1", slug: "lirosome" as const },
-  { label: "Tirosane — Longevity", slug: "tirosane" as const },
-  { label: "TIDL Core", slug: "tidl-core" as const },
-  { label: "TIDL Cycle", slug: "tidl-cycle" as const },
+const POPULAR_ITEMS = [
+  {
+    title: "GLP-1 Programs",
+    description: "Physician-guided metabolic care",
+    slug: "lirosome" as const,
+    icon: FlaskConical,
+  },
+  {
+    title: "Personalized Treatments",
+    description: "Tailored protocols by your goals",
+    slug: "tirosane" as const,
+    icon: Workflow,
+  },
+  {
+    title: "Wellness Plans",
+    description: "Foundational plans for long-term health",
+    slug: "tidl-core" as const,
+    icon: Sparkles,
+  },
 ];
 
-const ACCOUNT_LINKS = [
-  { label: "My account", to: "/account" as const },
-  { label: "My orders", to: "/account/orders" as const },
-  { label: "My treatment", to: "/account/treatment" as const },
-  { label: "Support", to: "/account/support" as const },
+const RESOURCE_ITEMS = [
+  {
+    title: "How it works",
+    description: "Understand our physician-led process",
+    href: "/#how-it-works",
+    icon: Workflow,
+  },
+  {
+    title: "Health articles",
+    description: "Evidence-based education and insights",
+    href: "/#science",
+    icon: BookOpenText,
+  },
+  {
+    title: "FAQs",
+    description: "Answers to common care questions",
+    href: "/#faqs",
+    icon: CircleHelp,
+  },
+  {
+    title: "Contact support",
+    description: "Talk to our care team when needed",
+    href: "/account/support",
+    icon: LifeBuoy,
+  },
 ];
 
 function Avatar({ user }: { user: { firstName: string; lastName?: string } | null }) {
@@ -58,10 +128,12 @@ export function SiteNav({ dark = true }: SiteNavProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Prevent body scroll when menu open
+  // Lock page scroll (and pause Lenis where present) when menu is open
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (menuOpen) {
+      lockPageScroll();
+      return () => unlockPageScroll();
+    }
   }, [menuOpen]);
 
   const bg = dark
@@ -175,144 +247,182 @@ export function SiteNav({ dark = true }: SiteNavProps) {
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 z-[60] flex h-full w-[320px] sm:w-[360px] flex-col rounded-l-3xl bg-white shadow-[-4px_0_40px_rgba(0,0,0,0.12)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`fixed right-0 top-0 z-[60] flex h-full w-[400px] sm:w-[450px] lg:w-[500px] flex-col rounded-l-[2.35rem] bg-[#FCFCFB] shadow-[-10px_0_60px_rgba(0,0,0,0.14)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           menuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
       >
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between px-6 pt-7 pb-4">
-          <span className="text-xl font-semibold text-foreground">Menu</span>
-          <div className="flex items-center gap-1">
-            {isAuthenticated ? (
-              <Link
-                to="/account"
-                onClick={() => setMenuOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-foreground/60 transition-colors hover:bg-surface hover:text-foreground"
-                aria-label="Account"
-              >
-                <User className="h-5 w-5" />
-              </Link>
-            ) : (
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-foreground/60 transition-colors hover:bg-surface hover:text-foreground"
-                aria-label="Log in"
-              >
-                <User className="h-5 w-5" />
-              </Link>
-            )}
+        <div className="shrink-0 border-b border-border/60 bg-gradient-to-b from-[#FFFDF5] to-[#FCFCFB] px-6 pb-5 pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src={tidlLogoYellow} alt="TIDL" className="h-7 w-auto" />
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#9B927C]">Dashboard</p>
+                <p className="text-sm font-semibold text-foreground">Navigation</p>
+              </div>
+            </div>
             <button
               type="button"
               onClick={() => setMenuOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground/60 transition-colors hover:bg-surface hover:text-foreground"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white text-foreground/60 transition-colors hover:text-foreground"
               aria-label="Close menu"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
-        </div>
 
-        {/* Scrollable nav */}
-        <nav
-          className="flex-1 overflow-y-auto"
-          style={{ scrollbarWidth: "none" } as React.CSSProperties}
-        >
-          {/* Account section when logged in */}
           {isAuthenticated && (
-            <div className="px-6 pb-2 pt-4">
-              <div className="mb-3 flex items-center gap-2.5">
+            <Link
+              to="/account"
+              onClick={() => setMenuOpen(false)}
+              className="mt-4 flex items-center justify-between rounded-2xl border border-border/50 bg-white/90 px-4 py-3 shadow-[0_6px_18px_rgba(0,0,0,0.03)]"
+            >
+              <div className="flex items-center gap-3">
                 <Avatar user={user} />
                 <div>
                   <p className="text-sm font-semibold text-foreground">{user?.firstName} {user?.lastName}</p>
                   <p className="text-[11px] text-muted-foreground">{user?.email}</p>
                 </div>
               </div>
-              <ul>
-                {ACCOUNT_LINKS.map((item) => (
-                  <li key={item.to} className="border-b border-border/50">
-                    <Link
-                      to={item.to}
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-between py-4 text-[15px] text-foreground/85 transition-colors hover:text-foreground"
-                    >
-                      {item.label}
-                      <ChevronRight className="h-4 w-4 text-foreground/30" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <ChevronRight className="h-4 w-4 text-foreground/35" />
+            </Link>
           )}
 
-          {/* Explore */}
-          <div className="px-6 pb-2 pt-5">
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
-              Explore
-            </p>
-            <ul>
-              {NAV_LINKS.map((link) => (
-                <li key={link.to} className="border-b border-border/50">
+          {!isAuthenticated && (
+            <div className="mt-4 flex items-center justify-between rounded-2xl border border-border/50 bg-white/90 px-4 py-3 shadow-[0_6px_18px_rgba(0,0,0,0.03)]">
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFF6D8] text-[#8A6D00]">
+                  <User className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Guest</p>
+                  <p className="text-[11px] text-muted-foreground">Log in to access account tools</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Scrollable nav */}
+        <nav className="no-scrollbar flex-1 overflow-y-auto px-6 pb-36 pt-5">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9B927C]">
+            Explore
+          </p>
+          <ul className="space-y-2.5">
+            {EXPLORE_ITEMS.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.to}>
                   <Link
-                    to={link.to}
+                    to={item.to}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-between py-4 text-[15px] text-foreground/85 transition-colors hover:text-foreground"
+                    className={`group flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3.5 shadow-[0_6px_16px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#F3C300]/40 hover:shadow-[0_12px_24px_rgba(0,0,0,0.07)] ${
+                      menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                    }`}
+                    style={{ transitionDelay: `${80 + idx * 45}ms` }}
                   >
-                    {link.label}
-                    <ChevronRight className="h-4 w-4 text-foreground/30" />
+                    <div className="flex items-start gap-3">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF9E7] text-[#B28B00]">
+                        <Icon className="h-4.5 w-4.5" />
+                      </span>
+                      <div>
+                        <p className="text-[14px] font-semibold text-foreground">{item.title}</p>
+                        <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-foreground/35 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
+              );
+            })}
+          </ul>
 
-          {/* Top Treatments */}
-          <div className="px-6 pb-2 pt-5">
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
-              Top Treatments
-            </p>
-            <ul>
-              {PRODUCT_LINKS.map((p) => (
-                <li key={p.slug} className="border-b border-border/50">
+          <p className="mb-3 mt-7 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9B927C]">
+            Popular Treatments
+          </p>
+          <ul className="space-y-2.5">
+            {POPULAR_ITEMS.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.slug}>
                   <Link
                     to="/products/$slug"
-                    params={{ slug: p.slug }}
+                    params={{ slug: item.slug }}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-between py-4 text-[15px] text-foreground/85 transition-colors hover:text-foreground"
+                    className={`group flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3.5 shadow-[0_6px_16px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#F3C300]/40 hover:shadow-[0_12px_24px_rgba(0,0,0,0.07)] ${
+                      menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                    }`}
+                    style={{ transitionDelay: `${280 + idx * 45}ms` }}
                   >
-                    {p.label}
-                    <ChevronRight className="h-4 w-4 text-foreground/30" />
+                    <div className="flex items-start gap-3">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF9E7] text-[#B28B00]">
+                        <Icon className="h-4.5 w-4.5" />
+                      </span>
+                      <div>
+                        <p className="text-[14px] font-semibold text-foreground">{item.title}</p>
+                        <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-foreground/35 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
+              );
+            })}
+          </ul>
 
-          {/* Sign out at bottom */}
-          {isAuthenticated && (
-            <div className="px-6 py-4">
+          <p className="mb-3 mt-7 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9B927C]">
+            Resources
+          </p>
+          <ul className="space-y-2.5">
+            {RESOURCE_ITEMS.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.title}>
+                  <a
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`group flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3.5 shadow-[0_6px_16px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#F3C300]/40 hover:shadow-[0_12px_24px_rgba(0,0,0,0.07)] ${
+                      menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                    }`}
+                    style={{ transitionDelay: `${470 + idx * 45}ms` }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF9E7] text-[#B28B00]">
+                        <Icon className="h-4.5 w-4.5" />
+                      </span>
+                      <div>
+                        <p className="text-[14px] font-semibold text-foreground">{item.title}</p>
+                        <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-foreground/35 transition-transform group-hover:translate-x-0.5" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="flex items-center gap-1">
+            {isAuthenticated && (
               <button
                 type="button"
                 onClick={() => { logout(); setMenuOpen(false); }}
-                className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="mt-6 flex items-center gap-2 rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <LogOut className="h-4 w-4" />
                 Sign out
               </button>
-            </div>
-          )}
-
-          {/* Extra bottom padding so last items aren't hidden behind CTA */}
-          <div className="h-4" />
+            )}
+          </div>
         </nav>
 
         {/* Sticky bottom CTA */}
-        <div className="shrink-0 rounded-bl-3xl border-t border-border/40 bg-white px-5 pb-8 pt-4">
+        <div className="shrink-0 rounded-bl-[2rem] border-t border-border/60 bg-gradient-to-t from-white to-[#FCFCFB] px-6 pb-8 pt-5">
           {!isAuthenticated && (
             <Link
               to="/login"
               onClick={() => setMenuOpen(false)}
-              className="mb-2.5 flex items-center justify-center rounded-2xl border border-border py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-surface"
+              className="mb-3 flex items-center justify-center rounded-[1.1rem] border border-border/70 bg-white py-3.5 text-sm font-semibold text-foreground transition-all hover:bg-surface"
             >
               Log in
             </Link>
@@ -320,7 +430,7 @@ export function SiteNav({ dark = true }: SiteNavProps) {
           <button
             type="button"
             onClick={() => { openModal(); setMenuOpen(false); }}
-            className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-sm font-semibold text-black shadow-[0_4px_16px_rgba(243,195,0,0.30)] transition-opacity hover:opacity-90"
+            className="flex w-full items-center justify-center rounded-[1.1rem] bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-sm font-semibold text-black shadow-[0_8px_20px_rgba(243,195,0,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(243,195,0,0.4)]"
           >
             Start Assessment
           </button>
