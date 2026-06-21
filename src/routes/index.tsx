@@ -444,7 +444,7 @@ function Nav() {
         </div>
 
         {/* Scrollable nav */}
-        <nav className="no-scrollbar flex-1 overflow-y-auto px-7 pb-10 pt-6">
+        <nav data-lenis-prevent className="no-scrollbar flex-1 overflow-y-auto overscroll-contain px-7 pb-10 pt-6">
           {/* Explore */}
           <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">
             Explore
