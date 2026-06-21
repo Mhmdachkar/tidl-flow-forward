@@ -22,7 +22,6 @@ export function QuizModal() {
     noNavigation: true,
   });
 
-  // Mount guard for portal (SSR-safe)
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -36,7 +35,31 @@ export function QuizModal() {
     }
   }, [isOpen, mounted]);
 
-  // Reset quiz to step 1 whenever modal opens fresh
+  // Keep wheel/touch scroll inside the quiz pane (don't let Lenis/page steal it)
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el || !isOpen) return;
+
+    const stopBubble = (event: Event) => {
+      event.stopPropagation();
+    };
+
+    el.addEventListener("wheel", stopBubble, { passive: true });
+    el.addEventListener("touchmove", stopBubble, { passive: true });
+
+    return () => {
+      el.removeEventListener("wheel", stopBubble);
+      el.removeEventListener("touchmove", stopBubble);
+    };
+  }, [isOpen, quiz.currentStep]);
+
+  // Reset scroll position when step changes
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [quiz.currentStep]);
+
   const wasOpen = useRef(false);
   useEffect(() => {
     if (isOpen && !wasOpen.current) {
@@ -48,7 +71,6 @@ export function QuizModal() {
 
   const isRecommendation = quiz.currentStep === QUIZ_TOTAL_STEPS;
 
-  // ── Automatic advance: every step moves forward on its own once valid ──
   const TEXT_INPUT_STEPS = new Set([2, 7]);
   useEffect(() => {
     if (!isOpen || isRecommendation) return;
@@ -68,21 +90,6 @@ export function QuizModal() {
     }
   };
 
-  // Route wheel events on the backdrop into the quiz scroll area
-  const handleOverlayWheel = (event: React.WheelEvent) => {
-    const scrollEl = contentRef.current;
-    if (!scrollEl) {
-      event.preventDefault();
-      return;
-    }
-
-    const target = event.target as Node;
-    if (scrollEl.contains(target)) return;
-
-    event.preventDefault();
-    scrollEl.scrollTop += event.deltaY;
-  };
-
   if (!mounted) return null;
 
   return createPortal(
@@ -99,28 +106,28 @@ export function QuizModal() {
         aria-hidden="true"
       />
 
-      {/* Wrapper — sheet anchored to bottom, blocks background scroll */}
+      {/* Wrapper — sheet flush to bottom */}
       <div
-        className="fixed inset-0 z-[91] flex items-end justify-center overscroll-none"
+        className="fixed inset-0 z-[91] flex items-end justify-center"
         style={{ pointerEvents: isOpen ? "auto" : "none" }}
-        onWheel={handleOverlayWheel}
         aria-modal="true"
         role="dialog"
         aria-label="Health assessment"
       >
-        {/* Sheet — fixed max height so inner content scrolls, not the page */}
+        {/* Sheet — fixed height so the middle row is always scrollable */}
         <div
           style={{
             transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
             transform: isOpen ? "translateY(0)" : "translateY(100%)",
+            height: "min(92dvh, 92svh)",
           }}
-          className={`relative flex max-h-[92svh] min-h-0 w-full flex-col overflow-hidden rounded-t-[36px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
+          className={`grid w-full grid-rows-[auto_auto_minmax(0,1fr)_auto] overflow-hidden rounded-t-[36px] bg-[#F7F5F1] shadow-[0_-12px_60px_rgba(0,0,0,0.4)] ${
             isRecommendation ? "sm:max-w-[760px]" : "sm:max-w-[720px]"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Gold progress bar */}
-          <div className="h-1 w-full shrink-0 bg-[#E8E5DF]">
+          {/* Progress */}
+          <div className="h-1 w-full bg-[#E8E5DF]">
             <div
               className="h-full bg-gradient-to-r from-[#C9A200] to-[#F3C300] transition-all duration-500 ease-out"
               style={{ width: `${quiz.progress}%` }}
@@ -128,7 +135,7 @@ export function QuizModal() {
           </div>
 
           {/* Header */}
-          <div className="flex shrink-0 items-center justify-between px-6 pt-5 pb-1 sm:px-8">
+          <div className="flex items-center justify-between px-6 pt-5 pb-2 sm:px-8">
             {quiz.canGoBack ? (
               <button
                 type="button"
@@ -156,36 +163,38 @@ export function QuizModal() {
             </button>
           </div>
 
-          {/* Scrollable quiz content — only this area moves */}
+          {/* Scrollable quiz body — grid row 3, minmax(0,1fr) forces overflow */}
           <div
             ref={contentRef}
-            className="no-scrollbar min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-6 pt-7 pb-4 sm:px-10"
+            className="no-scrollbar min-h-0 overflow-y-auto overscroll-y-contain px-6 pt-4 pb-6 sm:px-10"
+            style={{ WebkitOverflowScrolling: "touch" }}
           >
             {isRecommendation ? (
               <QuizFlow quiz={quiz} />
             ) : (
-              <div className="mx-auto w-full max-w-[480px] pb-2">
+              <div className="mx-auto w-full max-w-[480px]">
                 <QuizFlow quiz={quiz} />
               </div>
             )}
           </div>
 
-          {/* Final step CTA */}
-          {isRecommendation && (
-            <div className="shrink-0 px-6 pb-4 pt-2 sm:px-9">
-              <button
-                type="button"
-                onClick={handleGetPlan}
-                className="h-14 w-full rounded-2xl bg-[#1A1816] text-[15px] font-semibold text-white transition-opacity hover:opacity-80 active:scale-[0.98]"
-              >
-                Get my plan →
-              </button>
-            </div>
-          )}
-
-          <p className="shrink-0 pb-5 pt-2 text-center text-[11px] text-[#9C9890]">
-            Secure &amp; private · Physician reviewed
-          </p>
+          {/* Footer */}
+          <div className="shrink-0 border-t border-[#E8E5DF]/80 bg-[#F7F5F1]">
+            {isRecommendation && (
+              <div className="px-6 pt-4 sm:px-9">
+                <button
+                  type="button"
+                  onClick={handleGetPlan}
+                  className="h-14 w-full rounded-2xl bg-[#1A1816] text-[15px] font-semibold text-white transition-opacity hover:opacity-80 active:scale-[0.98]"
+                >
+                  Get my plan →
+                </button>
+              </div>
+            )}
+            <p className="py-4 text-center text-[11px] text-[#9C9890]">
+              Secure &amp; private · Physician reviewed
+            </p>
+          </div>
         </div>
       </div>
     </>,
