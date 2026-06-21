@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { HowItWorksSection } from "@/components/product/HowItWorksSection";
 import { IncludedSection } from "@/components/product/IncludedSection";
 import { OutcomesSection } from "@/components/product/OutcomesSection";
@@ -17,6 +18,7 @@ interface ProductPageProps {
 }
 
 export function ProductPage({ product }: ProductPageProps) {
+  const { openModal } = useQuizModal();
   return (
     <div className="min-h-svh bg-background pb-24 lg:pb-0">
       <header className="border-b border-border/60 bg-background/90 backdrop-blur-md">
@@ -24,13 +26,13 @@ export function ProductPage({ product }: ProductPageProps) {
           <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
             ← TIDL
           </Link>
-          <Link
-            to="/quiz"
-            search={{ product: product.slug }}
+          <button
+            type="button"
+            onClick={() => openModal({ product: product.slug })}
             className="text-sm font-medium text-foreground hover:text-clinical"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </header>
 

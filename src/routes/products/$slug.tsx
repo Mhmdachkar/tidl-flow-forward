@@ -1,4 +1,4 @@
-﻿import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { ProductPage } from "@/components/product/ProductPage";
 import { getProductBySlug } from "@/lib/products";
@@ -9,10 +9,10 @@ export const Route = createFileRoute("/products/$slug")({
     return {
       meta: product
         ? [
-            { title: `${product.displayName} ΓÇö TIDL` },
+            { title: `${product.displayName} — TIDL` },
             { name: "description", content: product.metaDescription },
           ]
-        : [{ title: "Product not found ΓÇö TIDL" }],
+        : [{ title: "Product not found — TIDL" }],
     };
   },
   component: ProductDetailPage,

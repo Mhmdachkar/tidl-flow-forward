@@ -37,15 +37,8 @@ function QuizPage() {
     initialGoal: goal,
   });
 
-  if (!quiz.hydrated) {
-    return (
-      <div className="flex min-h-svh items-center justify-center bg-background text-muted-foreground">
-        Loading assessment...
-      </div>
-    );
-  }
-
-  const isFinalStep = quiz.currentStep === quiz.totalSteps;
+  const isRecommendation = quiz.currentStep === quiz.totalSteps;
+  const isFinalStep = isRecommendation;
   const primaryLabel = isFinalStep ? "Continue to Checkout" : "Continue";
 
   const handleContinue = () => {
@@ -62,8 +55,13 @@ function QuizPage() {
       progress={quiz.progress}
       canGoBack={quiz.canGoBack}
       onBack={quiz.goBack}
+      wide={isRecommendation}
       footer={
-        <button type="button" onClick={handleContinue} className="btn-primary h-14 w-full justify-center text-base">
+        <button
+          type="button"
+          onClick={handleContinue}
+          className="h-14 w-full rounded-2xl bg-[#1A1816] text-[15px] font-semibold text-white transition-opacity hover:opacity-80"
+        >
           {primaryLabel}
         </button>
       }

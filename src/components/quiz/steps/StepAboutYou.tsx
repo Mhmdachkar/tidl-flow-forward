@@ -50,7 +50,7 @@ export function StepAboutYou({
             max={120}
             value={age ?? ""}
             onChange={(event) => onChange({ age: parseNumber(event.target.value) })}
-            className="h-14 rounded-2xl px-4 text-base"
+            className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
             placeholder="Enter your age"
           />
         </QuizField>
@@ -68,7 +68,7 @@ export function StepAboutYou({
               max={8}
               value={heightFeet ?? ""}
               onChange={(event) => onChange({ heightFeet: parseNumber(event.target.value) })}
-              className="h-14 rounded-2xl px-4 text-base"
+              className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
               placeholder="Feet"
               aria-label="Height in feet"
             />
@@ -79,7 +79,7 @@ export function StepAboutYou({
               max={11}
               value={heightInches ?? ""}
               onChange={(event) => onChange({ heightInches: parseNumber(event.target.value) })}
-              className="h-14 rounded-2xl px-4 text-base"
+              className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
               placeholder="Inches"
               aria-label="Height in inches"
             />
@@ -94,7 +94,7 @@ export function StepAboutYou({
             max={700}
             value={weightLbs ?? ""}
             onChange={(event) => onChange({ weightLbs: parseNumber(event.target.value) })}
-            className="h-14 rounded-2xl px-4 text-base"
+            className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
             placeholder="Enter your weight"
           />
         </QuizField>

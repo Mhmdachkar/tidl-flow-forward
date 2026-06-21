@@ -30,11 +30,11 @@ export function QuizSegmentedControl<T extends string>({
             type="button"
             onClick={() => onChange(option.id)}
             className={cn(
-              "min-h-[56px] rounded-2xl border px-4 py-3 text-sm font-medium transition-all",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+              "min-h-[56px] rounded-2xl border px-4 py-3 text-[15px] font-medium transition-all duration-150",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A200]/40",
               selected
-                ? "border-foreground bg-surface text-foreground shadow-sm"
-                : "border-border bg-surface/70 text-muted-foreground hover:border-foreground/30 hover:bg-surface hover:text-foreground",
+                ? "border-[#1A1816] bg-[#1A1816] text-white shadow-sm"
+                : "border-[#DDD9D1] bg-white text-[#1A1816] hover:border-[#BFBBAF] hover:shadow-sm",
             )}
             aria-pressed={selected}
           >

@@ -90,4 +90,5 @@ export interface RecommendedTreatment {
   description: string;
   startingPrice: number;
   productSlug?: ProductSlug;
+  image?: string;
 }

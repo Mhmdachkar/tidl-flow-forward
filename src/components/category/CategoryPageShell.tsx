@@ -6,6 +6,7 @@ import { TrustBar } from "@/components/product/TrustBar";
 import { WhyPenSection } from "@/components/product/WhyPenSection";
 import { CategoryProductGrid } from "@/components/category/CategoryProductGrid";
 import { CARE_JOURNEY_STEPS } from "@/data/shared-care-steps";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import type { Category } from "@/types/product";
 import type { Product } from "@/types/product";
 
@@ -15,7 +16,8 @@ interface CategoryPageProps {
 }
 
 export function CategoryPageShell({ category, products }: CategoryPageProps) {
-  const quizSearch = products[0]
+  const { openModal } = useQuizModal();
+  const quizOpts = products[0]
     ? { product: products[0].slug }
     : { goal: category.defaultGoalId };
 
@@ -26,13 +28,13 @@ export function CategoryPageShell({ category, products }: CategoryPageProps) {
           <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
             ← TIDL
           </Link>
-          <Link
-            to="/quiz"
-            search={quizSearch}
+          <button
+            type="button"
+            onClick={() => openModal(quizOpts)}
             className="text-sm font-medium text-foreground hover:text-clinical"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -60,13 +62,13 @@ export function CategoryPageShell({ category, products }: CategoryPageProps) {
             ))}
           </ul>
 
-          <Link
-            to="/quiz"
-            search={quizSearch}
+          <button
+            type="button"
+            onClick={() => openModal(quizOpts)}
             className="btn-primary mt-8 inline-flex justify-center px-8 py-3.5 text-sm"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </section>
 
@@ -99,26 +101,26 @@ export function CategoryPageShell({ category, products }: CategoryPageProps) {
             Complete a secure assessment. A licensed physician reviews your information
             before any prescription is written.
           </p>
-          <Link
-            to="/quiz"
-            search={quizSearch}
+          <button
+            type="button"
+            onClick={() => openModal(quizOpts)}
             className="btn-primary mt-8 inline-flex justify-center px-10 py-3.5 text-sm"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </section>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-4 backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">{category.title}</p>
-          <Link
-            to="/quiz"
-            search={quizSearch}
+          <button
+            type="button"
+            onClick={() => openModal(quizOpts)}
             className="btn-primary shrink-0 px-6 py-2.5 text-sm"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </div>
     </div>

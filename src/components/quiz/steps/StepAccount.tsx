@@ -24,7 +24,7 @@ export function StepAccount({ email, phone, password, errors, onChange }: StepAc
             autoComplete="email"
             value={email}
             onChange={(event) => onChange({ email: event.target.value })}
-            className="h-14 rounded-2xl px-4 text-base"
+            className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
             placeholder="you@example.com"
           />
         </QuizField>
@@ -35,7 +35,7 @@ export function StepAccount({ email, phone, password, errors, onChange }: StepAc
             autoComplete="tel"
             value={phone}
             onChange={(event) => onChange({ phone: event.target.value })}
-            className="h-14 rounded-2xl px-4 text-base"
+            className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
             placeholder="(555) 555-5555"
           />
         </QuizField>
@@ -50,7 +50,7 @@ export function StepAccount({ email, phone, password, errors, onChange }: StepAc
             autoComplete="new-password"
             value={password}
             onChange={(event) => onChange({ password: event.target.value })}
-            className="h-14 rounded-2xl px-4 text-base"
+            className="h-14 rounded-2xl border-[#DDD9D1] bg-white px-4 text-[15px] text-[#1A1816] placeholder:text-[#BFBBAF] focus:border-[#1A1816]"
             placeholder="Create a password"
           />
         </QuizField>

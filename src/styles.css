@@ -270,6 +270,55 @@
   transform-origin: 0 50%; transform: scaleX(0); z-index: 100;
 }
 
+/* ──────────── Gold / clinical accent utilities ──────────── */
+.gold-glow {
+  box-shadow:
+    0 0 0 1px rgba(243,195,0,0.35),
+    0 4px 24px -6px rgba(243,195,0,0.30),
+    0 0 40px -12px rgba(243,195,0,0.20);
+}
+.gold-glow-sm {
+  box-shadow: 0 0 0 1px rgba(243,195,0,0.30), 0 2px 12px -4px rgba(243,195,0,0.22);
+}
+.gold-border {
+  border-color: rgba(243,195,0,0.55);
+}
+.bg-gold-subtle {
+  background: linear-gradient(135deg, rgba(243,195,0,0.07) 0%, rgba(249,220,107,0.04) 100%);
+}
+.text-gold {
+  color: #C9A200;
+}
+
+.gold-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.gold-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(243,195,0,0.18) 50%, transparent 60%);
+  transform: translateX(-100%);
+  animation: goldShimmer 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes goldShimmer {
+  0%   { transform: translateX(-100%); }
+  60%  { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Quiz option card — selected gold ring pulse */
+.quiz-option-selected {
+  animation: goldRingPulse 1.8s ease-out forwards;
+}
+@keyframes goldRingPulse {
+  0%   { box-shadow: 0 0 0 1px #C9A200, 0 4px 24px -6px rgba(243,195,0,0.25), 0 0 0 4px rgba(243,195,0,0.18); }
+  60%  { box-shadow: 0 0 0 1px #C9A200, 0 4px 24px -6px rgba(243,195,0,0.25), 0 0 0 7px rgba(243,195,0,0.05); }
+  100% { box-shadow: 0 0 0 1px #C9A200, 0 4px 24px -6px rgba(243,195,0,0.25), 0 0 0 0px rgba(243,195,0,0); }
+}
+
 /* ──────────── FX ──────────── */
 .float-y { animation: floatY 6s ease-in-out infinite; }
 @keyframes floatY { 0%,100% { transform: translateY(-6px) } 50% { transform: translateY(6px) } }
@@ -345,4 +394,15 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hairline-grow { animation: none !important; transform: scaleX(1); }
+}
+
+/* ──────────── Hidden scrollbar (scrollable, no visible bar) ──────────── */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }

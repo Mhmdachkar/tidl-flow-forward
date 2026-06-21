@@ -11,6 +11,10 @@ import { type ReactNode } from "react";
 
 import { AuthProvider } from "@/providers/auth-provider";
 import { AgeGate } from "@/components/AgeGate";
+import { QuizModalProvider } from "@/providers/quiz-modal-provider";
+import { QuizModal } from "@/components/quiz/QuizModal";
+import { AuthModalProvider } from "@/providers/auth-modal-provider";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 import appCss from "../styles.css?url";
 import favicon from "@/assets/TIDL_LOGO_BLACK_WHITE.jpg?url";
@@ -123,7 +127,13 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AgeGate />
-        <Outlet />
+        <AuthModalProvider>
+          <QuizModalProvider>
+            <Outlet />
+            <QuizModal />
+            <AuthModal />
+          </QuizModalProvider>
+        </AuthModalProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
