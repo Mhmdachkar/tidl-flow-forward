@@ -22,6 +22,16 @@
   --color-mint: var(--mint);
   --color-sand: var(--sand);
   --color-accent: var(--accent);
+
+  /* ── Pharmacy section Tailwind tokens ── */
+  --color-cream:         var(--cream);
+  --color-cream-deep:    var(--cream-deep);
+  --color-hairline:      var(--hairline-color);
+  --color-clinical-deep: var(--clinical-deep);
+  --color-clinical-soft: var(--clinical-soft);
+  --color-ink-mute:      var(--ink-mute);
+  --color-noir:          var(--noir);
+  --font-serif:          "Instrument Serif", Georgia, serif;
 }
 
 :root {
@@ -40,6 +50,15 @@
   --sand:       oklch(0.86  0.06  85);      /* warm metal accent */
   --accent:     #F3C300;
   --radius: 1.25rem;
+
+  /* ── Pharmacy section palette ── */
+  --cream:          oklch(0.975 0.012 85);
+  --cream-deep:     oklch(0.945 0.018 82);
+  --hairline-color: oklch(0.18 0.012 60 / 0.12);
+  --clinical-deep:  oklch(0.22 0.045 158);
+  --clinical-soft:  oklch(0.34 0.055 155 / 0.08);
+  --ink-mute:       oklch(0.55 0.008 60);
+  --noir:           oklch(0.13 0.008 60);
 }
 
 @layer base {
@@ -289,4 +308,41 @@
   position: absolute; inset: 0;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
   opacity: 0.025; mix-blend-mode: multiply; pointer-events: none;
+}
+
+/* ──────────── Pharmacy section utilities ──────────── */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink-mute);
+}
+
+.hairline-grow {
+  height: 1px;
+  background: var(--color-hairline);
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+@supports (animation-timeline: view()) {
+  .hairline-grow {
+    transform: scaleX(0);
+    animation: hairline-grow 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+}
+@keyframes hairline-grow {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
+}
+
+.grain-dot {
+  background-image: radial-gradient(circle at 1px 1px, oklch(0.18 0.012 60 / 0.035) 1px, transparent 0);
+  background-size: 3px 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hairline-grow { animation: none !important; transform: scaleX(1); }
 }

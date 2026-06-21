@@ -4,11 +4,10 @@ import { useLenisScroll } from "@/lib/use-lenis";
 import { NavSection } from "@/components/sections/NavSection";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TrustSection } from "@/components/sections/TrustSection";
-import { VoxelSection } from "@/components/sections/VoxelSection";
+import { TreatmentCategoriesSection } from "@/components/sections/TreatmentCategoriesSection";
 import { HumanSection } from "@/components/sections/HumanSection";
 import { PenSection } from "@/components/sections/PenSection";
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
-import { TreatmentCategoriesSection } from "@/components/sections/TreatmentCategoriesSection";
 import { RedManSection } from "@/components/sections/RedManSection";
 import { DoctorSection } from "@/components/sections/DoctorSection";
 import { PharmacySection } from "@/components/sections/PharmacySection";
@@ -43,7 +42,7 @@ function Index() {
 
       <div className="flex flex-col gap-2 px-2 pb-2">
         <div className="overflow-hidden bg-surface"><TrustSection /></div>
-        <div className="section-card-dark"><VoxelSection /></div>
+        <div className="section-card"><TreatmentCategoriesSection /></div>
 
         <div className="section-card">
           <HumanSection
@@ -67,7 +66,6 @@ function Index() {
 
       <div className="flex flex-col gap-2 px-2 pb-2">
         <div className="section-card"><HowItWorksSection /></div>
-        <div className="section-card"><TreatmentCategoriesSection /></div>
         <RedManSection />
 
         <div className="section-card">
