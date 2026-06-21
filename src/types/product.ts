@@ -27,6 +27,12 @@ export interface ProductIncludedItem {
   description: string;
 }
 
+export interface ProductTimelinePhase {
+  period: string;
+  title: string;
+  description: string;
+}
+
 export interface ProductFAQ {
   question: string;
   answer: string;
@@ -61,6 +67,7 @@ export interface Product {
   };
   howItWorks: ProductStep[];
   included: ProductIncludedItem[];
+  timeline?: ProductTimelinePhase[];
   safety: {
     headline: string;
     items: string[];

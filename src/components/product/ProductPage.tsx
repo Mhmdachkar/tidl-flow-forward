@@ -9,6 +9,7 @@ import { ProductFinalCTA } from "@/components/product/ProductFinalCTA";
 import { ProductHero } from "@/components/product/ProductHero";
 import { ReviewsSection } from "@/components/product/ReviewsSection";
 import { SafetySection } from "@/components/product/SafetySection";
+import { TimelineSection } from "@/components/product/TimelineSection";
 import { TrustBar } from "@/components/product/TrustBar";
 import { WhyPenSection } from "@/components/product/WhyPenSection";
 import type { Product } from "@/types/product";
@@ -42,6 +43,7 @@ export function ProductPage({ product }: ProductPageProps) {
       <WhyPenSection showPen={product.showPenHero} />
       <HowItWorksSection steps={product.howItWorks} />
       <IncludedSection items={product.included} />
+      <TimelineSection timeline={product.timeline} />
       <SafetySection safety={product.safety} />
       <ReviewsSection reviews={product.reviews} />
       <ProductFAQSection faqs={product.faqs} />

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -10,6 +11,7 @@ const DOCTORS = [
     creds: "MD, FACE, ECNU",
     years: "12+",
     bio: "Pioneers personalized hormone optimization protocols. Published 40+ papers on metabolic resilience and clinical longevity.",
+    short: "Personalized hormone & metabolic protocols.",
     focus: ["Hormone therapy", "Metabolic health", "Longevity"],
     photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&h=1100&q=85&fit=crop",
   },
@@ -19,6 +21,7 @@ const DOCTORS = [
     creds: "MD, ABOM",
     years: "15+",
     bio: "Specialist in preventive cardiology and metabolic syndrome reversal. Former lead at Stanford Preventive Care.",
+    short: "Preventive cardiology & metabolic reversal.",
     focus: ["Preventive care", "Cardiology", "Diagnostics"],
     photo: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=900&h=1100&q=85&fit=crop",
   },
@@ -28,10 +31,13 @@ const DOCTORS = [
     creds: "MD, FACFP",
     years: "18+",
     bio: "Whole-person practitioner focused on weight management, behavioural health, and continuous patient oversight.",
+    short: "Whole-person care & continuous oversight.",
     focus: ["Whole-person care", "Weight management", "Continuity"],
     photo: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=900&h=1100&q=85&fit=crop",
   },
 ] as const;
+
+type Doctor = (typeof DOCTORS)[number];
 
 const CREDENTIALS = [
   "BOARD-CERTIFIED",
@@ -67,6 +73,190 @@ function CharSplit({ text }: { text: string }) {
   );
 }
 
+// ─── Mobile: sticky stacked doctor cards (Framer Motion + GSAP) ─────────────────
+
+function MobileDoctorCard({
+  doc,
+  i,
+  total,
+  scrollProgress,
+  range,
+  targetScale,
+}: {
+  doc: Doctor;
+  i: number;
+  total: number;
+  scrollProgress: MotionValue<number>;
+  range: [number, number];
+  targetScale: number;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  // image parallax as the card scrolls into view
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start start"],
+  });
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.4, 1]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "0%"]);
+
+  // sticky stacking: earlier cards shrink as later ones cover them
+  const scale = useTransform(scrollProgress, range, [1, targetScale]);
+
+  return (
+    <div
+      ref={ref}
+      className="cl-stack-pin sticky top-0 flex h-screen items-center justify-center px-4"
+    >
+      <motion.div
+        style={{ scale, top: `calc(-4vh + ${i * 16}px)` }}
+        className="cl-stack-card relative flex w-full max-w-[420px] flex-col overflow-hidden"
+        // height tuned to leave a peek of the next card while pinned
+        // (kept as inline so it overrides nothing important)
+      >
+        <div
+          className="relative flex flex-col overflow-hidden rounded-[24px]"
+          style={{
+            height: "min(78vh, 580px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 30px 70px -28px rgba(11,16,13,0.65)",
+            background: "#10140f",
+          }}
+        >
+          {/* photo with framer-motion parallax */}
+          <div className="relative h-[56%] w-full overflow-hidden">
+            <motion.div
+              style={{
+                scale: imageScale,
+                y: imageY,
+                backgroundImage: `url(${doc.photo})`,
+              }}
+              className="absolute inset-0 bg-cover bg-top"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(11,16,13,0.15) 0%, rgba(11,16,13,0) 35%, rgba(16,20,15,0.95) 100%)",
+              }}
+            />
+            {/* top labels */}
+            <span className="absolute left-4 top-4 text-[10px] uppercase tracking-[0.25em] text-white/85">
+              {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            </span>
+            <span className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.2em] text-white/65">
+              {doc.creds}
+            </span>
+          </div>
+
+          {/* info — each line is a GSAP reveal target */}
+          <div className="cl-card-body relative flex flex-1 flex-col px-5 pb-5 -mt-10">
+            <span
+              className="cl-reveal mb-2 text-[10px] font-semibold uppercase tracking-[0.22em]"
+              style={{ color: "#9ec5ad" }}
+            >
+              {doc.role}
+            </span>
+            <h3
+              className="cl-reveal mb-2 leading-[1]"
+              style={{
+                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontSize: "clamp(30px, 9vw, 42px)",
+                color: "#f6f3ec",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {doc.name}
+            </h3>
+            <p
+              className="cl-reveal mb-4 text-[14px] leading-[1.5]"
+              style={{ color: "rgba(246,243,236,0.65)" }}
+            >
+              {doc.short}
+            </p>
+
+            <div className="cl-reveal mb-5 flex flex-wrap gap-2">
+              {doc.focus.map((f) => (
+                <span
+                  key={f}
+                  className="rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.12em]"
+                  style={{
+                    background: "rgba(158,197,173,0.1)",
+                    color: "#9ec5ad",
+                    border: "1px solid rgba(158,197,173,0.2)",
+                  }}
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+
+            <div
+              className="cl-reveal mt-auto flex items-baseline gap-2 pt-4"
+              style={{ borderTop: "1px solid rgba(246,243,236,0.1)" }}
+            >
+              <span
+                className="leading-none"
+                style={{
+                  fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                  fontSize: 34,
+                  color: "#f6f3ec",
+                }}
+              >
+                {doc.years}
+              </span>
+              <span
+                className="text-[10px] uppercase tracking-[0.18em]"
+                style={{ color: "rgba(246,243,236,0.5)" }}
+              >
+                years in practice
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function MobileDoctorStack() {
+  const container = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start start", "end end"],
+  });
+
+  return (
+    <div className="lg:hidden">
+      {/* section eyebrow */}
+      <div className="mb-2 flex items-center gap-3 px-5 pt-2">
+        <span
+          className="text-[10px] font-medium uppercase"
+          style={{ letterSpacing: "0.3em", color: "#2d4a3e" }}
+        >
+          §02 — Meet the physicians
+        </span>
+        <span className="h-px flex-1" style={{ background: "rgba(22,22,22,0.18)" }} />
+      </div>
+
+      <div ref={container}>
+        {DOCTORS.map((doc, i) => (
+          <MobileDoctorCard
+            key={doc.name}
+            doc={doc}
+            i={i}
+            total={DOCTORS.length}
+            scrollProgress={scrollYProgress}
+            range={[i / DOCTORS.length, 1]}
+            targetScale={1 - (DOCTORS.length - i) * 0.045}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ClinicalLeadershipSection() {
@@ -91,7 +281,7 @@ export function ClinicalLeadershipSection() {
       const chars       = gsap.utils.toArray<HTMLElement>(".cl-headline .char");
       const eyebrow     = root.querySelector(".cl-eyebrow");
       const eyebrowLine = root.querySelector(".cl-eyebrow-line");
-      const body        = root.querySelector(".cl-body");
+      const body        = root.querySelectorAll(".cl-body");
       const sigBlock    = root.querySelector(".cl-sig");
       const metaRow     = root.querySelector(".cl-meta-row");
 
@@ -172,20 +362,31 @@ export function ClinicalLeadershipSection() {
       }
     }, root);
 
-    // ── Mobile: entrance for stacked doctor cards ───────────────
+    // ── Mobile: GSAP content reveal for each sticky-stacked card ─
     const mm = gsap.matchMedia();
 
     mm.add("(max-width: 1023px)", () => {
-      const mobileCards = rootRef.current?.querySelectorAll<HTMLElement>(".cl-mobile-doc");
-      mobileCards?.forEach((card: HTMLElement, i: number) => {
-        gsap.from(card, {
-          opacity: 0,
-          y: 48,
-          duration: 0.85,
-          ease: "expo.out",
-          delay: i * 0.06,
-          scrollTrigger: { trigger: card, start: "top 88%" },
-        });
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const pins = rootRef.current?.querySelectorAll<HTMLElement>(".cl-stack-pin");
+      pins?.forEach((pin) => {
+        const lines = pin.querySelectorAll<HTMLElement>(".cl-reveal");
+        if (!lines.length) return;
+        if (reduced) {
+          gsap.set(lines, { opacity: 1, y: 0 });
+          return;
+        }
+        gsap.fromTo(
+          lines,
+          { opacity: 0, y: 26 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "expo.out",
+            stagger: 0.08,
+            scrollTrigger: { trigger: pin, start: "top 65%" },
+          },
+        );
       });
     });
 
@@ -255,7 +456,7 @@ export function ClinicalLeadershipSection() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden"
+      className="relative overflow-x-clip"
       style={{ background: "#f6f3ec", color: "#161616", fontFamily: "Inter, system-ui, sans-serif" }}
     >
       {/* cursor spotlight */}
@@ -267,17 +468,6 @@ export function ClinicalLeadershipSection() {
           width: 500, height: 500,
           background: "radial-gradient(circle, rgba(45,74,62,0.08) 0%, rgba(45,74,62,0) 70%)",
           filter: "blur(10px)",
-        }}
-      />
-
-      {/* faint grid */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #161616 1px, transparent 1px), linear-gradient(to bottom, #161616 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
         }}
       />
 
@@ -323,8 +513,16 @@ export function ClinicalLeadershipSection() {
           </div>
 
           <div className="flex flex-col justify-end pb-2">
+            {/* mobile — short */}
             <p
-              className="cl-body mb-12 text-[17px] leading-[1.55]"
+              className="cl-body mb-8 text-[15px] leading-[1.5] lg:hidden"
+              style={{ color: "rgba(22,22,22,0.65)" }}
+            >
+              Every plan is signed off by a board-certified physician — never an algorithm.
+            </p>
+            {/* desktop — full */}
+            <p
+              className="cl-body mb-12 hidden text-[17px] leading-[1.55] lg:block"
               style={{ color: "rgba(22,22,22,0.65)", maxWidth: 420 }}
             >
               Every treatment plan is reviewed and signed off by a board-certified physician.
@@ -397,85 +595,8 @@ export function ClinicalLeadershipSection() {
         </div>
       </div>
 
-      {/* ══ MOBILE: stacked doctor cards (< 1024px) ═══════════════ */}
-      <div className="block lg:hidden px-5 pb-12 space-y-6">
-        <div className="mb-6 flex items-center gap-3 px-1">
-          <span className="text-[10px] font-medium uppercase" style={{ letterSpacing: "0.3em", color: "#2d4a3e" }}>
-            §02 — Meet the physicians
-          </span>
-        </div>
-
-        {DOCTORS.map((doc, i) => (
-          <div
-            key={doc.name}
-            className="cl-mobile-doc overflow-hidden"
-            style={{ borderRadius: 10, border: "1px solid rgba(22,22,22,0.09)", background: "#faf9f7" }}
-          >
-            {/* photo */}
-            <div
-              className="relative w-full"
-              style={{
-                aspectRatio: "3/2",
-                backgroundImage: `url(${doc.photo})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center top",
-              }}
-            >
-              <div
-                className="absolute inset-x-0 bottom-0"
-                style={{ height: "50%", background: "linear-gradient(transparent, rgba(0,0,0,0.55))" }}
-              />
-              <span
-                className="absolute bottom-4 left-4 text-white"
-                style={{
-                  fontFamily: '"Instrument Serif","Fraunces",Georgia,serif',
-                  fontSize: 22,
-                  lineHeight: 1.2,
-                }}
-              >
-                {doc.name}
-              </span>
-              <span
-                className="absolute bottom-4 right-4 text-[10px] uppercase tracking-[0.2em] text-white/70"
-              >
-                {doc.creds}
-              </span>
-            </div>
-
-            {/* info */}
-            <div className="p-5">
-              <p className="mb-3 text-[11px] uppercase tracking-[0.2em]" style={{ color: "#2d4a3e" }}>
-                {doc.role}
-              </p>
-              <p className="mb-4 leading-relaxed" style={{ fontSize: 16, color: "rgba(22,22,22,0.68)" }}>
-                {doc.bio}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {doc.focus.map((f) => (
-                  <span
-                    key={f}
-                    className="rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.12em]"
-                    style={{ background: "rgba(45,74,62,0.07)", color: "#2d4a3e", border: "1px solid rgba(45,74,62,0.15)" }}
-                  >
-                    {f}
-                  </span>
-                ))}
-              </div>
-              <div className="flex items-baseline gap-2 pt-4" style={{ borderTop: "1px solid rgba(22,22,22,0.08)" }}>
-                <span
-                  className="leading-none"
-                  style={{ fontFamily: '"Instrument Serif","Fraunces",Georgia,serif', fontSize: 36, color: "#161616" }}
-                >
-                  {doc.years}
-                </span>
-                <span className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "rgba(22,22,22,0.5)" }}>
-                  years in practice
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* ══ MOBILE: sticky stacked doctor cards (< 1024px) ════════ */}
+      <MobileDoctorStack />
 
       {/* ══ DESKTOP: pinned scrollytelling (≥ 1024px) ═════════════ */}
       <div ref={pinWrapRef} className="relative z-10 hidden min-h-screen lg:block">

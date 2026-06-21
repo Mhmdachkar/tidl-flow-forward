@@ -25,7 +25,6 @@ export function CtaSection() {
 
   return (
     <section ref={ref} className="relative py-28 overflow-hidden">
-      <div className="absolute inset-0 bg-grid opacity-40" />
       <div className="absolute inset-0 bg-radial-light" />
       <div className="relative mx-auto max-w-4xl px-6 text-center">
         <div className="cta-pill mx-auto mb-10 inline-flex items-center gap-2 pill-tag" style={{ opacity: 0 }}>

@@ -147,18 +147,6 @@ export function HeroBackground() {
         />
       </div>
 
-      {/* Layer 4 — scientific grid (very faint) */}
-      <div
-        className="absolute inset-0 opacity-[0.05] mix-blend-multiply"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #111 1px, transparent 1px), linear-gradient(to bottom, #111 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          maskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%)",
-          WebkitMaskImage: "radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%)",
-        }}
-      />
-
       {/* Layer 2 — breathing wave system */}
       <svg
         ref={waveRef}

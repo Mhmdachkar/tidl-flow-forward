@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
-
+import { motion, AnimatePresence } from "framer-motion";
+import { gsap, ScrollTrigger, Draggable } from "@/lib/gsap";
 // ─── step data ────────────────────────────────────────────────────────────────
 const STEPS = [
   {
@@ -9,34 +9,59 @@ const STEPS = [
     label: "Online intake",
     title: "Take the\nAssessment",
     body: "Answer a short clinical intake in about 10 minutes. No clinic visit. No waiting room.",
+    detail:
+      "A guided questionnaire covers your goals, symptoms, medical history and current medications — so your provider has the full picture before they ever review your file.",
+    points: ["~10 minutes to complete", "100% online, on your schedule", "Encrypted & HIPAA-compliant"],
+    image:
+      "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&h=1100&q=80&fit=crop",
   },
   {
     num: "02",
     label: "Licensed provider",
     title: "Doctor\nReview",
     body: "A licensed physician reads your intake and health history within 24 hours.",
+    detail:
+      "A board-certified physician licensed in your state evaluates your responses, flags any contraindications, and decides whether treatment is clinically appropriate for you.",
+    points: ["Board-certified physicians", "Reviewed within 24 hours", "Message your provider anytime"],
+    image:
+      "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=1100&q=80&fit=crop",
   },
   {
     num: "03",
     label: "Real prescription",
     title: "Receive\nPrescription",
     body: "If clinically appropriate, a personalised prescription is written to your protocol.",
+    detail:
+      "Your protocol is tailored to your biology and goals — dosing, titration schedule and supporting guidance are written specifically for you, never one-size-fits-all.",
+    points: ["Personalised dosing", "Clear titration schedule", "Adjusted as you progress"],
+    image:
+      "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=800&h=1100&q=80&fit=crop",
   },
   {
     num: "04",
     label: "Licensed facility",
     title: "Pharmacy\nFulfillment",
     body: "Your medication is compounded in a licensed, regulated pharmacy to your exact specification.",
+    detail:
+      "Medication is prepared in a US-licensed, regulated compounding pharmacy with batch testing and quality controls at every stage before it ships to you.",
+    points: ["US-licensed pharmacies", "Batch-tested for purity", "Sealed, tamper-evident packaging"],
+    image:
+      "https://images.unsplash.com/photo-1576602976047-174e57a47881?w=800&h=1100&q=80&fit=crop",
   },
   {
     num: "05",
     label: "Cold-chain delivery",
     title: "Delivered\nto Your Door",
     body: "Cold-chain shipped directly to your home. Ongoing physician-supervised care included.",
+    detail:
+      "Temperature-controlled shipping keeps every dose stable in transit. Your care doesn't stop at delivery — ongoing physician supervision and refills are built in.",
+    points: ["Cold-chain, tracked shipping", "Discreet to your door", "Ongoing supervision & refills"],
+    image:
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=1100&q=80&fit=crop",
   },
 ] as const;
 
-// ─── SVG inner shapes — one per step, drawn with stroke-dashoffset ─────────
+// ─── SVG line-art for each step (drawn with stroke-dashoffset) ──────────────
 const SHAPES = [
   ["M 40 72 L 160 72", "M 40 92 L 128 92", "M 40 112 L 148 112", "M 40 132 L 108 132"],
   ["M 100 48 L 100 152", "M 48 100 L 152 100"],
@@ -46,434 +71,512 @@ const SHAPES = [
 ] as const;
 
 const TOTAL = STEPS.length;
-const CIRCUMFERENCE = 2 * Math.PI * 84;
-const HOLD = 1.5;
-const TRANS = 0.48;
+const INK = "#161616";
+const ACCENT = "#2d4a3e";
+const AUTO_INTERVAL_MS = 4500;
 
+function cardWidthForStage(w: number) {
+  if (w >= 1280) return Math.min(w * 0.32, 360);
+  if (w >= 1024) return Math.min(w * 0.36, 320);
+  return Math.min(w * 0.56, 250);
+}
 export function HowItWorksSection() {
-  const sectionRef     = useRef<HTMLElement>(null);
-  const desktopRef     = useRef<HTMLDivElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const ringRef        = useRef<SVGCircleElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const proxyRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  // continuous carousel progress + nearest active index (kept in refs so the
+  // GSAP render loop always reads fresh values without re-binding closures)
+  const progressRef = useRef(0);
+  const activeRef = useRef(0);
+  const gapRef = useRef(220);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const autoPausedRef = useRef(false);
+  const autoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const [active, setActive] = useState(0);
+  // ── place every card in 3D space relative to the live progress value ──
+  const renderCards = useCallback(() => {
+    const gap = gapRef.current;
+    const prog = progressRef.current;
+
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      const d = i - prog;
+      const ad = Math.abs(d);
+
+      const x = d * gap;
+      const rotateY = gsap.utils.clamp(-58, 58, -d * 42);
+      const z = -ad * 220;
+      const scale = gsap.utils.clamp(0.58, 1, 1 - ad * 0.07);      const opacity = ad > 3.1 ? 0 : gsap.utils.clamp(0, 1, 1.25 - ad * 0.34);
+
+      gsap.set(card, {
+        x,
+        z,
+        rotateY,
+        scale,
+        opacity,
+        zIndex: 100 - Math.round(ad * 10),
+        filter: `brightness(${gsap.utils.clamp(0.55, 1, 1 - ad * 0.16)})`,
+      });
+    });
+
+    const nearest = gsap.utils.clamp(0, TOTAL - 1, Math.round(prog));
+    if (nearest !== activeRef.current) {
+      activeRef.current = nearest;
+      setActive(nearest);
+    }
+  }, []);
+
+  const goTo = useCallback(
+    (index: number) => {
+      const gap = gapRef.current;
+      const target = gsap.utils.clamp(0, TOTAL - 1, index);
+      tweenRef.current?.kill();
+      tweenRef.current = gsap.to(proxyRef.current, {
+        x: -target * gap,
+        duration: 0.85,
+        ease: "expo.out",
+        onUpdate: () => {
+          progressRef.current = -gsap.getProperty(proxyRef.current, "x") / gapRef.current;
+          renderCards();
+        },
+      });
+    },
+    [renderCards],
+  );
 
   useEffect(() => {
-    const sec = sectionRef.current;
-    const desk = desktopRef.current;
-    if (!sec) return;
+    const section = sectionRef.current;
+    const stage = stageRef.current;
+    const proxy = proxyRef.current;
+    if (!section || !stage || !proxy) return;
 
-    const mm = gsap.matchMedia();
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // ── DESKTOP: full pinned cinematic experience ──────────────────────
-    mm.add("(min-width: 1024px)", () => {
-      if (!desk) return;
-      const ctx = gsap.context(() => {
-        const slides     = Array.from(desk.querySelectorAll<HTMLElement>(".hiw-slide"));
-        const shapeSvgs  = Array.from(desk.querySelectorAll<SVGSVGElement>(".hiw-shape-svg"));
-        const centerNums = Array.from(desk.querySelectorAll<HTMLElement>(".hiw-center-num"));
-        const counters   = Array.from(desk.querySelectorAll<HTMLElement>(".hiw-counter"));
-        const dots       = Array.from(desk.querySelectorAll<HTMLElement>(".hiw-dot"));
-        const ring       = ringRef.current;
+    const measure = () => {
+      const w = stage.clientWidth;
+      const cardW = cardWidthForStage(w);
+      gapRef.current = Math.max(140, cardW * 0.72);
+    };
+    const ctx = gsap.context(() => {
+      measure();
+      gsap.set(proxy, { x: 0 });
+      progressRef.current = 0;
+      renderCards();
 
-        shapeSvgs.forEach((svg) => {
-          svg.querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path) => {
-            const len = path.getTotalLength();
-            gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+      // draw the line-art inside every card
+      cardRefs.current.forEach((card) => {
+        card?.querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path) => {
+          const len = path.getTotalLength();
+          gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+        });
+      });
+
+      const drawActive = (index: number) => {
+        const card = cardRefs.current[index];
+        card?.querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path, pi) => {
+          gsap.to(path, {
+            strokeDashoffset: 0,
+            duration: 0.7,
+            ease: "power2.inOut",
+            delay: pi * 0.06,
           });
         });
+      };
 
-        gsap.set(slides,        { opacity: 0, y: 44 });
-        gsap.set(slides[0],     { opacity: 1, y: 0 });
-        gsap.set(shapeSvgs,     { opacity: 0, scale: 1.1 });
-        gsap.set(shapeSvgs[0],  { opacity: 1, scale: 1 });
-        gsap.set(centerNums,    { opacity: 0 });
-        gsap.set(centerNums[0], { opacity: 1 });
-        gsap.set(counters,      { opacity: 0 });
-        gsap.set(counters[0],   { opacity: 1 });
-        gsap.set(dots,          { scale: 1,   opacity: 0.22 });
-        gsap.set(dots[0],       { scale: 1.6, opacity: 1 });
-        if (ring) gsap.set(ring, { strokeDasharray: CIRCUMFERENCE, strokeDashoffset: CIRCUMFERENCE });
+      // ── entrance: header + carousel rise in on scroll ──────────────
+      const head = section.querySelectorAll<HTMLElement>(".hiw-head");
+      const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
+      if (!reduced) {
+        gsap.set(head, { opacity: 0, y: 26 });
+        gsap.set(cards, { transformOrigin: "50% 60%" });
 
-        ScrollTrigger.create({ trigger: desk, start: "top top", end: "+=500%", pin: true, anticipatePin: 1 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: desk, start: "top top", end: "+=500%", scrub: 1.6 },
-        });
-
-        shapeSvgs[0].querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path, pi) => {
-          tl.to(path, { strokeDashoffset: 0, duration: 0.28, ease: "power2.inOut" }, 0.08 + pi * 0.07);
-        });
-
-        for (let i = 0; i < TOTAL - 1; i++) {
-          const exitAt  = i * (HOLD + TRANS) + HOLD;
-          const enterAt = exitAt + 0.15;
-
-          tl.to(slides[i],     { opacity: 0, y: -44, duration: TRANS - 0.15, ease: "power2.in"  }, exitAt);
-          tl.to(shapeSvgs[i],  { opacity: 0, scale: 0.88, duration: TRANS - 0.15 }, exitAt);
-          tl.to(centerNums[i], { opacity: 0, duration: TRANS - 0.15 }, exitAt);
-          tl.to(counters[i],   { opacity: 0, duration: TRANS - 0.15 }, exitAt);
-          tl.to(dots[i],       { scale: 1,   opacity: 0.22, duration: TRANS - 0.15 }, exitAt);
-
-          tl.fromTo(slides[i + 1],     { opacity: 0, y: 44 },      { opacity: 1, y: 0,    duration: TRANS - 0.15, ease: "power2.out" }, enterAt);
-          tl.fromTo(shapeSvgs[i + 1],  { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: TRANS - 0.15 }, enterAt);
-          tl.fromTo(centerNums[i + 1], { opacity: 0 },              { opacity: 1,           duration: TRANS - 0.15 }, enterAt);
-          tl.fromTo(counters[i + 1],   { opacity: 0 },              { opacity: 1,           duration: TRANS - 0.15 }, enterAt);
-          tl.to(dots[i + 1], { scale: 1.6, opacity: 1, duration: TRANS - 0.15 }, enterAt);
-
-          shapeSvgs[i + 1].querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path, pi) => {
-            tl.to(path, { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, enterAt + 0.06 + pi * 0.07);
-          });
-        }
-
-        if (ring) {
-          gsap.fromTo(ring,
-            { strokeDashoffset: CIRCUMFERENCE },
-            { strokeDashoffset: 0, ease: "none",
-              scrollTrigger: { trigger: desk, start: "top top", end: "+=500%", scrub: 1 } },
+        gsap.timeline({ scrollTrigger: { trigger: section, start: "top 72%" } })
+          .to(head, { opacity: 1, y: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" })
+          .from(
+            cards,
+            {
+              yPercent: 18,
+              opacity: 0,
+              duration: 0.8,
+              stagger: 0.05,
+              ease: "expo.out",
+              onComplete: () => drawActive(activeRef.current),
+            },
+            0.15,
           );
+      } else {
+        drawActive(0);
+      }
+
+      // ── draggable coverflow ────────────────────────────────────────
+      const dragUnit = () => gapRef.current;
+      const [drag] = Draggable.create(proxy, {
+        type: "x",
+        trigger: stage,
+        inertia: !reduced,
+        edgeResistance: 0.82,
+        dragResistance: 0.06,
+        bounds: { minX: -(TOTAL - 1) * gapRef.current, maxX: 0 },
+        snap: (value: number) => Math.round(value / dragUnit()) * dragUnit(),
+        onPress() {
+          tweenRef.current?.kill();
+          autoPausedRef.current = true;
+        },        onDrag() {
+          progressRef.current = -this.x / gapRef.current;
+          renderCards();
+        },
+        onThrowUpdate() {
+          progressRef.current = -this.x / gapRef.current;
+          renderCards();
+        },
+        onThrowComplete() {
+          drawActive(activeRef.current);
+          window.setTimeout(() => { autoPausedRef.current = false; }, 2000);
+        },
+        onDragEnd() {
+          if (!this.tween) {
+            drawActive(activeRef.current);
+            window.setTimeout(() => { autoPausedRef.current = false; }, 2000);
+          }
+        },      });
+
+      // recompute spacing + positions on resize
+      const onResize = () => {
+        const prevIndex = activeRef.current;
+        measure();
+        gsap.set(proxy, { x: -prevIndex * gapRef.current });
+        progressRef.current = prevIndex;
+        drag.applyBounds({ minX: -(TOTAL - 1) * gapRef.current, maxX: 0 });
+        renderCards();
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
+    }, section);
+
+    return () => ctx.revert();
+  }, [renderCards]);
+
+  // auto-advance carousel
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    autoTimerRef.current = window.setInterval(() => {
+      if (autoPausedRef.current) return;
+      const next = (activeRef.current + 1) % TOTAL;
+      goTo(next);
+    }, AUTO_INTERVAL_MS);
+
+    return () => {
+      if (autoTimerRef.current) window.clearInterval(autoTimerRef.current);
+    };
+  }, [goTo]);
+
+  // redraw line-art + reset inactive cards when step changes
+  useEffect(() => {
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      card.querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path) => {
+        const len = path.getTotalLength();
+        gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+        if (i === active) {
+          gsap.to(path, {
+            strokeDashoffset: 0,
+            duration: 0.7,
+            ease: "power2.inOut",
+            delay: Array.from(card.querySelectorAll(".hiw-draw")).indexOf(path) * 0.06,
+          });
         }
-
-        gsap.fromTo(progressBarRef.current,
-          { scaleX: 0 },
-          { scaleX: 1, ease: "none", transformOrigin: "left center",
-            scrollTrigger: { trigger: desk, start: "top top", end: "+=500%", scrub: 1 } },
-        );
-      }, desk);
-
-      return () => ctx.revert();
+      });
     });
-
-    // ── MOBILE: simple scroll-triggered entrance per step card ─────────
-    mm.add("(max-width: 1023px)", () => {
-      const ctx = gsap.context(() => {
-        const cards = sec.querySelectorAll<HTMLElement>(".hiw-mobile-card");
-        cards.forEach((card, i) => {
-          gsap.from(card, {
-            opacity: 0,
-            y: 36,
-            duration: 0.75,
-            ease: "expo.out",
-            scrollTrigger: { trigger: card, start: "top 88%" },
-            delay: i % 2 === 0 ? 0 : 0.05,
-          });
-        });
-        const svgIcons = sec.querySelectorAll<SVGSVGElement>(".hiw-mobile-svg");
-        svgIcons.forEach((svg) => {
-          svg.querySelectorAll<SVGPathElement>(".hiw-draw").forEach((path) => {
-            const len = path.getTotalLength();
-            gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
-            ScrollTrigger.create({
-              trigger: svg,
-              start: "top 85%",
-              onEnter: () => gsap.to(path, { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }),
-            });
-          });
-        });
-      }, sec);
-      return () => ctx.revert();
-    });
-
-    return () => mm.revert();
-  }, []);
+  }, [active]);
+  const step = STEPS[active];
 
   return (
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="relative overflow-hidden bg-[#F3C300]"
+      className="relative overflow-hidden"
+      style={{ background: "#f6f3ec", color: INK, fontFamily: "Inter, system-ui, sans-serif" }}
     >
-      {/* shared background elements */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.07]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,0,0,1) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,1) 1px,transparent 1px)",
-          backgroundSize: "72px 72px",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ boxShadow: "inset 0 0 280px rgba(180,130,0,0.35)" }}
-      />
-
-      {/* ══════════════════════════════════════════════════════════════
-          MOBILE VIEW  (< 1024px) — vertical step list
-      ══════════════════════════════════════════════════════════════ */}
-      <div className="block lg:hidden">
-
-        {/* mobile header */}
-        <div className="flex items-center justify-between px-6 pt-14 pb-8">
-          <span className="pill-tag !border-black/15 !bg-black/[0.07] !text-black/65 text-[10px]">
-            <span className="dot !bg-black" /> How it works
-          </span>
-          <span className="text-[10px] font-semibold tracking-[0.22em] text-black/40 uppercase">
-            {String(TOTAL).padStart(2, "0")} steps
-          </span>
-        </div>
-
-        {/* step cards */}
-        <div className="flex flex-col gap-0 px-5 pb-14">
-          {STEPS.map((s, i) => (
-            <div
-              key={s.num}
-              className="hiw-mobile-card relative flex gap-5 pb-10"
-            >
-              {/* vertical connector line */}
-              {i < TOTAL - 1 && (
-                <div className="absolute left-[19px] top-10 bottom-0 w-px bg-black/15" aria-hidden />
-              )}
-
-              {/* left: mini SVG icon */}
-              <div className="relative flex-shrink-0">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full"
-                  style={{ background: "rgba(0,0,0,0.09)", border: "1px solid rgba(0,0,0,0.14)" }}
-                >
-                  <svg
-                    className="hiw-mobile-svg h-5 w-5"
-                    viewBox="0 0 200 200"
-                    fill="none"
-                    stroke="rgba(0,0,0,0.6)"
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {SHAPES[i].map((d, pi) => (
-                      <path key={pi} d={d} className="hiw-draw" />
-                    ))}
-                  </svg>
-                </div>
-              </div>
-
-              {/* right: text */}
-              <div className="pt-1">
-                {/* label */}
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="text-[10px] font-bold tracking-[0.28em] text-black/50 uppercase">
-                    Step {s.num}
-                  </span>
-                  <div className="h-px w-5 bg-black/25" />
-                  <span className="text-[10px] tracking-[0.12em] text-black/35 uppercase">{s.label}</span>
-                </div>
-
-                {/* title */}
-                <h2
-                  className="font-display leading-[0.94]"
-                  style={{ fontSize: "clamp(28px, 7vw, 40px)", color: "#0c0b09", fontWeight: 400 }}
-                >
-                  {s.title.split("\n").map((line, li) => (
-                    <span key={li} className="block">
-                      {li === 1 ? (
-                        <span className="italic" style={{ color: "rgba(12,11,9,0.55)" }}>{line}</span>
-                      ) : line}
-                    </span>
-                  ))}
-                </h2>
-
-                {/* body */}
-                <p
-                  className="mt-3 leading-relaxed"
-                  style={{ fontSize: 16, color: "rgba(0,0,0,0.55)", maxWidth: "34ch" }}
-                >
-                  {s.body}
-                </p>
-
-                {/* CTA on last step */}
-                {i === TOTAL - 1 && (
-                  <Link
-                    to="/quiz"
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 font-semibold text-[#F3C300] transition-transform active:scale-95"
-                    style={{ fontSize: 14, minHeight: 48 }}
-                  >
-                    Start your assessment
-                    <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" aria-hidden>
-                      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </Link>
-                )}
-              </div>
+      <div className="relative z-10 mx-auto max-w-[1240px] px-5 pt-12 sm:px-8 lg:pt-16">
+        {/* ── header ─────────────────────────────────────────────── */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="hiw-head mb-4 flex items-center gap-4">
+              <span
+                className="text-[10px] font-medium uppercase"
+                style={{ letterSpacing: "0.32em", color: ACCENT }}
+              >
+                §04 — How it works
+              </span>
+              <span className="h-px w-16" style={{ background: "rgba(22,22,22,0.25)" }} />
             </div>
-          ))}
-        </div>
+            <h2
+              className="hiw-head leading-[0.95]"
+              style={{
+                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontSize: "clamp(30px, 4.4vw, 58px)",
+                fontWeight: 400,
+                letterSpacing: "-0.025em",
+              }}
+            >
+              Five steps,{" "}
+              <span className="italic" style={{ color: ACCENT }}>
+                fully guided.
+              </span>
+            </h2>
+          </div>
 
-        {/* mobile progress dots */}
-        <div className="flex justify-center gap-2 pb-10">
-          {STEPS.map((_, i) => (
-            <div
-              key={i}
-              className="h-[3px] rounded-full bg-black"
-              style={{ width: i === 0 ? 20 : 6, opacity: i === 0 ? 0.7 : 0.2 }}
-            />
-          ))}
-        </div>
+          <p
+            className="hiw-head max-w-[300px] text-[14px] leading-[1.55]"
+            style={{ color: "rgba(22,22,22,0.62)" }}
+          >
+            From a 10-minute intake to cold-chain delivery — the journey runs on its own.
+            Hover any card for the detail.
+          </p>        </div>
       </div>
 
-      {/* ══════════════════════════════════════════════════════════════
-          DESKTOP VIEW  (≥ 1024px) — pinned cinematic experience
-      ══════════════════════════════════════════════════════════════ */}
-      <div ref={desktopRef} className="relative hidden h-[100svh] lg:block">
+      {/* ── coverflow carousel ───────────────────────────────────── */}
+      <div
+        ref={stageRef}
+        className="relative z-10 mx-auto mt-8 flex h-[330px] w-full max-w-[1240px] cursor-grab touch-pan-y items-center justify-center active:cursor-grabbing sm:h-[370px] lg:mt-10 lg:h-[500px] lg:cursor-default xl:h-[540px]"
+        style={{ perspective: "1500px" }}
+        onMouseEnter={() => { autoPausedRef.current = true; }}
+        onMouseLeave={() => { autoPausedRef.current = false; }}
+      >        {/* hidden drag proxy — single source of truth for the carousel position */}
+        <div ref={proxyRef} className="pointer-events-none absolute h-0 w-0 opacity-0" aria-hidden />
 
-        {/* top bar */}
-        <div className="absolute inset-x-16 top-10 z-20 flex items-center justify-between">
-          <span className="pill-tag !border-black/15 !bg-black/[0.07] !text-black/65">
-            <span className="dot !bg-black" /> How it works
-          </span>
-          <div className="relative h-4 w-14">
-            {STEPS.map((s, i) => (
+        {STEPS.map((s, i) => (
+          <div
+            key={s.num}
+            ref={(el) => { cardRefs.current[i] = el; }}
+            className="hiw-card absolute flex w-[min(56vw,250px)] flex-col items-center lg:w-[min(36vw,320px)] xl:w-[min(32vw,360px)]"
+            style={{
+              transformStyle: "preserve-3d",
+              willChange: "transform, opacity",
+            }}            onClick={() => {
+              if (i !== activeRef.current) goTo(i);
+            }}
+          >
+            <div
+              className="group relative aspect-[3/4] w-full select-none overflow-hidden rounded-2xl"
+              style={{
+                background: "linear-gradient(155deg, #2a3c33 0%, #161616 100%)",
+                border: "1px solid rgba(22,22,22,0.1)",
+                boxShadow:
+                  "0 36px 70px -34px rgba(22,22,22,0.5), 0 10px 24px -14px rgba(22,22,22,0.3)",
+              }}
+            >
+              {/* photo */}
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-[900ms] ease-out group-hover:scale-105"
+                style={{ backgroundImage: `url(${s.image})` }}
+              />
+              {/* base legibility gradient */}
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(11,16,13,0.55) 0%, rgba(11,16,13,0.05) 32%, rgba(11,16,13,0.78) 100%)",
+                }}
+              />
+
+              {/* corner registration marks */}
+              {(
+                [
+                  "left-3.5 top-3.5 border-l border-t",
+                  "right-3.5 top-3.5 border-r border-t",
+                  "bottom-3.5 left-3.5 border-b border-l",
+                  "bottom-3.5 right-3.5 border-b border-r",
+                ] as const
+              ).map((pos) => (
+                <span
+                  key={pos}
+                  aria-hidden
+                  className={`absolute h-2.5 w-2.5 ${pos}`}
+                  style={{ borderColor: "rgba(255,255,255,0.45)" }}
+                />
+              ))}
+
+              {/* step index */}
               <span
-                key={s.num}
-                className="hiw-counter absolute inset-0 text-right text-[0.65rem] font-semibold tracking-[0.22em] text-black/40 uppercase"
-                style={{ opacity: i === 0 ? 1 : 0 }}
+                className="absolute left-4 top-4 text-[10px] font-semibold uppercase tracking-[0.22em] text-white"
+              >
+                Step {s.num}
+              </span>
+              <span
+                className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.2em]"
+                style={{ color: "rgba(255,255,255,0.65)" }}
               >
                 {s.num} / {String(TOTAL).padStart(2, "0")}
               </span>
-            ))}
-          </div>
-        </div>
 
-        {/* main content */}
-        <div className="absolute inset-x-16 top-1/2 -translate-y-[48%] flex items-center gap-16">
-
-          {/* left: step text */}
-          <div className="relative flex-1">
-            {STEPS.map((s, i) => (
-              <div
-                key={s.num}
-                className="hiw-slide absolute inset-x-0 top-0"
-                style={{ opacity: i === 0 ? 1 : 0 }}
-              >
-                <div className="mb-6 flex items-center gap-3">
-                  <span className="text-[0.62rem] font-bold tracking-[0.3em] text-black uppercase">
-                    Step {s.num}
-                  </span>
-                  <div className="h-px w-8 bg-black/35" />
-                  <span className="text-[0.62rem] tracking-[0.15em] text-black/45 uppercase">{s.label}</span>
-                </div>
-
-                <h2 className="font-display text-[clamp(2.6rem,6.5vw,6rem)] font-normal leading-[0.92] text-[#0c0b09]">
-                  {s.title.split("\n").map((line, li) => (
-                    <span key={li} className="block">
-                      {li === 1
-                        ? <span className="italic text-[#0c0b09]/60">{line}</span>
-                        : line}
-                    </span>
+              {/* line-art icon */}
+              <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
+                <svg
+                  className="h-20 w-20 sm:h-24 sm:w-24"
+                  viewBox="0 0 200 200"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.92)"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }}
+                >
+                  {SHAPES[i].map((d, pi) => (
+                    <path key={pi} d={d} className="hiw-draw" />
                   ))}
-                </h2>
+                </svg>
+              </div>
 
-                <div
-                  className="mt-7 h-px w-16"
-                  style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.5), transparent)" }}
-                />
+              {/* label (hidden on hover, replaced by detail) */}
+              <span
+                className="absolute bottom-4 left-4 text-[10px] uppercase tracking-[0.18em] transition-opacity duration-300 group-hover:opacity-0"
+                style={{ color: "rgba(255,255,255,0.8)" }}
+              >
+                {s.label}
+              </span>
 
-                <p className="mt-5 max-w-[36ch] text-[1rem] leading-relaxed text-black/55">{s.body}</p>
+              {/* hover detail overlay */}
+              <div
+                className="absolute inset-0 flex flex-col justify-end p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:p-5"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(11,16,13,0.25) 0%, rgba(11,16,13,0.82) 55%, rgba(11,16,13,0.95) 100%)",
+                  backdropFilter: "blur(1px)",
+                }}
+              >
+                <span
+                  className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em]"
+                  style={{ color: "#9ec5ad" }}
+                >
+                  {s.label}
+                </span>
+                <p className="mb-3 text-[12.5px] leading-[1.5] text-white/90 sm:text-[13px]">
+                  {s.detail}
+                </p>
+                <ul className="space-y-1.5">
+                  {s.points.map((pt) => (
+                    <li key={pt} className="flex items-start gap-2 text-[11px] text-white/75">
+                      <svg className="mt-[3px] h-3 w-3 flex-none" viewBox="0 0 12 12" fill="none" aria-hidden>
+                        <path d="M2.5 6.2l2.2 2.2L9.5 3.6" stroke="#9ec5ad" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-                {i === TOTAL - 1 && (
+      {/* ── synced detail + progress ───────────────────────────────── */}
+      <div className="relative z-10 mx-auto max-w-[680px] px-5 pb-12 pt-5 text-center sm:px-8 lg:pb-16">
+        <div ref={detailRef}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <motion.p
+                className="text-[10px] font-semibold uppercase tracking-[0.22em]"
+                style={{ color: ACCENT }}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.05, duration: 0.35 }}
+              >
+                Step {step.num} · {step.label}
+              </motion.p>
+
+              <motion.h3
+                className="mt-3 font-display leading-[1.05] tracking-[-0.02em]"
+                style={{
+                  fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                  fontSize: "clamp(22px, 3vw, 32px)",
+                }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08, duration: 0.4 }}
+              >
+                {step.title.split("\n").map((line, li) => (
+                  <span key={li} className="block">
+                    {li === 1 ? (
+                      <span className="italic" style={{ color: ACCENT }}>{line}</span>
+                    ) : (
+                      line
+                    )}
+                  </span>
+                ))}
+              </motion.h3>
+
+              <motion.p
+                className="mx-auto mt-4 max-w-[46ch] text-[14px] leading-[1.55] sm:text-[15px]"
+                style={{ color: "rgba(22,22,22,0.7)" }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.14, duration: 0.4 }}
+              >
+                {step.body}
+              </motion.p>
+
+              {active === TOTAL - 1 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.35 }}
+                >
                   <Link
                     to="/quiz"
-                    className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-black px-7 py-3 text-sm font-semibold text-[#F3C300] transition-transform hover:scale-[1.03]"
+                    className="mt-5 inline-flex items-center gap-2.5 rounded-full px-6 py-2.5 text-[13px] font-semibold text-white transition-transform hover:scale-[1.03]"
+                    style={{ background: ACCENT }}
                   >
                     Start your assessment
                     <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" aria-hidden>
                       <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </Link>
-                )}
-              </div>
-            ))}
-            {/* invisible spacer to give the relative container height */}
-            <div className="invisible pointer-events-none">
-              <div className="mb-6 text-[0.62rem]">Step 01</div>
-              <div className="font-display text-[clamp(2.6rem,6.5vw,6rem)] leading-[0.92]">
-                Take the<br />Assessment
-              </div>
-              <div className="mt-7 h-px w-16" />
-              <p className="mt-5 text-[1rem] leading-relaxed">placeholder</p>
-            </div>
-          </div>
-
-          {/* right: animated SVG ring + shape */}
-          <div className="relative mx-auto aspect-square w-[min(42vw,440px)] flex-none">
-            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 200 200" fill="none">
-              <circle cx="100" cy="100" r="84" stroke="rgba(0,0,0,0.1)" strokeWidth="1" />
-            </svg>
-            <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 200 200" fill="none">
-              <circle
-                ref={ringRef}
-                cx="100" cy="100" r="84"
-                stroke="rgba(0,0,0,0.65)"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            </svg>
-            {SHAPES.map((paths, i) => (
-              <svg
-                key={i}
-                className="hiw-shape-svg absolute inset-0 h-full w-full"
-                viewBox="0 0 200 200"
-                fill="none"
-                stroke="rgba(0,0,0,0.55)"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ opacity: i === 0 ? 1 : 0 }}
-              >
-                {paths.map((d, pi) => (
-                  <path key={pi} d={d} className="hiw-draw" />
-                ))}
-              </svg>
-            ))}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {STEPS.map((s, i) => (
-                <span
-                  key={s.num}
-                  className="hiw-center-num absolute font-display text-[clamp(1.8rem,5vw,3.2rem)] font-light tracking-tight text-black/55"
-                  style={{ opacity: i === 0 ? 1 : 0 }}
-                >
-                  {s.num}
-                </span>
-              ))}
-            </div>
-            <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 200 200" fill="none">
-              {STEPS.map((_, i) => {
-                const angle = -90 + (i / TOTAL) * 360;
-                const rad = (angle * Math.PI) / 180;
-                const cx = 100 + 84 * Math.cos(rad);
-                const cy = 100 + 84 * Math.sin(rad);
-                return (
-                  <circle
-                    key={i}
-                    cx={cx} cy={cy} r="3"
-                    fill={i === 0 ? "rgba(0,0,0,0.75)" : "rgba(0,0,0,0.18)"}
-                    className={`hiw-dot`}
-                  />
-                );
-              })}
-            </svg>
-          </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* bottom bar */}
-        <div className="absolute inset-x-16 bottom-9 z-20 flex items-center justify-between">
-          <div className="flex items-center gap-[7px]">
-            {STEPS.map((_, i) => (
-              <div
-                key={i}
-                className="hiw-dot h-[3px] w-[3px] rounded-full bg-black"
-                style={{ opacity: i === 0 ? 1 : 0.22 }}
-              />
-            ))}
-          </div>
-          <p className="text-[0.62rem] uppercase tracking-[0.22em] text-black/30">
-            Scroll to explore
-          </p>
+        {/* progress dots — visual only, auto-advances */}
+        <div className="mt-8 flex items-center justify-center gap-2.5">
+          {STEPS.map((s, i) => (
+            <motion.span
+              key={s.num}
+              aria-hidden={i !== active}
+              aria-label={i === active ? `Step ${s.num} of ${TOTAL}` : undefined}
+              className="block h-[6px] rounded-full"
+              animate={{
+                width: i === active ? 32 : 6,
+                background: i === active ? ACCENT : "rgba(22,22,22,0.2)",
+              }}
+              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+            />
+          ))}
         </div>
 
-        {/* progress bar */}
-        <div
-          ref={progressBarRef}
-          className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0"
-          style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.7), rgba(0,0,0,0.2))" }}
-        />
-      </div>
-    </section>
+        <motion.p
+          className="mt-5 text-[10px] uppercase tracking-[0.24em]"
+          style={{ color: "rgba(22,22,22,0.4)" }}
+          animate={{ opacity: [0.45, 0.75, 0.45] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        >
+          Auto-playing · hover to pause
+        </motion.p>
+      </div>    </section>
   );
 }

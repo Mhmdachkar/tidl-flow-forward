@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 // TODO: Replace with real patient reviews before launch
@@ -66,30 +66,6 @@ const MARQUEE_ITEMS = [
   "Board-Certified", "Discreet Delivery", "Real Patients", "HIPAA Compliant",
 ];
 
-// directional enter per card — alternating left / top / right / left / bottom / right
-const ENTERS = [
-  { x: -140, y:   0, rotate: -3.0, delay: 0.00 },
-  { x:    0, y: -80, rotate:  1.5, delay: 0.08 },
-  { x:  130, y:   0, rotate:  2.5, delay: 0.04 },
-  { x: -110, y:   0, rotate: -2.0, delay: 0.12 },
-  { x:    0, y:  90, rotate: -1.5, delay: 0.06 },
-  { x:  120, y:   0, rotate:  3.0, delay: 0.10 },
-] as const;
-
-// ─── Stars ────────────────────────────────────────────────────────────────────
-
-function Stars({ n }: { n: number }) {
-  return (
-    <div className="flex items-center gap-[3px]" aria-label={`${n} out of 5 stars`}>
-      {Array.from({ length: n }).map((_, i) => (
-        <svg key={i} width="9" height="9" viewBox="0 0 10 10" aria-hidden fill="#2d4a3e">
-          <path d="M5 1l1.12 2.27L9 3.82l-2 1.95.47 2.76L5 7.27l-2.47 1.26L3 5.77 1 3.82l2.88-.55z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
 // ─── Headline line with per-word mask reveal spans ────────────────────────────
 
 function RevLine({
@@ -121,9 +97,9 @@ export function ReviewsSection() {
   const rootRef    = useRef<HTMLElement | null>(null);
   const cursorRef  = useRef<HTMLDivElement | null>(null);
   const headRef    = useRef<HTMLDivElement | null>(null);
-  const statsRef   = useRef<HTMLDivElement | null>(null);
-  const marqueeRef = useRef<HTMLDivElement | null>(null);
-  const cardEls    = useRef<(HTMLDivElement | null)[]>([]);
+  const statsRef    = useRef<HTMLDivElement | null>(null);
+  const marqueeRef  = useRef<HTMLDivElement | null>(null);
+  const reviewsRef  = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -188,26 +164,13 @@ export function ReviewsSection() {
         });
       }
 
-      // ── card directional enters ─────────────────────────────────────────
-      cardEls.current.forEach((el, i) => {
-        if (!el) return;
-        const e = ENTERS[i];
-        gsap.set(el, {
-          x: e.x, y: e.y, rotate: e.rotate,
-          opacity: 0, filter: "blur(8px)",
-        });
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top 92%",
-          onEnter: () => {
-            gsap.to(el, {
-              x: 0, y: 0, rotate: 0,
-              opacity: 1, filter: "blur(0px)",
-              duration: 1.1, delay: e.delay, ease: "expo.out",
-            });
-          },
-        });
-      });
+      // ── reviews auto slider (text only) ─────────────────────────────────
+      const rmq = reviewsRef.current;
+      if (rmq) {
+        const tween = gsap.to(rmq, { xPercent: -50, duration: 50, ease: "none", repeat: -1 });
+        rmq.addEventListener("mouseenter", () => tween.pause());
+        rmq.addEventListener("mouseleave", () => tween.resume());
+      }
 
       // ── marquee ─────────────────────────────────────────────────────────
       const mq = marqueeRef.current?.firstElementChild as HTMLElement | null;
@@ -331,106 +294,32 @@ export function ReviewsSection() {
         <div className="h-px" style={{ background: "rgba(22,22,22,0.1)" }} />
       </div>
 
-      {/* ── card wall ───────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-[1360px] px-6 py-8 sm:px-10 sm:py-12 lg:px-16 lg:py-14">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {REVIEWS.map((r, i) => (
+      {/* ── reviews auto slider — text only, no container, no border ──────── */}
+      <div className="relative z-10 overflow-hidden py-10 sm:py-14 lg:py-16">
+        <div ref={reviewsRef} className="flex w-max items-start">
+          {[...REVIEWS, ...REVIEWS].map((r, i) => (
             <div
-              key={r.id}
-              ref={(el) => { cardEls.current[i] = el; }}
-              className="will-change-transform"
-              style={{
-                background: "#faf9f6",
-                border: "1px solid rgba(22,22,22,0.09)",
-                borderLeft: "2px solid #2d4a3e",
-                borderRadius: 6,
-                padding: "18px 20px",
-              }}
+              key={i}
+              className="flex-shrink-0 w-[280px] sm:w-[400px] lg:w-[480px] px-8 sm:px-12 lg:px-16"
             >
-              {/* tag + stars row */}
-              <div className="mb-3 flex items-center justify-between">
-                <span
-                  className="text-[9px] font-medium uppercase"
-                  style={{
-                    letterSpacing: "0.28em",
-                    color: "#2d4a3e",
-                    background: "rgba(45,74,62,0.07)",
-                    padding: "2px 7px",
-                    borderRadius: 2,
-                  }}
-                >
-                  {r.tag}
-                </span>
-                <Stars n={r.stars} />
-              </div>
-
-              {/* outcome headline */}
               <p
-                className="mb-3"
                 style={{
                   fontFamily: '"Instrument Serif", Georgia, serif',
-                  fontSize: "clamp(15px, 1.6vw, 19px)",
-                  color: "#161616",
+                  fontSize: "clamp(20px, 1.8vw, 28px)",
+                  lineHeight: 1.35,
                   letterSpacing: "-0.01em",
-                  lineHeight: 1.2,
-                }}
-              >
-                {r.outcome}
-              </p>
-
-              {/* quote */}
-              <p
-                className="mb-4"
-                style={{
-                  fontSize: 16,
-                  lineHeight: 1.6,
-                  color: "rgba(22,22,22,0.62)",
+                  color: "#161616",
                   fontStyle: "italic",
                 }}
               >
                 &ldquo;{r.quote}&rdquo;
               </p>
-
-              {/* attribution */}
-              <div
-                className="flex items-center gap-2.5 pt-3"
-                style={{ borderTop: "1px solid rgba(22,22,22,0.07)" }}
+              <p
+                className="mt-5 text-[11px] font-medium uppercase"
+                style={{ letterSpacing: "0.24em", color: "#2d4a3e" }}
               >
-                {/* initials avatar */}
-                <div
-                  className="flex flex-shrink-0 items-center justify-center text-[10px] font-medium"
-                  style={{
-                    width: 28, height: 28,
-                    borderRadius: "50%",
-                    background: "rgba(45,74,62,0.1)",
-                    color: "#2d4a3e",
-                  }}
-                  aria-hidden
-                >
-                  {r.name.split(" ").map((p) => p[0]).join("")}
-                </div>
-                <div>
-                  <p className="text-[12px] font-medium" style={{ color: "#161616" }}>
-                    {r.name}, {r.age}
-                  </p>
-                  <p
-                    className="text-[10px]"
-                    style={{ color: "rgba(22,22,22,0.45)", letterSpacing: "0.1em" }}
-                  >
-                    Verified patient
-                  </p>
-                </div>
-
-                {/* corner mark */}
-                <div className="ml-auto">
-                  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
-                    <path
-                      d="M10 0H0v1h9v9h1z"
-                      fill="rgba(45,74,62,0.25)"
-                    />
-                  </svg>
-                </div>
-              </div>
+                {r.name}, {r.age}
+              </p>
             </div>
           ))}
         </div>

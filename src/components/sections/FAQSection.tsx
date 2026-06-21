@@ -339,17 +339,6 @@ export function FAQSection() {
         }}
       />
 
-      {/* faint grid */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #161616 1px, transparent 1px), linear-gradient(to bottom, #161616 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-        }}
-      />
-
       <div className="relative z-10 mx-auto max-w-[1360px] px-6 pt-12 pb-16 sm:px-8 sm:pt-16 sm:pb-20 lg:px-16 lg:pt-24 lg:pb-28">
 
         {/* ── header ─────────────────────────────────────────────────── */}

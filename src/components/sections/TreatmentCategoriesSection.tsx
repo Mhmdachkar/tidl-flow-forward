@@ -1,7 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { getProductListItems } from "@/data/products";
+
+import categoryHormonal from "@/assets/product 3 3d pink.png";
+import categoryMetabolic from "@/assets/product 1 3d.png";
+import categoryRecovery from "@/assets/product 2 3d white.png";
+import categoryLongevity from "@/assets/product 4 3d.png";
 
 type Card = {
   slug: string;
@@ -12,6 +18,13 @@ type Card = {
   price: number;
   lightProduct?: boolean;
 };
+
+const CATEGORIES = [
+  { before: "", highlight: "Hormonal", after: " balance", img: categoryHormonal, to: "/hormonal" },
+  { before: "", highlight: "Metabolic", after: " care", img: categoryMetabolic, to: "/metabolic" },
+  { before: "", highlight: "Recovery", after: " science", img: categoryRecovery, to: "/recovery" },
+  { before: "", highlight: "Longevity", after: " stack", img: categoryLongevity, to: "/longevity" },
+] as const;
 
 const CARDS: Card[] = getProductListItems().map((item) => ({
   slug: item.slug,
@@ -67,10 +80,22 @@ export function TreatmentCategoriesSection() {
       card.addEventListener("mouseenter", onEnter);
       card.addEventListener("mouseleave", onLeave);
     });
+
+    const hub = sec.querySelector<HTMLElement>(".cat-hub");
+    if (hub) {
+      gsap.fromTo(
+        hub.querySelectorAll<HTMLElement>(".cat-card, h3"),
+        { opacity: 0, y: 34 },
+        {
+          opacity: 1, y: 0, duration: 0.8, ease: "expo.out", stagger: 0.08,
+          scrollTrigger: { trigger: hub, start: "top 85%" },
+        },
+      );
+    }
   }, []);
 
   return (
-    <section id="treatments" ref={ref} className="relative py-24 lg:py-36 bg-surface">
+    <section id="treatments" ref={ref} className="relative py-24 lg:py-36" style={{ background: "rgb(226, 226, 226)" }}>
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-16 max-w-3xl">
           <span className="pill-tag mb-5"><span className="dot" /> Treatments</span>
@@ -117,6 +142,41 @@ export function TreatmentCategoriesSection() {
               </div>
             </Link>
           ))}
+        </div>
+
+        <div className="cat-hub mt-20 sm:mt-28">
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <h3 className="font-display text-[clamp(1.4rem,3vw,2.2rem)] leading-tight text-ink">
+              Explore by <span className="italic text-gradient-clinical">category.</span>
+            </h3>
+            <span className="hidden text-sm text-ink-soft sm:block">Four pillars of whole-system care</span>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c.to}
+                to={c.to}
+                className="cat-card group relative flex items-center gap-4 overflow-hidden rounded-[1.25rem] bg-white px-5 py-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_40px_-24px_rgba(20,30,60,0.35)]"
+              >
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  style={{ background: "radial-gradient(circle at 80% 50%, rgba(243,195,0,0.18), transparent 65%)" }}
+                />
+                <p className="relative z-10 min-w-0 flex-1 text-[clamp(0.95rem,1.8vw,1.15rem)] leading-snug text-ink">
+                  {c.before}
+                  <span className="text-[#C9A200]">{c.highlight}</span>
+                  {c.after}
+                </p>
+                <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                  <img src={c.img} alt="" className="h-full w-full object-contain" draggable={false} />
+                </div>
+                <ChevronRight
+                  className="relative z-10 h-4 w-4 shrink-0 text-ink/35 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ink/70"
+                  strokeWidth={1.75}
+                />
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>
