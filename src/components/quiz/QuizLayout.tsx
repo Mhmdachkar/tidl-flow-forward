@@ -23,8 +23,9 @@ export function QuizLayout({
   footer,
 }: QuizLayoutProps) {
   return (
-    <div className="flex h-svh flex-col overflow-hidden bg-background text-foreground">
-      <header className="shrink-0 border-b border-border/60 bg-background/90 backdrop-blur-md">
+    <div className="min-h-svh bg-background text-foreground flex flex-col">
+      {/* Sticky header */}
+      <header className="sticky top-0 z-10 shrink-0 border-b border-border/60 bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             {canGoBack && onBack ? (
@@ -62,11 +63,13 @@ export function QuizLayout({
         <div className="hairline" />
       </header>
 
-      <main className="flex-1 overflow-y-auto overscroll-contain">
+      {/* Scrollable content */}
+      <main className="flex-1">
         <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">{children}</div>
       </main>
 
-      <div className="shrink-0 border-t border-border/60 bg-background/95 backdrop-blur-sm">
+      {/* Sticky footer */}
+      <div className="sticky bottom-0 z-10 border-t border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-4 sm:px-6">
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground sm:text-sm">
             <ShieldCheck className="h-4 w-4 shrink-0 text-clinical" />
