@@ -18,13 +18,13 @@ export function QuizFlow({ quiz }: QuizFlowProps) {
   const { currentStep, data, errors, updateData } = quiz;
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={currentStep}
-        initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
         {currentStep === 1 ? (
           <StepGoal
