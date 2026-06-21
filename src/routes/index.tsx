@@ -8,6 +8,7 @@ import { PhoneApp } from "@/components/PhoneApp";
 import { PixelButton } from "@/components/PixelButton";
 import { getProductListItems } from "@/data/products";
 import { useAuth } from "@/providers/auth-provider";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import hero from "@/assets/hero image 3d.png";
 import heroBg from "@/assets/hero bg.jpeg";
@@ -178,6 +179,7 @@ function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
+  const { openModal } = useQuizModal();
 
   useEffect(() => {
     gsap.from(ref.current, { y: -40, opacity: 0, duration: 1.2, ease: "expo.out", delay: 0.3 });
@@ -463,13 +465,13 @@ function Nav() {
               Log in
             </Link>
           )}
-          <Link
-            to="/quiz"
-            onClick={() => setMenuOpen(false)}
+          <button
+            type="button"
+            onClick={() => { openModal(); setMenuOpen(false); }}
             className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-sm font-semibold text-black shadow-[0_4px_16px_rgba(243,195,0,0.30)] transition-opacity hover:opacity-90"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </div>
     </>
@@ -551,7 +553,7 @@ function Hero() {
               </p>
 
               <div ref={ctaRef} className="mt-7 flex flex-wrap items-center justify-start gap-3">
-                <MagneticButton as="a" href="/quiz" className="btn-primary">
+                <MagneticButton as="button" onClick={() => openModal()} className="btn-primary">
                   Start your assessment →
                 </MagneticButton>
                 <MagneticButton className="btn-ghost">Watch the film</MagneticButton>

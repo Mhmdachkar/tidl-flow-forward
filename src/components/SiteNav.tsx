@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 
 import { useAuth } from "@/providers/auth-provider";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 
 const NAV_LINKS = [
@@ -47,6 +48,7 @@ interface SiteNavProps {
 export function SiteNav({ dark = true }: SiteNavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
+  const { openModal } = useQuizModal();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -315,13 +317,13 @@ export function SiteNav({ dark = true }: SiteNavProps) {
               Log in
             </Link>
           )}
-          <Link
-            to="/quiz"
-            onClick={() => setMenuOpen(false)}
+          <button
+            type="button"
+            onClick={() => { openModal(); setMenuOpen(false); }}
             className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-sm font-semibold text-black shadow-[0_4px_16px_rgba(243,195,0,0.30)] transition-opacity hover:opacity-90"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </div>
     </>

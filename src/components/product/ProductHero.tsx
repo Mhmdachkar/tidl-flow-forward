@@ -1,5 +1,4 @@
-import { Link } from "@tanstack/react-router";
-
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { Pen3D } from "@/components/three/Pen3D";
 import type { Product } from "@/types/product";
 
@@ -8,6 +7,7 @@ interface ProductHeroProps {
 }
 
 export function ProductHero({ product }: ProductHeroProps) {
+  const { openModal } = useQuizModal();
   const imageFilter = product.lightProduct
     ? "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))"
     : "drop-shadow(0 22px 28px rgba(20,30,60,0.22))";
@@ -41,13 +41,13 @@ export function ProductHero({ product }: ProductHeroProps) {
             </div>
 
             <div className="order-3 mt-6 flex flex-col gap-3 sm:flex-row sm:items-center lg:order-none">
-              <Link
-                to="/quiz"
-                search={{ product: product.slug }}
+              <button
+                type="button"
+                onClick={() => openModal({ product: product.slug })}
                 className="btn-primary inline-flex justify-center px-8 py-3.5 text-sm"
               >
                 Start Assessment
-              </Link>
+              </button>
               <a
                 href="#how-it-works"
                 className="inline-flex justify-center rounded-full border border-border px-6 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"

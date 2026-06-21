@@ -12,13 +12,16 @@ import { StepTreatmentHistory } from "@/components/quiz/steps/StepTreatmentHisto
 
 interface QuizFlowProps {
   quiz: UseQuizReturn;
+  /** Called by auto-advance steps instead of showing a Continue button */
+  onAutoAdvance?: () => void;
 }
 
-export function QuizFlow({ quiz }: QuizFlowProps) {
+export function QuizFlow({ quiz, onAutoAdvance }: QuizFlowProps) {
   const { currentStep, data, errors, updateData } = quiz;
   const [visible, setVisible] = useState(true);
   const prevStep = useRef(currentStep);
 
+  // Fade between steps
   useEffect(() => {
     if (prevStep.current !== currentStep) {
       setVisible(false);
@@ -29,6 +32,16 @@ export function QuizFlow({ quiz }: QuizFlowProps) {
       return () => clearTimeout(t);
     }
   }, [currentStep]);
+
+  // Auto-advance: watch goal changes on step 1
+  const prevGoal = useRef(data.goal);
+  useEffect(() => {
+    if (currentStep === 1 && data.goal && data.goal !== prevGoal.current && onAutoAdvance) {
+      prevGoal.current = data.goal;
+      const t = setTimeout(() => onAutoAdvance(), 280);
+      return () => clearTimeout(t);
+    }
+  }, [currentStep, data.goal, onAutoAdvance]);
 
   const style: React.CSSProperties = {
     transition: "opacity 0.18s ease, transform 0.18s ease",

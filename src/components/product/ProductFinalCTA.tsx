@@ -1,5 +1,4 @@
-import { Link } from "@tanstack/react-router";
-
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import type { ProductSlug } from "@/types/product";
 
 interface ProductFinalCTAProps {
@@ -11,6 +10,7 @@ export function ProductFinalCTA({
   productSlug,
   headline = "Ready to see if you qualify?",
 }: ProductFinalCTAProps) {
+  const { openModal } = useQuizModal();
   return (
     <>
       <section className="border-t border-border bg-surface py-16 sm:py-24">
@@ -22,26 +22,26 @@ export function ProductFinalCTA({
             Complete a secure medical assessment. A licensed physician will review your
             information and determine whether treatment is appropriate.
           </p>
-          <Link
-            to="/quiz"
-            search={{ product: productSlug }}
+          <button
+            type="button"
+            onClick={() => openModal({ product: productSlug })}
             className="btn-primary mt-8 inline-flex justify-center px-10 py-3.5 text-sm"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </section>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-4 backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">Physician review required</p>
-          <Link
-            to="/quiz"
-            search={{ product: productSlug }}
+          <button
+            type="button"
+            onClick={() => openModal({ product: productSlug })}
             className="btn-primary shrink-0 px-6 py-2.5 text-sm"
           >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </div>
     </>

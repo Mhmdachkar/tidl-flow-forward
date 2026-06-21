@@ -16,6 +16,8 @@ interface UseQuizOptions {
   initialStep?: number;
   initialProduct?: string;
   initialGoal?: GoalId;
+  /** When true, skip URL navigation (used when quiz runs inside a modal) */
+  noNavigation?: boolean;
 }
 
 function hasInProgressQuiz(stored: ReturnType<typeof loadQuizState>) {
@@ -23,7 +25,7 @@ function hasInProgressQuiz(stored: ReturnType<typeof loadQuizState>) {
   return stored.currentStep > 1 || stored.data.goal !== null;
 }
 
-export function useQuiz({ initialStep, initialProduct, initialGoal }: UseQuizOptions = {}) {
+export function useQuiz({ initialStep, initialProduct, initialGoal, noNavigation = false }: UseQuizOptions = {}) {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<QuizFormData>(() => createDefaultQuizData());
@@ -87,13 +89,15 @@ export function useQuiz({ initialStep, initialProduct, initialGoal }: UseQuizOpt
       const nextStep = Math.min(Math.max(step, 1), QUIZ_TOTAL_STEPS);
       setCurrentStep(nextStep);
       setErrors({});
-      void navigate({
-        to: "/quiz",
-        search: nextStep > 1 ? { step: nextStep } : {},
-        replace: true,
-      });
+      if (!noNavigation) {
+        void navigate({
+          to: "/quiz",
+          search: nextStep > 1 ? { step: nextStep } : {},
+          replace: true,
+        });
+      }
     },
-    [navigate],
+    [navigate, noNavigation],
   );
 
   const goBack = useCallback(() => {
@@ -117,16 +121,19 @@ export function useQuiz({ initialStep, initialProduct, initialGoal }: UseQuizOpt
     return true;
   }, [currentStep, data, goToStep]);
 
-  const completeAndCheckout = useCallback(() => {
+  const completeAndCheckout = useCallback((): boolean => {
     const result = validateQuizStep(currentStep, data);
     if (!result.success) {
       setErrors(result.errors);
-      return;
+      return false;
     }
 
     saveQuizState(QUIZ_TOTAL_STEPS, data);
-    void navigate({ to: "/checkout" });
-  }, [currentStep, data, navigate]);
+    if (!noNavigation) {
+      void navigate({ to: "/checkout" });
+    }
+    return true;
+  }, [currentStep, data, navigate, noNavigation]);
 
   const resetQuiz = useCallback(() => {
     clearQuizState();
