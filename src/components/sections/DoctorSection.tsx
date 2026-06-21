@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
-import { gsap } from "@/lib/gsap";
-import { ScrollTrigger, Observer } from "gsap/all";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
+import ObserverPlugin from "gsap/Observer";
 
-gsap.registerPlugin(ScrollTrigger, Observer);
+gsap.registerPlugin(ObserverPlugin);
+const Observer = ObserverPlugin;
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const DOCTORS = [
@@ -225,58 +226,139 @@ export function ClinicalLeadershipSection() {
         return;
       }
 
-      // initial states
-      gsap.set(chars, { yPercent: 110, rotateX: -55, opacity: 0 });
-      gsap.set([eyebrow, bodyEl, sigEl], { opacity: 0, y: 24 });
-      gsap.set(imgPanelRef.current, { clipPath: "inset(0 0 100% 0 round 28px)" });
-      gsap.set(imgInnerRef.current, { scale: 1.25 });
-      gsap.set(badgeRef.current, { opacity: 0, y: 40, scale: 0.92 });
-      gsap.set(stdItems, { opacity: 0, x: -18 });
-      gsap.set([hairline0.current, hairline1.current], { scaleX: 0, transformOrigin: "left center" });
-      gsap.set(statsEl, { opacity: 0, y: 30 });
-
-      // Master intro timeline
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-        scrollTrigger: { trigger: sec, start: "top 75%" },
+      // ── ZONE 1 initial states ───────────────────────────────────────────────
+      // Left col: eyebrow slides in from LEFT
+      gsap.set(eyebrow, { opacity: 0, x: -60, skewX: -6 });
+      // Headline chars: burst up through the floor with 3-D rotation
+      gsap.set(chars, { yPercent: 120, rotateX: -70, opacity: 0, transformOrigin: "50% 100%" });
+      // Body: drifts up from below
+      gsap.set(bodyEl, { opacity: 0, y: 44 });
+      // Hairline 0: grows from left
+      gsap.set(hairline0.current, { scaleX: 0, transformOrigin: "left center" });
+      // Signature: hidden (drawn by strokeDashoffset below)
+      gsap.set(sigEl, { opacity: 0, x: -30 });
+      // Right image: slides in from RIGHT with clip-path curtain
+      gsap.set(imgPanelRef.current, {
+        clipPath: "inset(0 100% 0 0 round 28px)",
+        x: 60,
       });
-      tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.5 }, 0)
-        .to(chars, { yPercent: 0, rotateX: 0, opacity: 1, duration: 1.1,
-                     stagger: { each: 0.012, from: "start" }, ease: "expo.out" }, 0.08)
-        .to(bodyEl, { opacity: 1, y: 0, duration: 0.55 }, 0.55)
-        .to(hairline0.current, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.6)
-        .to(sigEl,  { opacity: 1, y: 0, duration: 0.5 }, 0.7)
-        .to(imgPanelRef.current, { clipPath: "inset(0 0 0% 0 round 28px)", duration: 1.5, ease: "expo.out" }, 0.1)
-        .to(imgInnerRef.current, { scale: 1, duration: 1.6, ease: "expo.out" }, 0.1)
-        .to(badgeRef.current, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 1.15)
-        .to(hairline1.current, { scaleX: 1, duration: 0.6 }, 0.55)
-        .to(stdItems, { opacity: 1, x: 0, duration: 0.5, stagger: 0.08 }, 0.6)
-        .to(trackRef.current, { opacity: 1, duration: 0.6 }, 0.8)
-        .to(statsEl, { opacity: 1, y: 0, duration: 0.6 }, 1.2);
+      gsap.set(imgInnerRef.current, { scale: 1.22 });
+      // Badge: pops up from below the image
+      gsap.set(badgeRef.current, { opacity: 0, y: 50, scale: 0.88 });
 
-      // Signature draw-on
+      // ── ZONE 2 initial states ───────────────────────────────────────────────
+      // Standards list: stagger in from the left with a slight tilt
+      gsap.set(stdItems, { opacity: 0, x: -50, skewY: 2 });
+      gsap.set(hairline1.current, { scaleX: 0, transformOrigin: "left center" });
+      // Carousel track: slides in from the RIGHT + depth
+      gsap.set(trackRef.current, { opacity: 0, x: 80, rotateY: -8 });
+
+      // ── ZONE 3 initial states ───────────────────────────────────────────────
+      // Stats bar: rises from below as one slab
+      gsap.set(statsEl, { opacity: 0, y: 60, rotateX: 6, transformOrigin: "50% 100%", transformPerspective: 1200 });
+
+      // ── MASTER ZONE 1 TIMELINE ─────────────────────────────────────────────
+      const tl1 = gsap.timeline({
+        defaults: { ease: "expo.out" },
+        scrollTrigger: { trigger: sec, start: "top 72%" },
+      });
+
+      // eyebrow slides in from left + deskew
+      tl1.to(eyebrow, { opacity: 1, x: 0, skewX: 0, duration: 0.65 }, 0)
+
+        // image curtain wipes LEFT-TO-RIGHT (clipPath right edge closes)
+        .to(imgPanelRef.current, {
+          clipPath: "inset(0 0% 0 0 round 28px)",
+          x: 0, duration: 1.3, ease: "expo.inOut",
+        }, 0.06)
+        .to(imgInnerRef.current, { scale: 1, duration: 1.4, ease: "expo.out" }, 0.06)
+
+        // headline chars burst upward with stagger
+        .to(chars, {
+          yPercent: 0, rotateX: 0, opacity: 1,
+          duration: 1.05, ease: "expo.out",
+          stagger: { each: 0.013, from: "start" },
+        }, 0.2)
+
+        // body drifts up
+        .to(bodyEl, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.62)
+
+        // hairline grows left→right
+        .to(hairline0.current, { scaleX: 1, duration: 0.8, ease: "expo.out" }, 0.72)
+
+        // signature slides in from left, then SVG draws
+        .to(sigEl, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 0.82)
+
+        // badge pops from below with bounce
+        .to(badgeRef.current, {
+          opacity: 1, y: 0, scale: 1,
+          duration: 0.75, ease: "back.out(2)",
+        }, 1.05);
+
+      // signature SVG draw-on
       if (sigPathRef.current) {
         const len = sigPathRef.current.getTotalLength();
         gsap.set(sigPathRef.current, { strokeDasharray: len, strokeDashoffset: len });
-        tl.to(sigPathRef.current, { strokeDashoffset: 0, duration: 1.7, ease: "power2.inOut" }, 0.8);
+        tl1.to(sigPathRef.current, {
+          strokeDashoffset: 0, duration: 1.8, ease: "power2.inOut",
+        }, 0.9);
       }
 
-      // Scrub parallax: image rises as section scrolls
+      // ── ZONE 2 TIMELINE (separate trigger, slightly later) ─────────────────
+      const tl2 = gsap.timeline({
+        defaults: { ease: "expo.out" },
+        scrollTrigger: { trigger: sec.querySelector(".dr2-zone2") ?? sec, start: "top 78%" },
+      });
+
+      // hairline draws out
+      tl2.to(hairline1.current, { scaleX: 1, duration: 0.6 }, 0)
+
+        // standards items: each slides from LEFT with stagger + deskew
+        .to(stdItems, {
+          opacity: 1, x: 0, skewY: 0,
+          duration: 0.65, stagger: 0.1, ease: "power3.out",
+        }, 0.05)
+
+        // carousel slides in from RIGHT + un-rotates
+        .to(trackRef.current, {
+          opacity: 1, x: 0, rotateY: 0,
+          duration: 1.0, ease: "expo.out",
+        }, 0.18);
+
+      // ── ZONE 3 TIMELINE ───────────────────────────────────────────────────
+      const tl3 = gsap.timeline({
+        defaults: { ease: "expo.out" },
+        scrollTrigger: { trigger: sec.querySelector(".dr2-stats") ?? sec, start: "top 84%" },
+      });
+
+      // stats bar rises from below + un-rotates
+      tl3.to(statsEl, {
+        opacity: 1, y: 0, rotateX: 0,
+        duration: 0.85, ease: "power3.out",
+      }, 0);
+
+      // ── ONGOING PARALLAX + LOOPS ──────────────────────────────────────────
+      // image inner rises subtly as page scrolls past
       gsap.to(imgInnerRef.current, {
         yPercent: -12, ease: "none",
         scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1 },
       });
+      // badge drifts up faster (creates depth separation)
       gsap.to(badgeRef.current, {
         yPercent: -30, ease: "none",
         scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1.2 },
       });
 
-      // Floating ambient loop on badge
-      gsap.to(badgeRef.current, { y: "+=8", duration: 3.2, yoyo: true, repeat: -1, ease: "sine.inOut", delay: 2 });
+      // ambient float on badge after entrance
+      gsap.to(badgeRef.current, {
+        y: "+=8", duration: 3.2, yoyo: true, repeat: -1, ease: "sine.inOut", delay: 2,
+      });
 
-      // Atom rotation
+      // atom rotates continuously
       if (atomSvgRef.current) {
-        gsap.to(atomSvgRef.current, { rotation: 360, duration: 32, ease: "none", repeat: -1, transformOrigin: "50% 50%" });
+        gsap.to(atomSvgRef.current, {
+          rotation: 360, duration: 32, ease: "none", repeat: -1, transformOrigin: "50% 50%",
+        });
       }
 
       // Headline char hover wave
@@ -369,7 +451,7 @@ export function ClinicalLeadershipSection() {
         </div>
 
         {/* ─── Zone 2 ───────────────────────────────────────────────── */}
-        <div className="mt-32 grid gap-16 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+        <div className="dr2-zone2 mt-32 grid gap-16 lg:grid-cols-[1fr_1.4fr] lg:items-center">
           <div>
             <div className="mb-8 flex items-center gap-3">
               <span className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: "#3B6FA0" }}>Our Standard</span>
