@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 import { useAuth } from "@/providers/auth-provider";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
+import { useAuthModal } from "@/providers/auth-modal-provider";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 
@@ -107,6 +108,7 @@ export function SiteNav({ dark = true }: SiteNavProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal } = useQuizModal();
+  const { openModal: openAuthModal } = useAuthModal();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -177,8 +179,9 @@ export function SiteNav({ dark = true }: SiteNavProps) {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
+              <button
+                type="button"
+                onClick={() => openAuthModal({ mode: "login" })}
                 className={`hidden rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors sm:block ${
                   dark
                     ? "border-white/20 text-white/70 hover:border-white/40 hover:text-white"
@@ -186,7 +189,7 @@ export function SiteNav({ dark = true }: SiteNavProps) {
                 }`}
               >
                 Log in
-              </Link>
+              </button>
             )}
 
             {/* Start Assessment — desktop */}
@@ -282,13 +285,13 @@ export function SiteNav({ dark = true }: SiteNavProps) {
                   Sign in to manage your health journey
                 </p>
               </div>
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
                 className="ml-4 shrink-0 rounded-full border border-border/70 px-4 py-2 text-[12px] font-semibold text-foreground transition-colors hover:bg-surface"
               >
                 Log in
-              </Link>
+              </button>
             </div>
           )}
         </div>
@@ -390,13 +393,13 @@ export function SiteNav({ dark = true }: SiteNavProps) {
           </p>
           <div className="space-y-2.5">
             {!isAuthenticated && (
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center rounded-[1.25rem] border border-border/70 bg-white py-3.5 text-[14px] font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] active:translate-y-0"
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
+                className="flex w-full items-center justify-center rounded-[1.25rem] border border-border/70 bg-white py-3.5 text-[14px] font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] active:translate-y-0"
               >
                 Log in
-              </Link>
+              </button>
             )}
             <button
               type="button"

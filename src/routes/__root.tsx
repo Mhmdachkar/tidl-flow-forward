@@ -12,6 +12,8 @@ import { type ReactNode } from "react";
 import { AuthProvider } from "@/providers/auth-provider";
 import { QuizModalProvider } from "@/providers/quiz-modal-provider";
 import { QuizModal } from "@/components/quiz/QuizModal";
+import { AuthModalProvider } from "@/providers/auth-modal-provider";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 import appCss from "../styles.css?url";
 import favicon from "@/assets/TIDL_LOGO_BLACK_WHITE.jpg?url";
@@ -123,12 +125,16 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <QuizModalProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-          {/* Global quiz modal — portal renders at document.body */}
-          <QuizModal />
-        </QuizModalProvider>
+        <AuthModalProvider>
+          <QuizModalProvider>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+            {/* Global quiz modal — portal renders at document.body */}
+            <QuizModal />
+            {/* Global auth modal — slide-in panel from the right */}
+            <AuthModal />
+          </QuizModalProvider>
+        </AuthModalProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

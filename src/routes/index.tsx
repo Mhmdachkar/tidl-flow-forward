@@ -10,6 +10,7 @@ import { PixelButton } from "@/components/PixelButton";
 import { getProductListItems } from "@/data/products";
 import { useAuth } from "@/providers/auth-provider";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
+import { useAuthModal } from "@/providers/auth-modal-provider";
 
 import hero from "@/assets/hero image 3d.png";
 import heroBg from "@/assets/hero bg.jpeg";
@@ -252,6 +253,7 @@ function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal } = useQuizModal();
+  const { openModal: openAuthModal } = useAuthModal();
 
   useEffect(() => {
     gsap.from(ref.current, { y: -40, opacity: 0, duration: 1.2, ease: "expo.out", delay: 0.3 });
@@ -342,8 +344,9 @@ function Nav() {
                     <NavAvatar user={user} scrolled={scrolled} />
                   </Link>
                 ) : (
-                  <Link
-                    to="/login"
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal({ mode: "login" })}
                     className={`hidden rounded-full font-medium transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:block ${
                       scrolled
                         ? "border border-transparent bg-[#F3C300] px-2.5 py-0.5 text-[10px] text-black hover:bg-[#F9DC6B]"
@@ -351,7 +354,7 @@ function Nav() {
                     }`}
                   >
                     Log in
-                  </Link>
+                  </button>
                 )}
 
                 {/* Hamburger */}
@@ -432,13 +435,13 @@ function Nav() {
                   Sign in to manage your health journey
                 </p>
               </div>
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
                 className="ml-4 shrink-0 rounded-full border border-border/70 px-4 py-2 text-[12px] font-semibold text-foreground transition-colors hover:bg-surface"
               >
                 Log in
-              </Link>
+              </button>
             </div>
           )}
         </div>
@@ -540,13 +543,13 @@ function Nav() {
           </p>
           <div className="space-y-2.5">
             {!isAuthenticated && (
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center rounded-[1.25rem] border border-border/70 bg-white py-3.5 text-[14px] font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] active:translate-y-0"
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
+                className="flex w-full items-center justify-center rounded-[1.25rem] border border-border/70 bg-white py-3.5 text-[14px] font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] active:translate-y-0"
               >
                 Log in
-              </Link>
+              </button>
             )}
             <button
               type="button"
