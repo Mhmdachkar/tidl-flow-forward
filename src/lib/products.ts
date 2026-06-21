@@ -50,6 +50,7 @@ export function getRecommendedTreatment(
         description: product.heroCopy,
         startingPrice: product.startingPrice,
         productSlug: product.slug,
+        image: product.image,
       };
     }
   }
@@ -64,6 +65,7 @@ export function getRecommendedTreatment(
           description: product.heroCopy,
           startingPrice: product.startingPrice,
           productSlug: product.slug,
+          image: product.image,
         };
       }
     }

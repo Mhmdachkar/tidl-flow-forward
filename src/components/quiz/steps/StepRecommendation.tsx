@@ -53,19 +53,21 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
   const bullets = (goal && GOAL_BULLETS[goal]) ?? DEFAULT_BULLETS;
 
   return (
-    <div className="-mx-7 -mt-5 sm:-mx-8 sm:-mt-6">
+    <div className="-mx-7 -mt-6 sm:-mx-10 sm:-mt-8">
       {/* Hero split panel */}
       <div className="relative overflow-hidden rounded-t-none rounded-b-2xl bg-gradient-to-br from-[#2A1F0A] via-[#3D2D0F] to-[#1A1208]">
         {/* Product image — float right */}
-        <div className="absolute right-0 top-0 h-full w-1/2 overflow-hidden opacity-70">
-          <img
-            src={treatment.image}
-            alt={treatment.name}
-            className="h-full w-full object-cover object-center mix-blend-luminosity"
-          />
-          {/* Fade overlay from left */}
-          <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#2A1F0A] to-transparent" />
-        </div>
+        {treatment.image && (
+          <div className="absolute right-0 top-0 h-full w-1/2 overflow-hidden opacity-70">
+            <img
+              src={treatment.image}
+              alt={treatment.name}
+              className="h-full w-full object-cover object-center mix-blend-luminosity"
+            />
+            {/* Fade overlay from left */}
+            <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#2A1F0A] to-transparent" />
+          </div>
+        )}
 
         <div className="relative z-10 px-7 py-9 sm:px-8 sm:py-10">
           <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-[#F3C300]/80">

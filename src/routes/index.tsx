@@ -481,6 +481,7 @@ function Nav() {
 /* ───────── hero ───────── */
 
 function Hero() {
+  const { openModal } = useQuizModal();
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
