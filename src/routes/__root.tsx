@@ -10,6 +10,7 @@ import {
 import { type ReactNode } from "react";
 
 import { AuthProvider } from "@/providers/auth-provider";
+import { AgeGate } from "@/components/AgeGate";
 
 import appCss from "../styles.css?url";
 import favicon from "@/assets/TIDL_LOGO_BLACK_WHITE.jpg?url";
@@ -121,6 +122,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <AgeGate />
         <Outlet />
       </AuthProvider>
     </QueryClientProvider>
