@@ -164,91 +164,102 @@ export function SiteNav({ dark = true }: SiteNavProps) {
       </header>
 
       {/* Backdrop */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 z-[55] bg-black/50 backdrop-blur-sm"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
+      <div
+        className={`fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 z-[60] flex h-full w-72 max-w-[90vw] flex-col bg-[#111] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed right-0 top-0 z-[60] flex h-full w-80 sm:w-96 flex-col bg-white shadow-[-8px_0_60px_rgba(0,0,0,0.18)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          menuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
       >
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#F3C300] to-transparent" />
+        {/* Gold top stripe */}
+        <div className="h-1 w-full bg-gradient-to-r from-[#C9A200] via-[#F3C300] to-[#F9DC6B]" />
 
         {/* Drawer header */}
         <div className="flex items-center justify-between px-6 py-5">
           {isAuthenticated ? (
-            <div className="flex items-center gap-3">
+            <Link
+              to="/account"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3"
+            >
               <Avatar user={user} />
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-semibold text-foreground">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-[10px] text-white/40">{user?.email}</p>
+                <p className="text-[11px] text-muted-foreground">{user?.email}</p>
               </div>
-            </div>
+            </Link>
           ) : (
-            <span className="text-xs uppercase tracking-[0.18em] text-white/40">Menu</span>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#F3C300] shadow-[0_0_6px_rgba(243,195,0,0.8)]" />
+              <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Menu</span>
+            </div>
           )}
           <button
             type="button"
             onClick={() => setMenuOpen(false)}
-            className="text-white/50 hover:text-white transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-foreground/50 transition-colors hover:bg-surface-2 hover:text-foreground"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="h-px bg-white/10" />
+        <div className="h-px bg-border/60" />
 
-        <nav className="flex-1 overflow-y-auto px-4 py-4">
+        <nav
+          className="flex-1 overflow-y-auto px-4 py-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
+        >
           {/* Account links (if logged in) */}
           {isAuthenticated && (
             <>
-              <p className="mb-2 px-2 text-[10px] uppercase tracking-[0.18em] text-white/30">Account</p>
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C9A200]">Account</p>
               <ul className="space-y-0.5">
                 {ACCOUNT_LINKS.map((item) => (
                   <li key={item.to}>
                     <Link
                       to={item.to}
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
+                      className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-[#F9DC6B]/15 hover:text-foreground"
                     >
                       {item.label}
-                      <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+                      <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
                     </Link>
                   </li>
                 ))}
               </ul>
-              <div className="my-4 h-px bg-white/10" />
+              <div className="my-4 h-px bg-border/60" />
             </>
           )}
 
           {/* Treatments */}
-          <p className="mb-2 px-2 text-[10px] uppercase tracking-[0.18em] text-white/30">Treatments</p>
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C9A200]">Treatments</p>
           <ul className="space-y-0.5">
             {NAV_LINKS.map((link) => (
               <li key={link.to}>
                 <Link
                   to={link.to}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
+                  className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-[#F9DC6B]/15 hover:text-foreground"
                 >
                   {link.label}
-                  <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
                 </Link>
               </li>
             ))}
           </ul>
 
-          <div className="my-4 h-px bg-white/10" />
+          <div className="my-4 h-px bg-border/60" />
 
           {/* Products */}
-          <p className="mb-2 px-2 text-[10px] uppercase tracking-[0.18em] text-white/30">Products</p>
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C9A200]">Products</p>
           <ul className="space-y-0.5">
             {PRODUCT_LINKS.map((p) => (
               <li key={p.slug}>
@@ -256,22 +267,22 @@ export function SiteNav({ dark = true }: SiteNavProps) {
                   to="/products/$slug"
                   params={{ slug: p.slug }}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
+                  className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-[#F9DC6B]/15 hover:text-foreground"
                 >
                   {p.label}
-                  <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
                 </Link>
               </li>
             ))}
           </ul>
 
-          {/* Sign out / Log in at bottom of list */}
-          <div className="my-4 h-px bg-white/10" />
+          <div className="my-4 h-px bg-border/60" />
+
           {isAuthenticated ? (
             <button
               type="button"
               onClick={() => { logout(); setMenuOpen(false); }}
-              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-white/40 transition-colors hover:bg-white/8 hover:text-white/70"
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-surface hover:text-foreground"
             >
               <LogOut className="h-4 w-4" />
               Sign out
@@ -281,18 +292,18 @@ export function SiteNav({ dark = true }: SiteNavProps) {
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
+                className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-[#F9DC6B]/15 hover:text-foreground"
               >
                 <span className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Log in
                 </span>
-                <ChevronRight className="h-3.5 w-3.5 opacity-40" />
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
               </Link>
               <Link
                 to="/signup"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#F3C300] px-3 py-2.5 text-sm font-medium text-black transition-opacity hover:opacity-90"
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#F3C300] px-3 py-3 text-sm font-semibold text-black transition-opacity hover:opacity-90"
               >
                 Create account
               </Link>
@@ -301,11 +312,11 @@ export function SiteNav({ dark = true }: SiteNavProps) {
         </nav>
 
         {/* Bottom CTA */}
-        <div className="px-5 pb-8 pt-3">
+        <div className="border-t border-border/60 px-5 pb-8 pt-4">
           <Link
             to="/quiz"
             onClick={() => setMenuOpen(false)}
-            className="btn-primary flex w-full justify-center py-3.5 text-sm"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-sm font-semibold text-black shadow-[0_4px_20px_rgba(243,195,0,0.35)] transition-opacity hover:opacity-90"
           >
             Start Assessment
           </Link>
