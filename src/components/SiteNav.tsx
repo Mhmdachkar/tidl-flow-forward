@@ -1,19 +1,4 @@
-import {
-  BookOpenText,
-  ChevronRight,
-  CircleHelp,
-  FlaskConical,
-  Gauge,
-  HeartPulse,
-  LifeBuoy,
-  LogOut,
-  Menu,
-  Scale,
-  Sparkles,
-  User,
-  Workflow,
-  X,
-} from "lucide-react";
+import { LogOut, Menu, User, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 
@@ -25,75 +10,64 @@ import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 const EXPLORE_ITEMS = [
   {
     title: "Weight Loss",
-    description: "Personalized plans and treatment options",
+    description: "Personalized treatment plans and physician-guided options",
     to: "/weight-loss" as const,
-    icon: Scale,
   },
   {
     title: "Longevity",
-    description: "Support healthy aging and wellness",
+    description: "Support long-term wellness and healthy aging",
     to: "/longevity" as const,
-    icon: Sparkles,
   },
   {
     title: "Hormonal Health",
-    description: "Balance and optimization programs",
+    description: "Personalized balance and optimization programs",
     to: "/hormonal" as const,
-    icon: HeartPulse,
   },
   {
     title: "Performance",
-    description: "Improve energy and lifestyle",
+    description: "Improve energy, lifestyle, and daily performance",
     to: "/performance" as const,
-    icon: Gauge,
   },
 ];
 
 const POPULAR_ITEMS = [
   {
     title: "GLP-1 Programs",
-    description: "Physician-guided metabolic care",
+    description: "Physician-guided metabolic and weight care",
     slug: "lirosome" as const,
-    icon: FlaskConical,
   },
   {
     title: "Personalized Treatments",
-    description: "Tailored protocols by your goals",
+    description: "Tailored protocols built around your goals",
     slug: "tirosane" as const,
-    icon: Workflow,
   },
   {
     title: "Wellness Plans",
-    description: "Foundational plans for long-term health",
+    description: "Foundational programs for long-term health",
     slug: "tidl-core" as const,
-    icon: Sparkles,
   },
 ];
 
 const RESOURCE_ITEMS = [
   {
     title: "How it works",
-    description: "Understand our physician-led process",
+    description: "Understand our physician-led care process",
     href: "/#how-it-works",
-    icon: Workflow,
   },
   {
-    title: "Health articles",
-    description: "Evidence-based education and insights",
-    href: "/#science",
-    icon: BookOpenText,
+    title: "Treatment overview",
+    description: "Explore the full range of available care",
+    href: "/#treatments",
   },
   {
     title: "FAQs",
     description: "Answers to common care questions",
     href: "/#faqs",
-    icon: CircleHelp,
   },
   {
     title: "Contact support",
-    description: "Talk to our care team when needed",
+    description: "Reach our care team whenever you need",
     href: "/account/support",
-    icon: LifeBuoy,
   },
 ];
 
@@ -106,6 +80,20 @@ function Avatar({ user }: { user: { firstName: string; lastName?: string } | nul
       aria-label={`${user.firstName} ${user.lastName ?? ""}`}
     >
       {initials}
+    </span>
+  );
+}
+
+const CARD_BASE =
+  "group block rounded-2xl border border-border/50 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-[#E8C84A]/60 hover:shadow-[0_14px_30px_rgba(0,0,0,0.08)]";
+
+function NavArrow() {
+  return (
+    <span
+      aria-hidden="true"
+      className="ml-4 mt-0.5 shrink-0 text-[18px] font-light leading-none text-foreground/30 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-foreground/60"
+    >
+      &rsaquo;
     </span>
   );
 }
@@ -247,193 +235,177 @@ export function SiteNav({ dark = true }: SiteNavProps) {
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 z-[60] flex h-full w-[400px] sm:w-[450px] lg:w-[500px] flex-col rounded-l-[2.35rem] bg-[#FCFCFB] shadow-[-10px_0_60px_rgba(0,0,0,0.14)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`fixed right-0 top-0 z-[60] flex h-full w-full max-w-[440px] sm:max-w-[480px] lg:max-w-[540px] flex-col rounded-l-[2.5rem] bg-[#FBFAF8] shadow-[-12px_0_70px_rgba(0,0,0,0.16)] transition-all duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           menuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
       >
-        {/* Header */}
-        <div className="shrink-0 border-b border-border/60 bg-gradient-to-b from-[#FFFDF5] to-[#FCFCFB] px-6 pb-5 pt-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        {/* Brand header */}
+        <div className="shrink-0 border-b border-border/40 px-7 pb-6 pt-7">
+          <div className="flex items-start justify-between">
+            <div>
               <img src={tidlLogoYellow} alt="TIDL" className="h-7 w-auto" />
-              <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#9B927C]">Dashboard</p>
-                <p className="text-sm font-semibold text-foreground">Navigation</p>
-              </div>
+              <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.22em] text-[#A89C82]">
+                Health platform
+              </p>
             </div>
             <button
               type="button"
               onClick={() => setMenuOpen(false)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white text-foreground/60 transition-colors hover:text-foreground"
+              className="-mr-1 flex h-9 w-9 items-center justify-center rounded-full text-foreground/40 transition-colors hover:text-foreground"
               aria-label="Close menu"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
-          {isAuthenticated && (
+          {/* Account card */}
+          {isAuthenticated ? (
             <Link
               to="/account"
               onClick={() => setMenuOpen(false)}
-              className="mt-4 flex items-center justify-between rounded-2xl border border-border/50 bg-white/90 px-4 py-3 shadow-[0_6px_18px_rgba(0,0,0,0.03)]"
+              className="mt-5 flex items-center justify-between rounded-2xl border border-border/50 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(0,0,0,0.07)]"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3.5">
                 <Avatar user={user} />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{user?.firstName} {user?.lastName}</p>
-                  <p className="text-[11px] text-muted-foreground">{user?.email}</p>
+                  <p className="text-[15px] font-semibold text-foreground">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-[12px] text-muted-foreground">{user?.email}</p>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-foreground/35" />
+              <NavArrow />
             </Link>
-          )}
-
-          {!isAuthenticated && (
-            <div className="mt-4 flex items-center justify-between rounded-2xl border border-border/50 bg-white/90 px-4 py-3 shadow-[0_6px_18px_rgba(0,0,0,0.03)]">
-              <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFF6D8] text-[#8A6D00]">
-                  <User className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Guest</p>
-                  <p className="text-[11px] text-muted-foreground">Log in to access account tools</p>
-                </div>
+          ) : (
+            <div className="mt-5 flex items-center justify-between rounded-2xl border border-border/50 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
+              <div>
+                <p className="text-[15px] font-semibold text-foreground">Guest</p>
+                <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">
+                  Sign in to manage your health journey
+                </p>
               </div>
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="ml-4 shrink-0 rounded-full border border-border/70 px-4 py-2 text-[12px] font-semibold text-foreground transition-colors hover:bg-surface"
+              >
+                Log in
+              </Link>
             </div>
           )}
         </div>
 
         {/* Scrollable nav */}
-        <nav className="no-scrollbar flex-1 overflow-y-auto px-6 pb-36 pt-5">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9B927C]">
+        <nav className="no-scrollbar flex-1 overflow-y-auto px-7 pb-10 pt-6">
+          {/* Explore */}
+          <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">
             Explore
           </p>
-          <ul className="space-y-2.5">
-            {EXPLORE_ITEMS.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <li key={item.to}>
-                  <Link
-                    to={item.to}
-                    onClick={() => setMenuOpen(false)}
-                    className={`group flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3.5 shadow-[0_6px_16px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#F3C300]/40 hover:shadow-[0_12px_24px_rgba(0,0,0,0.07)] ${
-                      menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                    }`}
-                    style={{ transitionDelay: `${80 + idx * 45}ms` }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF9E7] text-[#B28B00]">
-                        <Icon className="h-4.5 w-4.5" />
-                      </span>
-                      <div>
-                        <p className="text-[14px] font-semibold text-foreground">{item.title}</p>
-                        <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{item.description}</p>
-                      </div>
+          <ul className="space-y-3">
+            {EXPLORE_ITEMS.map((item, idx) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${CARD_BASE} ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                  style={{ transitionDelay: menuOpen ? `${100 + idx * 55}ms` : "0ms" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="pr-2">
+                      <p className="text-[15px] font-semibold leading-tight text-foreground">{item.title}</p>
+                      <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{item.description}</p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-foreground/35 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                </li>
-              );
-            })}
+                    <NavArrow />
+                  </div>
+                </Link>
+              </li>
+            ))}
           </ul>
 
-          <p className="mb-3 mt-7 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9B927C]">
+          {/* Popular Treatments */}
+          <p className="mb-3.5 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">
             Popular Treatments
           </p>
-          <ul className="space-y-2.5">
-            {POPULAR_ITEMS.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <li key={item.slug}>
-                  <Link
-                    to="/products/$slug"
-                    params={{ slug: item.slug }}
-                    onClick={() => setMenuOpen(false)}
-                    className={`group flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3.5 shadow-[0_6px_16px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#F3C300]/40 hover:shadow-[0_12px_24px_rgba(0,0,0,0.07)] ${
-                      menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                    }`}
-                    style={{ transitionDelay: `${280 + idx * 45}ms` }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF9E7] text-[#B28B00]">
-                        <Icon className="h-4.5 w-4.5" />
-                      </span>
-                      <div>
-                        <p className="text-[14px] font-semibold text-foreground">{item.title}</p>
-                        <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{item.description}</p>
-                      </div>
+          <ul className="space-y-3">
+            {POPULAR_ITEMS.map((item, idx) => (
+              <li key={item.slug}>
+                <Link
+                  to="/products/$slug"
+                  params={{ slug: item.slug }}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${CARD_BASE} ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                  style={{ transitionDelay: menuOpen ? `${320 + idx * 55}ms` : "0ms" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="pr-2">
+                      <p className="text-[15px] font-semibold leading-tight text-foreground">{item.title}</p>
+                      <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{item.description}</p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-foreground/35 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                </li>
-              );
-            })}
+                    <NavArrow />
+                  </div>
+                </Link>
+              </li>
+            ))}
           </ul>
 
-          <p className="mb-3 mt-7 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9B927C]">
+          {/* Resources */}
+          <p className="mb-3.5 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">
             Resources
           </p>
-          <ul className="space-y-2.5">
-            {RESOURCE_ITEMS.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <li key={item.title}>
-                  <a
-                    href={item.href}
-                    onClick={() => setMenuOpen(false)}
-                    className={`group flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3.5 shadow-[0_6px_16px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-0.5 hover:border-[#F3C300]/40 hover:shadow-[0_12px_24px_rgba(0,0,0,0.07)] ${
-                      menuOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-                    }`}
-                    style={{ transitionDelay: `${470 + idx * 45}ms` }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF9E7] text-[#B28B00]">
-                        <Icon className="h-4.5 w-4.5" />
-                      </span>
-                      <div>
-                        <p className="text-[14px] font-semibold text-foreground">{item.title}</p>
-                        <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{item.description}</p>
-                      </div>
+          <ul className="space-y-3">
+            {RESOURCE_ITEMS.map((item, idx) => (
+              <li key={item.title}>
+                <a
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${CARD_BASE} ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                  style={{ transitionDelay: menuOpen ? `${500 + idx * 55}ms` : "0ms" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="pr-2">
+                      <p className="text-[15px] font-semibold leading-tight text-foreground">{item.title}</p>
+                      <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{item.description}</p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-foreground/35 transition-transform group-hover:translate-x-0.5" />
-                  </a>
-                </li>
-              );
-            })}
+                    <NavArrow />
+                  </div>
+                </a>
+              </li>
+            ))}
           </ul>
 
-          <div className="flex items-center gap-1">
-            {isAuthenticated && (
-              <button
-                type="button"
-                onClick={() => { logout(); setMenuOpen(false); }}
-                className="mt-6 flex items-center gap-2 rounded-xl border border-border/60 bg-white px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            )}
-          </div>
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={() => { logout(); setMenuOpen(false); }}
+              className="mt-7 flex items-center gap-2 rounded-xl px-1 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4" strokeWidth={1.5} />
+              Sign out
+            </button>
+          )}
         </nav>
 
-        {/* Sticky bottom CTA */}
-        <div className="shrink-0 rounded-bl-[2rem] border-t border-border/60 bg-gradient-to-t from-white to-[#FCFCFB] px-6 pb-8 pt-5">
-          {!isAuthenticated && (
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-              className="mb-3 flex items-center justify-center rounded-[1.1rem] border border-border/70 bg-white py-3.5 text-sm font-semibold text-foreground transition-all hover:bg-surface"
+        {/* Sticky premium footer */}
+        <div className="shrink-0 rounded-bl-[2.5rem] border-t border-border/40 bg-white/80 px-7 pb-8 pt-5 backdrop-blur-sm">
+          <p className="mb-3.5 text-center text-[14px] font-semibold tracking-tight text-foreground">
+            Ready to start your journey?
+          </p>
+          <div className="space-y-2.5">
+            {!isAuthenticated && (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center rounded-[1.25rem] border border-border/70 bg-white py-3.5 text-[14px] font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] active:translate-y-0"
+              >
+                Log in
+              </Link>
+            )}
+            <button
+              type="button"
+              onClick={() => { openModal(); setMenuOpen(false); }}
+              className="flex w-full items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-[14px] font-semibold text-black shadow-[0_8px_22px_rgba(243,195,0,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(243,195,0,0.45)] active:translate-y-0"
             >
-              Log in
-            </Link>
-          )}
-          <button
-            type="button"
-            onClick={() => { openModal(); setMenuOpen(false); }}
-            className="flex w-full items-center justify-center rounded-[1.1rem] bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-sm font-semibold text-black shadow-[0_8px_20px_rgba(243,195,0,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(243,195,0,0.4)]"
-          >
-            Start Assessment
-          </button>
+              Start Assessment
+            </button>
+          </div>
         </div>
       </div>
     </>
