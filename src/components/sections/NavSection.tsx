@@ -3,6 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { useAuth } from "@/providers/auth-provider";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
+import { useAuthModal } from "@/providers/auth-modal-provider";
 
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
@@ -44,6 +46,8 @@ export function NavSection() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
+  const { openModal: openQuiz } = useQuizModal();
+  const { openModal: openAuthModal } = useAuthModal();
 
   useEffect(() => {
     gsap.from(ref.current, { y: -40, opacity: 0, duration: 1.2, ease: "expo.out", delay: 0.3 });
@@ -119,8 +123,9 @@ export function NavSection() {
                     <NavAvatar user={user} scrolled={scrolled} />
                   </Link>
                 ) : (
-                  <Link
-                    to="/login"
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal({ mode: "login" })}
                     className={`hidden rounded-full font-medium transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:block ${
                       scrolled
                         ? "border border-transparent bg-[#F3C300] px-2.5 py-0.5 text-[10px] text-black hover:bg-[#F9DC6B]"
@@ -128,7 +133,7 @@ export function NavSection() {
                     }`}
                   >
                     Log in
-                  </Link>
+                  </button>
                 )}
 
                 <button
@@ -261,32 +266,36 @@ export function NavSection() {
             </>
           ) : (
             <div className="space-y-2">
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
+                className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
               >
                 <span className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Log in
                 </span>
                 <ChevronRight className="h-4 w-4 opacity-40" />
-              </Link>
-              <Link
-                to="/signup"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#F3C300] px-4 py-3 text-sm font-medium text-black transition-opacity hover:opacity-90"
+              </button>
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "signup" }); setMenuOpen(false); }}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#F3C300] px-4 py-3 text-sm font-medium text-black transition-opacity hover:opacity-90"
               >
                 Create account
-              </Link>
+              </button>
             </div>
           )}
         </nav>
 
         <div className="px-6 pb-8 pt-4">
-          <Link to="/quiz" onClick={() => setMenuOpen(false)} className="btn-primary flex w-full justify-center py-3.5 text-sm">
+          <button
+            type="button"
+            onClick={() => { openQuiz(); setMenuOpen(false); }}
+            className="btn-primary flex w-full justify-center py-3.5 text-sm"
+          >
             Start Assessment
-          </Link>
+          </button>
         </div>
       </div>
     </>
