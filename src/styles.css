@@ -6,9 +6,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: "Fraunces", Georgia, serif;
-  --font-sans: "Fraunces", Georgia, serif;
-  --font-serif: "Fraunces", Georgia, serif;
+  /* TIDL Official Brand Fonts (CC_TIDL_StyleSheet_outlined.pdf)
+     Primary:   Archivo Narrow Bold, Archivo Bold
+     Secondary: Josefin Sans (closest free match to Blair ITC Regular) */
+  --font-display: "Archivo Narrow", sans-serif;
+  --font-sans:    "Archivo", sans-serif;
+  --font-serif:   "Archivo Narrow", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -66,12 +69,9 @@
   html {
     background: var(--color-background);
     color: var(--color-foreground);
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Archivo", sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-feature-settings: "ss01";
-    font-optical-sizing: auto;
-    letter-spacing: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
@@ -80,38 +80,37 @@
   body {
     background: var(--color-background);
     color: var(--color-foreground);
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Archivo", sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-feature-settings: "ss01";
-    font-optical-sizing: auto;
-    letter-spacing: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
     overflow-y: visible;
   }
   *, *::before, *::after {
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Archivo", sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-feature-settings: "ss01";
-    font-optical-sizing: auto;
-    letter-spacing: normal;
   }
   ::selection { background: var(--clinical); color: white; }
 }
 
 /* ──────────── Typography ──────────── */
-/* All three resolve to Fraunces — exact same rendering as the hero title */
+/* Archivo Narrow Bold — TIDL official primary headline (Archivo Narrow Bold from style guide) */
 .font-display,
 .font-serif {
-  font-family: "Fraunces", Georgia, serif;
-  font-weight: 400;
+  font-family: "Archivo Narrow", sans-serif;
+  font-weight: 700;
   font-style: normal;
-  font-feature-settings: "ss01";
-  font-optical-sizing: auto;
-  letter-spacing: normal;
+  letter-spacing: -0.01em;
+}
+/* Blair ITC secondary → Josefin Sans (closest free geometric all-caps match) */
+.font-blair {
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 .font-mono { font-family: var(--font-mono); font-feature-settings: normal; font-optical-sizing: none; letter-spacing: normal; }
 
@@ -376,8 +375,9 @@
 
 /* ──────────── Pharmacy section utilities ──────────── */
 .eyebrow {
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Josefin Sans", sans-serif;
   font-size: 0.6875rem;
+  font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-ink-mute);

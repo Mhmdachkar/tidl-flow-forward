@@ -9,9 +9,16 @@ import product4 from "@/assets/product 4 3d.png";
 import product5 from "@/assets/product 5 3d.png";
 
 const styles = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Archivo:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;600&display=swap');
 
-.tidl-hero { font-family: 'Inter', system-ui, sans-serif; background: #FAFAF7; color: #111111; min-height: 100vh; }
+/* ── TIDL Brand Tokens ──────────────────────────────────────
+   Knockout  #231f20   primary dark (near-black)
+   Resolve   #ffffff   white
+   Cool Mist #c4c6c7   light gray
+   Recover   #f3c300   gold (brand accent)
+   ────────────────────────────────────────────────────────── */
+
+.tidl-hero { font-family: 'Archivo', system-ui, sans-serif; background: #FAFAF7; color: #231f20; min-height: 100vh; }
 .tidl-hero * { box-sizing: border-box; }
 .tidl-main-grid, .tidl-quick-grid { perspective: 1400px; perspective-origin: 50% 30%; }
 .tidl-tilt { transform-style: preserve-3d; will-change: transform; }
@@ -21,21 +28,25 @@ const styles = `
 .tidl-card:hover .tidl-glare { opacity: 1; }
 .tidl-quick .tidl-glare { background: radial-gradient(160px circle at var(--gx, 50%) var(--gy, 50%), rgba(243,195,0,0.35), transparent 60%); mix-blend-mode: multiply; }
 .tidl-gsap-init { opacity: 0; }
-.tidl-fraunces { font-family: 'Fraunces', Georgia, serif; font-weight: 300; letter-spacing: -0.02em; line-height: 0.98; }
-.tidl-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
+/* Archivo Narrow Bold — official TIDL primary headline font */
+.tidl-fraunces { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
+/* Josefin Sans — closest free match to Blair ITC (geometric all-caps secondary) */
+.tidl-label { font-family: 'Josefin Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
 
-.tidl-announce { width: 100%; background: #F3C300; color: #111; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: filter .2s ease; }
-.tidl-announce:hover { filter: brightness(0.95); }
+.tidl-announce { width: 100%; background: #f3c300; color: #231f20; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; border: none; cursor: pointer; transition: filter .2s ease; }
+.tidl-announce:hover { filter: brightness(0.93); }
 
 .tidl-container { max-width: 1280px; margin: 0 auto; padding: 56px 24px 80px; }
 
 .tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: end; margin-bottom: 48px; }
 @media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; } }
-.tidl-headline { font-size: clamp(2.8rem, 6vw, 5rem); margin: 0; color: #111; }
-.tidl-headline em { font-style: italic; font-weight: 400; color: #2d4a3e; }
-.tidl-sub { margin-top: 18px; font-size: 15px; color: #5a5a55; max-width: 540px; }
+/* Archivo Narrow Bold — official brand headline */
+.tidl-headline { font-size: clamp(2.8rem, 6vw, 5rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
+/* em: italic Archivo Narrow Bold in brand gold */
+.tidl-headline em { font-style: italic; font-weight: 700; color: #f3c300; }
+.tidl-sub { margin-top: 18px; font-size: 15px; color: #6b6a6b; max-width: 540px; font-family: 'Archivo', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
 .tidl-hero-visual { display: flex; justify-content: center; align-items: center; min-height: 220px; }
-.tidl-hero-visual img { max-height: 280px; width: auto; filter: drop-shadow(0 30px 40px rgba(45,74,62,0.18)); transform: rotate(-12deg); }
+.tidl-hero-visual img { max-height: 280px; width: auto; filter: drop-shadow(0 30px 40px rgba(35,31,32,0.14)); transform: rotate(-12deg); }
 
 .tidl-main-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
 @media (min-width: 900px) { .tidl-main-grid { grid-template-columns: 6fr 4fr; } }
@@ -47,10 +58,11 @@ const styles = `
 .tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .tidl-card-img img { max-height: 280px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; will-change: transform; }
 
-.tidl-card-dark { background: #1a1a18; color: #fafaf7; }
-.tidl-card-dark .tidl-card-headline { color: #fafaf7; transition: text-shadow 0.5s ease; }
-.tidl-card-dark .tidl-label { color: #F3C300; transition: letter-spacing .4s ease, filter .3s ease; }
-.tidl-card-dark .tidl-card-cta { color: #F3C300; }
+/* Dark card uses Knockout #231f20 — official TIDL primary dark */
+.tidl-card-dark { background: #231f20; color: #ffffff; }
+.tidl-card-dark .tidl-card-headline { color: #ffffff; transition: text-shadow 0.5s ease; }
+.tidl-card-dark .tidl-label { color: #f3c300; transition: letter-spacing .4s ease, filter .3s ease; }
+.tidl-card-dark .tidl-card-cta { color: #f3c300; }
 .tidl-card-dark .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(105deg, transparent 46%, rgba(243,195,0,0.30) 49%, rgba(243,195,0,0.65) 50%, rgba(243,195,0,0.30) 51%, transparent 54%); transform: translateX(-120%) translateY(-20%); transition: transform 1.1s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
 .tidl-card-dark:hover .tidl-sweep { transform: translateX(20%) translateY(-20%); }
 .tidl-card-dark .tidl-scan { position: absolute; left: 0; right: 0; top: -20%; height: 3px; background: linear-gradient(90deg, transparent 5%, rgba(243,195,0,0.9) 30%, rgba(255,255,255,0.85) 50%, rgba(243,195,0,0.9) 70%, transparent 95%); box-shadow: 0 0 18px rgba(243,195,0,0.7), 0 0 45px rgba(243,195,0,0.35), 0 10px 40px rgba(243,195,0,0.15); opacity: 0; z-index: 4; pointer-events: none; }
@@ -69,31 +81,35 @@ const styles = `
 .tidl-card-dark .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-dark:hover .tidl-card-cta svg { transform: translateX(10px); }
 
-.tidl-card-cream { background: #F0EBE0; color: #111; }
-.tidl-card-cream .tidl-label { color: #2d4a3e; transition: letter-spacing .4s ease; }
-.tidl-card-cream .tidl-card-cta { color: #2d4a3e; }
-.tidl-card-cream:hover { box-shadow: 0 32px 70px rgba(243,195,0,0.25), 0 4px 20px rgba(17,17,17,0.08); }
-.tidl-card-cream .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(115deg, transparent 44%, rgba(243,195,0,0.35) 48%, rgba(45,74,62,0.30) 50%, rgba(243,195,0,0.35) 52%, transparent 56%); transform: translateX(-130%) translateY(10%); transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
+/* Cream card uses Resolve #ffffff with Cool Mist border — official brand */
+.tidl-card-cream { background: #f5f4f0; color: #231f20; }
+.tidl-card-cream .tidl-label { color: #231f20; transition: letter-spacing .4s ease; }
+.tidl-card-cream .tidl-card-cta { color: #231f20; }
+.tidl-card-cream:hover { box-shadow: 0 32px 70px rgba(243,195,0,0.25), 0 4px 20px rgba(35,31,32,0.10); }
+.tidl-card-cream .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(115deg, transparent 44%, rgba(243,195,0,0.35) 48%, rgba(35,31,32,0.12) 50%, rgba(243,195,0,0.35) 52%, transparent 56%); transform: translateX(-130%) translateY(10%); transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
 .tidl-card-cream:hover .tidl-sweep { transform: translateX(30%) translateY(10%); }
-.tidl-card-cream .tidl-pulse { position: absolute; top: 50%; left: 72%; width: 80px; height: 80px; transform: translate(-50%, -50%) scale(0.5); border-radius: 50%; border: 2px solid rgba(243,195,0,0.85); box-shadow: 0 0 20px rgba(243,195,0,0.4), 0 0 40px rgba(45,74,62,0.15); opacity: 0; z-index: 3; pointer-events: none; }
+.tidl-card-cream .tidl-pulse { position: absolute; top: 50%; left: 72%; width: 80px; height: 80px; transform: translate(-50%, -50%) scale(0.5); border-radius: 50%; border: 2px solid rgba(243,195,0,0.85); box-shadow: 0 0 20px rgba(243,195,0,0.4), 0 0 40px rgba(35,31,32,0.08); opacity: 0; z-index: 3; pointer-events: none; }
 .tidl-card-cream:hover .tidl-pulse { animation: tidlPulse 1.5s cubic-bezier(0.22,1,0.36,1) infinite; }
-.tidl-card-cream .tidl-inner-light { position: absolute; inset: 0; background: radial-gradient(450px circle at 70% 40%, rgba(243,195,0,0.18), transparent 55%); opacity: 0; transition: opacity 0.7s ease; z-index: 1; pointer-events: none; }
+.tidl-card-cream .tidl-inner-light { position: absolute; inset: 0; background: radial-gradient(450px circle at 70% 40%, rgba(243,195,0,0.14), transparent 55%); opacity: 0; transition: opacity 0.7s ease; z-index: 1; pointer-events: none; }
 .tidl-card-cream:hover .tidl-inner-light { opacity: 1; }
-.tidl-card-cream::before { content: ""; position: absolute; top: 0; right: 0; width: 240px; height: 240px; background: radial-gradient(circle at 100% 0%, rgba(45,74,62,0.28), transparent 60%); opacity: 0; transition: opacity 0.6s ease; z-index: 1; pointer-events: none; }
+.tidl-card-cream::before { content: ""; position: absolute; top: 0; right: 0; width: 240px; height: 240px; background: radial-gradient(circle at 100% 0%, rgba(243,195,0,0.18), transparent 60%); opacity: 0; transition: opacity 0.6s ease; z-index: 1; pointer-events: none; }
 .tidl-card-cream:hover::before { opacity: 1; }
-.tidl-card-cream::after { content: ""; position: absolute; left: 0; top: 24px; bottom: 24px; width: 3px; background: linear-gradient(180deg, #2d4a3e, rgba(45,74,62,0.4)); box-shadow: 0 0 14px rgba(45,74,62,0.45), 0 0 32px rgba(45,74,62,0.20); transform: scaleY(0); transform-origin: top center; transition: transform 0.7s cubic-bezier(0.77,0,0.18,1); z-index: 3; }
+/* Brand gold accent line on left edge */
+.tidl-card-cream::after { content: ""; position: absolute; left: 0; top: 24px; bottom: 24px; width: 3px; background: linear-gradient(180deg, #f3c300, rgba(243,195,0,0.3)); box-shadow: 0 0 14px rgba(243,195,0,0.5), 0 0 32px rgba(243,195,0,0.20); transform: scaleY(0); transform-origin: top center; transition: transform 0.7s cubic-bezier(0.77,0,0.18,1); z-index: 3; }
 .tidl-card-cream:hover::after { transform: scaleY(1); }
-.tidl-card-cream .tidl-aura { position: absolute; inset: -1px; border-radius: 1.5rem; opacity: 0; transition: opacity 0.5s ease; box-shadow: inset 0 0 40px rgba(243,195,0,0.08), 0 0 0 1px rgba(243,195,0,0.22), 0 0 50px rgba(243,195,0,0.14), 0 0 100px rgba(45,74,62,0.08); z-index: 0; pointer-events: none; }
+.tidl-card-cream .tidl-aura { position: absolute; inset: -1px; border-radius: 1.5rem; opacity: 0; transition: opacity 0.5s ease; box-shadow: inset 0 0 40px rgba(243,195,0,0.08), 0 0 0 1px rgba(243,195,0,0.22), 0 0 50px rgba(243,195,0,0.14), 0 0 100px rgba(35,31,32,0.06); z-index: 0; pointer-events: none; }
 .tidl-card-cream:hover .tidl-aura { opacity: 1; }
-.tidl-card-cream:hover .tidl-label { letter-spacing: 0.24em; }
+.tidl-card-cream:hover .tidl-label { letter-spacing: 0.26em; }
 .tidl-card-cream .tidl-card-headline { transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-cream:hover .tidl-card-headline { transform: translateX(8px); }
-.tidl-card-cream:hover .tidl-card-img img { transform: scale(1.10) rotate(10deg) translateY(-8px); filter: drop-shadow(0 22px 34px rgba(45,74,62,0.18)); }
+.tidl-card-cream:hover .tidl-card-img img { transform: scale(1.10) rotate(10deg) translateY(-8px); filter: drop-shadow(0 22px 34px rgba(35,31,32,0.14)); }
 .tidl-card-cream .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
 
-.tidl-card-headline { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.02; letter-spacing: -0.02em; margin: 18px 0 0; max-width: 360px; }
-.tidl-card-cta { font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; margin-top: 24px; }
+/* Archivo Narrow Bold — official TIDL headline font for cards */
+.tidl-card-headline { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height: 1.0; letter-spacing: -0.01em; margin: 18px 0 0; max-width: 360px; }
+/* Archivo Bold — official TIDL primary for CTAs */
+.tidl-card-cta { font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; margin-top: 24px; }
 
 .tidl-quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (min-width: 900px) { .tidl-quick-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -104,7 +120,7 @@ const styles = `
 .tidl-quick:hover::before { transform: scaleX(1); }
 .tidl-quick::after { content: ""; position: absolute; inset: 0; background: radial-gradient(180px circle at 85% 50%, rgba(243,195,0,0.18), transparent 60%); opacity: 0; transition: opacity 0.4s ease; z-index: 0; pointer-events: none; }
 .tidl-quick:hover::after { opacity: 1; }
-.tidl-quick-label { position: relative; z-index: 2; font-size: 15px; font-weight: 500; color: #111; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s ease; }
+.tidl-quick-label { position: relative; z-index: 2; font-size: 15px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.01em; color: #231f20; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s ease; }
 .tidl-quick:hover .tidl-quick-label { transform: translateX(4px); }
 .tidl-quick-img { position: relative; z-index: 2; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tidl-quick-img img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
