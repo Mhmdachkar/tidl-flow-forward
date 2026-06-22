@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLenisScroll } from "@/lib/use-lenis";
 
-import { NavSection } from "@/components/sections/NavSection";
+import { SiteNav } from "@/components/SiteNav";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TrustSection } from "@/components/sections/TrustSection";
 import { TreatmentCategoriesSection } from "@/components/sections/TreatmentCategoriesSection";
@@ -33,7 +33,7 @@ function Index() {
     <div className="relative bg-[#e2e2e2] text-foreground overflow-x-clip">
       <div className="scroll-progress" />
 
-      <NavSection />
+      <SiteNav />
       <HeroSection />
 
       <div className="flex flex-col gap-2 px-2 pb-2">
