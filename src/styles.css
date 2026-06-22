@@ -67,7 +67,7 @@
     background: var(--color-background);
     color: var(--color-foreground);
     font-family: "Fraunces", Georgia, serif;
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     font-feature-settings: "ss01";
     font-optical-sizing: auto;
@@ -81,7 +81,7 @@
     background: var(--color-background);
     color: var(--color-foreground);
     font-family: "Fraunces", Georgia, serif;
-    font-weight: 300;
+    font-weight: 400;
     font-style: normal;
     font-feature-settings: "ss01";
     font-optical-sizing: auto;
@@ -91,9 +91,9 @@
     overflow-x: clip;
     overflow-y: visible;
   }
-  * {
+  *, *::before, *::after {
     font-family: "Fraunces", Georgia, serif;
-    font-weight: inherit;
+    font-weight: 400;
     font-style: normal;
     font-feature-settings: "ss01";
     font-optical-sizing: auto;
@@ -103,9 +103,17 @@
 }
 
 /* ──────────── Typography ──────────── */
-.font-display { font-family: var(--font-display); font-feature-settings: "ss01"; font-optical-sizing: auto; letter-spacing: normal; font-style: normal; font-weight: 400; }
-.font-serif   { font-family: var(--font-serif);  font-feature-settings: "ss01"; font-optical-sizing: auto; letter-spacing: normal; font-style: normal; }
-.font-mono    { font-family: var(--font-mono); letter-spacing: normal; font-feature-settings: normal; font-optical-sizing: none; }
+/* All three resolve to Fraunces — exact same rendering as the hero title */
+.font-display,
+.font-serif {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-style: normal;
+  font-feature-settings: "ss01";
+  font-optical-sizing: auto;
+  letter-spacing: normal;
+}
+.font-mono { font-family: var(--font-mono); font-feature-settings: normal; font-optical-sizing: none; letter-spacing: normal; }
 
 .text-gradient-ink {
   background: linear-gradient(180deg, oklch(0.30 0.02 250) 0%, oklch(0.55 0.02 250) 100%);
