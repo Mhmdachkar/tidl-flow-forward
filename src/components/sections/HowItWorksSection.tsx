@@ -322,7 +322,7 @@ export function HowItWorksSection() {
             <h2
               className="hiw-head leading-[0.95]"
               style={{
-                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(30px, 4.4vw, 58px)",
                 fontWeight: 400,
                 letterSpacing: "-0.025em",
@@ -504,7 +504,7 @@ export function HowItWorksSection() {
               <motion.h3
                 className="mt-3 font-display leading-[1.05] tracking-[-0.02em]"
                 style={{
-                  fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                  fontFamily: '"Fraunces", Georgia, serif',
                   fontSize: "clamp(22px, 3vw, 32px)",
                 }}
                 initial={{ opacity: 0, y: 10 }}

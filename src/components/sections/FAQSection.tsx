@@ -163,7 +163,7 @@ function FAQItem({
             aria-hidden
             className="flex-shrink-0 leading-none transition-colors duration-300"
             style={{
-              fontFamily: '"Instrument Serif", Georgia, serif',
+              fontFamily: '"Fraunces", Georgia, serif',
               fontSize: "clamp(28px, 2.8vw, 40px)",
               color: isOpen ? "#2d4a3e" : "rgba(22,22,22,0.1)",
               letterSpacing: "-0.02em",
@@ -177,7 +177,7 @@ function FAQItem({
           <span
             className="flex-1 pt-1 transition-colors duration-200"
             style={{
-              fontFamily: '"Instrument Serif", Georgia, serif',
+              fontFamily: '"Fraunces", Georgia, serif',
               fontSize: "clamp(16px, 1.6vw, 21px)",
               color: isOpen ? "#161616" : "rgba(22,22,22,0.78)",
               letterSpacing: "-0.01em",
@@ -364,7 +364,7 @@ export function FAQSection() {
               <h2
                 className="leading-[0.9]"
                 style={{
-                  fontFamily: '"Instrument Serif", Georgia, serif',
+                  fontFamily: '"Fraunces", Georgia, serif',
                   fontSize: "clamp(42px, 5.5vw, 80px)",
                   fontWeight: 400,
                   letterSpacing: "-0.025em",
@@ -493,7 +493,7 @@ export function FAQSection() {
           <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <p
               style={{
-                fontFamily: '"Instrument Serif", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(22px, 2.8vw, 38px)",
                 color: "#161616",
                 letterSpacing: "-0.02em",

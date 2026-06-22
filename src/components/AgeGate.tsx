@@ -287,7 +287,7 @@ export function AgeGate() {
           id="ag-heading"
           className="ag-item"
           style={{
-            fontFamily: "'Fraunces', 'Instrument Serif', Georgia, serif",
+            fontFamily: "'Fraunces', Georgia, serif",
             fontSize: "clamp(30px, 6vw, 42px)",
             fontWeight: 300,
             lineHeight: 1.18,

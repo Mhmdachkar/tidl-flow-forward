@@ -246,7 +246,7 @@ export function ReviewsSection() {
             <h2
               className="leading-[0.9]"
               style={{
-                fontFamily: '"Instrument Serif", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(44px, 6vw, 88px)",
                 fontWeight: 400,
                 letterSpacing: "-0.025em",
@@ -267,7 +267,7 @@ export function ReviewsSection() {
               <div key={s.label}>
                 <p
                   style={{
-                    fontFamily: '"Instrument Serif", Georgia, serif',
+                    fontFamily: '"Fraunces", Georgia, serif',
                     fontSize: "clamp(28px, 3vw, 44px)",
                     color: "#2d4a3e",
                     letterSpacing: "-0.02em",
@@ -304,7 +304,7 @@ export function ReviewsSection() {
             >
               <p
                 style={{
-                  fontFamily: '"Instrument Serif", Georgia, serif',
+                  fontFamily: '"Fraunces", Georgia, serif',
                   fontSize: "clamp(20px, 1.8vw, 28px)",
                   lineHeight: 1.35,
                   letterSpacing: "-0.01em",
@@ -339,7 +339,7 @@ export function ReviewsSection() {
               <span key={i} className="flex items-center gap-12">
                 <span
                   style={{
-                    fontFamily: '"Instrument Serif", Georgia, serif',
+                    fontFamily: '"Fraunces", Georgia, serif',
                     fontSize: "clamp(28px, 3.5vw, 52px)",
                     color: i % 2 === 0 ? "#161616" : "transparent",
                     WebkitTextStroke: i % 2 === 0 ? "0" : "1px #161616",

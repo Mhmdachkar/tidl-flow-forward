@@ -161,7 +161,7 @@ function MobileDoctorCard({
             <h3
               className="cl-reveal mb-2 leading-[1]"
               style={{
-                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(30px, 9vw, 42px)",
                 color: "#f6f3ec",
                 letterSpacing: "-0.02em",
@@ -199,7 +199,7 @@ function MobileDoctorCard({
               <span
                 className="leading-none"
                 style={{
-                  fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                  fontFamily: '"Fraunces", Georgia, serif',
                   fontSize: 34,
                   color: "#f6f3ec",
                 }}
@@ -491,7 +491,7 @@ export function ClinicalLeadershipSection() {
             <h2
               className="cl-headline leading-[0.92]"
               style={{
-                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(38px, 7.2vw, 132px)",
                 fontWeight: 400,
                 letterSpacing: "-0.025em",
@@ -544,7 +544,7 @@ export function ClinicalLeadershipSection() {
               <div>
                 <p
                   className="text-[17px]"
-                  style={{ fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif' }}
+                  style={{ fontFamily: '"Fraunces", Georgia, serif' }}
                 >
                   Dr. Michael Andrews
                 </p>
@@ -564,7 +564,7 @@ export function ClinicalLeadershipSection() {
               <div>
                 <p
                   className="text-[28px]"
-                  style={{ fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif', color: "#2d4a3e" }}
+                  style={{ fontFamily: '"Fraunces", Georgia, serif', color: "#2d4a3e" }}
                 >
                   100%
                 </p>
@@ -579,7 +579,7 @@ export function ClinicalLeadershipSection() {
               <div>
                 <p
                   className="text-[28px]"
-                  style={{ fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif', color: "#2d4a3e" }}
+                  style={{ fontFamily: '"Fraunces", Georgia, serif', color: "#2d4a3e" }}
                 >
                   24/7
                 </p>
@@ -630,7 +630,7 @@ export function ClinicalLeadershipSection() {
                 <h3
                   className="mb-3 leading-[0.95]"
                   style={{
-                    fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                    fontFamily: '"Fraunces", Georgia, serif',
                     fontSize: "clamp(40px, 4.4vw, 72px)",
                     fontWeight: 400,
                     letterSpacing: "-0.02em",
@@ -673,7 +673,7 @@ export function ClinicalLeadershipSection() {
                   <span
                     className="text-[44px] leading-none"
                     style={{
-                      fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                      fontFamily: '"Fraunces", Georgia, serif',
                       color: "#161616",
                     }}
                   >
@@ -743,7 +743,7 @@ export function ClinicalLeadershipSection() {
                     </p>
                     <p
                       className="text-[22px] leading-tight text-white"
-                      style={{ fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif' }}
+                      style={{ fontFamily: '"Fraunces", Georgia, serif' }}
                     >
                       {doc.role.split("·")[0].trim()}
                     </p>
@@ -796,7 +796,7 @@ export function ClinicalLeadershipSection() {
               <span key={i} className="flex items-center gap-12">
                 <span
                   style={{
-                    fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                    fontFamily: '"Fraunces", Georgia, serif',
                     fontSize: "clamp(40px, 5vw, 72px)",
                     color: i % 2 === 0 ? "#161616" : "transparent",
                     WebkitTextStroke: i % 2 === 0 ? "0" : "1px #161616",
@@ -829,7 +829,7 @@ export function ClinicalLeadershipSection() {
             <h3
               className="leading-[1]"
               style={{
-                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(36px, 3.6vw, 56px)",
                 fontWeight: 400,
                 letterSpacing: "-0.02em",
@@ -869,7 +869,7 @@ export function ClinicalLeadershipSection() {
                 ref={(el) => { statRefs.current[i] = el; }}
                 className="block leading-none"
                 style={{
-                  fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                  fontFamily: '"Fraunces", Georgia, serif',
                   fontSize: "clamp(56px, 6vw, 96px)",
                   color: "#161616",
                   fontWeight: 400,

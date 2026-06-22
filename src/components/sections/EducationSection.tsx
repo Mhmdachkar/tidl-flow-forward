@@ -99,7 +99,7 @@ export function EducationSection() {
             <h2
               className="edu-head leading-[0.96]"
               style={{
-                fontFamily: '"Instrument Serif", "Fraunces", Georgia, serif',
+                fontFamily: '"Fraunces", Georgia, serif',
                 fontSize: "clamp(30px, 4.4vw, 58px)",
                 fontWeight: 400,
                 letterSpacing: "-0.025em",
