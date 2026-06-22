@@ -1,39 +1,70 @@
-import { ChevronRight, User, LogOut, X, Menu } from "lucide-react";
+import { LogOut, X, Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { useAuth } from "@/providers/auth-provider";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useAuthModal } from "@/providers/auth-modal-provider";
+import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 
-const NAV_LINKS = [
-  { label: "Weight loss", to: "/weight-loss" as const },
-  { label: "Longevity", to: "/longevity" as const },
-  { label: "Hormonal", to: "/hormonal" as const },
-  { label: "Performance", to: "/performance" as const },
+const EXPLORE_ITEMS = [
+  { title: "Weight Loss",      description: "Personalized treatment plans and physician-guided options", to: "/weight-loss" as const },
+  { title: "Longevity",        description: "Support long-term wellness and healthy aging",              to: "/longevity"   as const },
+  { title: "Hormonal Health",  description: "Personalized balance and optimization programs",            to: "/hormonal"    as const },
+  { title: "Performance",      description: "Improve energy, lifestyle, and daily performance",          to: "/performance" as const },
 ];
 
+const POPULAR_ITEMS = [
+  { title: "GLP-1 Programs",          description: "Physician-guided metabolic and weight care",       slug: "lirosome"  as const },
+  { title: "Personalized Treatments", description: "Tailored protocols built around your goals",       slug: "tirosane"  as const },
+  { title: "Wellness Plans",          description: "Foundational programs for long-term health",       slug: "tidl-core" as const },
+];
+
+const RESOURCE_ITEMS = [
+  { title: "How it works",      description: "Understand our physician-led care process", href: "/#how-it-works" },
+  { title: "Treatment overview",description: "Explore the full range of available care",  href: "/#treatments"   },
+  { title: "FAQs",              description: "Answers to common care questions",          href: "/#faqs"         },
+  { title: "Contact support",   description: "Reach our care team whenever you need",    href: "/account/support"},
+];
+
+const CARD_BASE =
+  "group block rounded-2xl border border-border/50 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-[#E8C84A]/60 hover:shadow-[0_14px_30px_rgba(0,0,0,0.08)]";
+
+function NavArrow() {
+  return (
+    <span
+      aria-hidden="true"
+      className="ml-4 mt-0.5 shrink-0 text-[18px] font-light leading-none text-foreground/30 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-foreground/60"
+    >
+      &rsaquo;
+    </span>
+  );
+}
+
+function Avatar({ user }: { user: { firstName: string; lastName?: string } | null }) {
+  if (!user) return null;
+  const initials = `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
+  return (
+    <span
+      className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] text-[11px] font-bold text-black shadow-[0_0_0_2px_rgba(243,195,0,0.3)]"
+      aria-label={`${user.firstName} ${user.lastName ?? ""}`}
+    >
+      {initials}
+    </span>
+  );
+}
+
 function NavAvatar({
-  user,
-  scrolled,
-  size = "sm",
-}: {
-  user: { firstName: string; lastName?: string; email?: string } | null;
-  scrolled?: boolean;
-  size?: "sm" | "md";
-}) {
-  const initials = user
-    ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase()
-    : "?";
+  user, scrolled, size = "sm",
+}: { user: { firstName: string; lastName?: string; email?: string } | null; scrolled?: boolean; size?: "sm" | "md" }) {
+  const initials = user ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() : "?";
   const dim = size === "md" ? "h-9 w-9 text-sm" : "h-7 w-7 text-[11px]";
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] font-bold text-black shadow-[0_0_0_2px_rgba(243,195,0,0.35)] transition-shadow hover:shadow-[0_0_0_3px_rgba(243,195,0,0.5)] ${dim} ${
-        scrolled === false ? "shadow-[0_0_0_2px_rgba(0,0,0,0.15)]" : ""
-      }`}
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] font-bold text-black shadow-[0_0_0_2px_rgba(243,195,0,0.35)] transition-shadow hover:shadow-[0_0_0_3px_rgba(243,195,0,0.5)] ${dim} ${scrolled === false ? "shadow-[0_0_0_2px_rgba(0,0,0,0.15)]" : ""}`}
       aria-label={user ? `${user.firstName} ${user.lastName ?? ""}` : "Account"}
     >
       {initials}
@@ -66,8 +97,16 @@ export function NavSection() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => {
+    if (menuOpen) {
+      lockPageScroll();
+      return () => unlockPageScroll();
+    }
+  }, [menuOpen]);
+
   return (
     <>
+      {/* ── Header ── */}
       <header
         ref={ref}
         className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -82,35 +121,22 @@ export function NavSection() {
         >
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 text-[11px] leading-tight text-ink">
             <span>Personalised longevity care is here.</span>
-            <a
-              href="#treatments"
-              className="inline-flex shrink-0 items-center gap-1 rounded-full bg-black/15 px-2.5 py-0.5 text-[10px] font-medium transition-colors hover:bg-black/25"
-            >
+            <a href="#treatments" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-black/15 px-2.5 py-0.5 text-[10px] font-medium transition-colors hover:bg-black/25">
               Check it out →
             </a>
           </div>
         </div>
 
-        <div
-          className={`transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            scrolled ? "bg-transparent" : "bg-[#F3C300]"
-          }`}
-        >
-          <nav
-            className={`px-4 sm:px-6 lg:px-10 transition-[background-color,border-radius,box-shadow,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              scrolled
-                ? "rounded-none bg-transparent py-1.5 shadow-none"
-                : "rounded-t-[2rem] bg-white py-2 shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-            }`}
-          >
+        <div className={`transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "bg-transparent" : "bg-[#F3C300]"}`}>
+          <nav className={`px-4 sm:px-6 lg:px-10 transition-[background-color,border-radius,box-shadow,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            scrolled ? "rounded-none bg-transparent py-1.5 shadow-none" : "rounded-t-[2rem] bg-white py-2 shadow-[0_1px_0_rgba(0,0,0,0.06)]"
+          }`}>
             <div className="mx-auto flex max-w-6xl items-center justify-between">
               <Link to="/" className="flex items-center">
                 <img
                   src={scrolled ? tidlLogoYellow : tidlLogo}
                   alt="TIDL"
-                  className={`object-contain transition-[height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                    scrolled ? "h-11" : "h-14"
-                  }`}
+                  className={`object-contain transition-[height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "h-11" : "h-14"}`}
                   draggable={false}
                 />
               </Link>
@@ -144,11 +170,9 @@ export function NavSection() {
                     scrolled ? "h-6 w-6 text-white" : "h-7 w-7 text-ink sm:h-8 sm:w-8"
                   }`}
                 >
-                  {menuOpen ? (
-                    <X width={scrolled ? 16 : 18} height={scrolled ? 16 : 18} />
-                  ) : (
-                    <Menu width={scrolled ? 16 : 18} height={scrolled ? 16 : 18} />
-                  )}
+                  {menuOpen
+                    ? <X width={scrolled ? 16 : 18} height={scrolled ? 16 : 18} />
+                    : <Menu width={scrolled ? 16 : 18} height={scrolled ? 16 : 18} />}
                 </button>
               </div>
             </div>
@@ -156,146 +180,174 @@ export function NavSection() {
         </div>
       </header>
 
-      {menuOpen && (
-        <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)}>
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-        </div>
-      )}
-
+      {/* ── Backdrop ── */}
       <div
-        className={`fixed right-0 top-0 z-50 flex h-full w-72 max-w-[90vw] flex-col bg-[#111] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 z-[55] bg-black/30 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
+
+      {/* ── Premium white drawer ── */}
+      <div
+        className={`fixed right-0 top-0 z-[60] flex h-full w-full max-w-[440px] sm:max-w-[480px] lg:max-w-[540px] flex-col rounded-l-[2.5rem] bg-[#FBFAF8] shadow-[-12px_0_70px_rgba(0,0,0,0.16)] transition-all duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          menuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
       >
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#F3C300] to-transparent" />
+        {/* Brand header */}
+        <div className="shrink-0 border-b border-border/40 px-7 pb-6 pt-7">
+          <div className="flex items-start justify-between">
+            <div>
+              <img src={tidlLogoYellow} alt="TIDL" className="h-7 w-auto" />
+              <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.22em] text-[#A89C82]">Health platform</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              className="-mr-1 flex h-9 w-9 items-center justify-center rounded-full text-foreground/40 transition-colors hover:text-foreground"
+              aria-label="Close menu"
+            >
+              <X className="h-5 w-5" strokeWidth={1.5} />
+            </button>
+          </div>
 
-        <div className="flex items-center justify-between px-6 py-5">
+          {/* Account / guest card */}
           {isAuthenticated ? (
-            <Link to="/account" onClick={() => setMenuOpen(false)} className="flex items-center gap-3">
-              <NavAvatar user={user} size="md" />
-              <div>
-                <p className="text-sm font-medium text-white">{user?.firstName} {user?.lastName}</p>
-                <p className="text-[10px] text-white/40">{user?.email}</p>
+            <Link
+              to="/account"
+              onClick={() => setMenuOpen(false)}
+              className="mt-5 flex items-center justify-between rounded-2xl border border-border/50 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(0,0,0,0.07)]"
+            >
+              <div className="flex items-center gap-3.5">
+                <Avatar user={user} />
+                <div>
+                  <p className="text-[15px] font-semibold text-foreground">{user?.firstName} {user?.lastName}</p>
+                  <p className="text-[12px] text-muted-foreground">{user?.email}</p>
+                </div>
               </div>
+              <NavArrow />
             </Link>
           ) : (
-            <span className="text-xs uppercase tracking-[0.18em] text-white/40">Menu</span>
-          )}
-          <button type="button" onClick={() => setMenuOpen(false)} className="text-white/50 hover:text-white transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="h-px bg-white/10" />
-
-        <nav className="flex-1 overflow-y-auto px-6 pt-4">
-          <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-white/30">Treatments</p>
-          <ul className="space-y-1">
-            {NAV_LINKS.map((link) => (
-              <li key={link.to}>
-                <Link
-                  to={link.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
-                >
-                  {link.label}
-                  <ChevronRight className="h-4 w-4 opacity-40" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="my-5 h-px bg-white/10" />
-
-          <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-white/30">Products</p>
-          <ul className="space-y-1">
-            {[
-              { label: "Lirosiome — GLP-1", slug: "lirosome" as const },
-              { label: "Tirosane — Longevity", slug: "tirosane" as const },
-              { label: "TIDL Core", slug: "tidl-core" as const },
-              { label: "TIDL Cycle", slug: "tidl-cycle" as const },
-            ].map((p) => (
-              <li key={p.slug}>
-                <Link
-                  to="/products/$slug"
-                  params={{ slug: p.slug }}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
-                >
-                  {p.label}
-                  <ChevronRight className="h-4 w-4 opacity-40" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="my-5 h-px bg-white/10" />
-
-          {isAuthenticated ? (
-            <>
-              <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-white/30">
-                {user?.firstName} {user?.lastName}
-              </p>
-              <ul className="space-y-1">
-                {[
-                  { label: "My account", to: "/account" as const },
-                  { label: "My orders", to: "/account/orders" as const },
-                  { label: "My treatment", to: "/account/treatment" as const },
-                  { label: "Support", to: "/account/support" as const },
-                ].map((item) => (
-                  <li key={item.to}>
-                    <Link
-                      to={item.to}
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-between rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
-                    >
-                      {item.label}
-                      <ChevronRight className="h-4 w-4 opacity-40" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <button
-                type="button"
-                onClick={() => { logout(); setMenuOpen(false); }}
-                className="mt-2 flex w-full items-center gap-2 rounded-xl px-4 py-3 text-sm text-white/40 transition-colors hover:bg-white/8 hover:text-white/70"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-            </>
-          ) : (
-            <div className="space-y-2">
+            <div className="mt-5 flex items-center justify-between rounded-2xl border border-border/50 bg-white px-5 py-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
+              <div>
+                <p className="text-[15px] font-semibold text-foreground">Guest</p>
+                <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">Sign in to manage your health journey</p>
+              </div>
               <button
                 type="button"
                 onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
-                className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/8 hover:text-white"
+                className="ml-4 shrink-0 rounded-full border border-border/70 px-4 py-2 text-[12px] font-semibold text-foreground transition-colors hover:bg-surface"
               >
-                <span className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Log in
-                </span>
-                <ChevronRight className="h-4 w-4 opacity-40" />
-              </button>
-              <button
-                type="button"
-                onClick={() => { openAuthModal({ mode: "signup" }); setMenuOpen(false); }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#F3C300] px-4 py-3 text-sm font-medium text-black transition-opacity hover:opacity-90"
-              >
-                Create account
+                Log in
               </button>
             </div>
           )}
+        </div>
+
+        {/* Scrollable nav links */}
+        <nav data-lenis-prevent className="no-scrollbar flex-1 overflow-y-auto overscroll-contain px-7 pb-10 pt-6">
+          <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">Explore</p>
+          <ul className="space-y-3">
+            {EXPLORE_ITEMS.map((item, idx) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${CARD_BASE} ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                  style={{ transitionDelay: menuOpen ? `${100 + idx * 55}ms` : "0ms" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="pr-2">
+                      <p className="text-[15px] font-semibold leading-tight text-foreground">{item.title}</p>
+                      <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{item.description}</p>
+                    </div>
+                    <NavArrow />
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mb-3.5 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">Popular Treatments</p>
+          <ul className="space-y-3">
+            {POPULAR_ITEMS.map((item, idx) => (
+              <li key={item.slug}>
+                <Link
+                  to="/products/$slug"
+                  params={{ slug: item.slug }}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${CARD_BASE} ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                  style={{ transitionDelay: menuOpen ? `${320 + idx * 55}ms` : "0ms" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="pr-2">
+                      <p className="text-[15px] font-semibold leading-tight text-foreground">{item.title}</p>
+                      <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{item.description}</p>
+                    </div>
+                    <NavArrow />
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mb-3.5 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">Resources</p>
+          <ul className="space-y-3">
+            {RESOURCE_ITEMS.map((item, idx) => (
+              <li key={item.title}>
+                <a
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`${CARD_BASE} ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                  style={{ transitionDelay: menuOpen ? `${500 + idx * 55}ms` : "0ms" }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="pr-2">
+                      <p className="text-[15px] font-semibold leading-tight text-foreground">{item.title}</p>
+                      <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{item.description}</p>
+                    </div>
+                    <NavArrow />
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={() => { logout(); setMenuOpen(false); }}
+              className="mt-7 flex items-center gap-2 rounded-xl px-1 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4" strokeWidth={1.5} />
+              Sign out
+            </button>
+          )}
         </nav>
 
-        <div className="px-6 pb-8 pt-4">
-          <button
-            type="button"
-            onClick={() => { openQuiz(); setMenuOpen(false); }}
-            className="btn-primary flex w-full justify-center py-3.5 text-sm"
-          >
-            Start Assessment
-          </button>
+        {/* Sticky footer CTA */}
+        <div className="shrink-0 rounded-bl-[2.5rem] border-t border-border/40 bg-white/80 px-7 pb-8 pt-5 backdrop-blur-sm">
+          <p className="mb-3.5 text-center text-[14px] font-semibold tracking-tight text-foreground">
+            Ready to start your journey?
+          </p>
+          <div className="space-y-2.5">
+            {!isAuthenticated && (
+              <button
+                type="button"
+                onClick={() => { openAuthModal({ mode: "login" }); setMenuOpen(false); }}
+                className="flex w-full items-center justify-center rounded-[1.25rem] border border-border/70 bg-white py-3.5 text-[14px] font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] active:translate-y-0"
+              >
+                Log in
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => { openQuiz(); setMenuOpen(false); }}
+              className="flex w-full items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-[14px] font-semibold text-black shadow-[0_8px_22px_rgba(243,195,0,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(243,195,0,0.45)] active:translate-y-0"
+            >
+              Start Assessment
+            </button>
+          </div>
         </div>
       </div>
     </>
