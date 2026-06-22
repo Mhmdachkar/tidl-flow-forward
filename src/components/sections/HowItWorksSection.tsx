@@ -304,7 +304,7 @@ export function HowItWorksSection() {
       ref={sectionRef}
       id="how-it-works"
       className="relative overflow-hidden"
-      style={{ background: "#f6f3ec", color: INK, fontFamily: "Inter, system-ui, sans-serif" }}
+      style={{ background: "#f6f3ec", color: INK }}
     >
       <div className="relative z-10 mx-auto max-w-[1240px] px-5 pt-12 sm:px-8 lg:pt-16">
         {/* ── header ─────────────────────────────────────────────── */}

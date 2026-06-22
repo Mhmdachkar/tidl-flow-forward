@@ -457,7 +457,7 @@ export function ClinicalLeadershipSection() {
     <section
       ref={rootRef}
       className="relative overflow-x-clip"
-      style={{ background: "#f6f3ec", color: "#161616", fontFamily: "Inter, system-ui, sans-serif" }}
+      style={{ background: "#f6f3ec", color: "#161616" }}
     >
       {/* cursor spotlight */}
       <div

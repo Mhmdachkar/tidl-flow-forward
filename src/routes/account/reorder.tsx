@@ -1,5 +1,6 @@
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import { createReorder, getLatestOrderForUser } from "@/lib/order-storage";
 import { formatCurrency } from "@/lib/pricing";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/account/reorder")({
 
 function AccountReorderPage() {
   const { user } = useAuth();
+  const { openModal: openQuiz } = useQuizModal();
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const order = user ? getLatestOrderForUser(user.id) : null;
@@ -25,9 +27,9 @@ function AccountReorderPage() {
     return (
       <div className="rounded-3xl border border-border bg-surface p-8 text-center">
         <p className="text-muted-foreground">No treatment available to refill.</p>
-        <Link to="/quiz" className="btn-primary mt-6 inline-flex">
+        <button type="button" onClick={() => openQuiz()} className="btn-primary mt-6 inline-flex">
           Start Assessment
-        </Link>
+        </button>
       </div>
     );
   }

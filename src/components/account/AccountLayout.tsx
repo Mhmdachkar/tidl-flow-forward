@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
-import { SiteNav } from "@/components/SiteNav";
+import { NavSection } from "@/components/sections/NavSection";
 
 const NAV_ITEMS = [
   { to: "/account", label: "Home", icon: Home, exact: true },
@@ -21,7 +21,7 @@ export function AccountLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-svh bg-background pb-24 lg:pb-8">
       {/* Shared site nav — dark mode */}
-      <SiteNav dark />
+      <NavSection />
 
       {/* Page title bar */}
       <div className="border-b border-border/60 bg-background/80 px-4 py-5 backdrop-blur-md sm:px-6">

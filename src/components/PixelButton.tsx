@@ -49,7 +49,7 @@ export function PixelButton({
     octx.textBaseline = "middle";
     octx.textAlign = "center";
     const fontSize = Math.round(H * 0.42);
-    octx.font = `600 ${fontSize}px "Inter", system-ui, sans-serif`;
+    octx.font = `600 ${fontSize}px "Fraunces", Georgia, serif`;
     octx.fillText(label, W / 2, H / 2 + 1);
     const img = octx.getImageData(0, 0, W, H).data;
 

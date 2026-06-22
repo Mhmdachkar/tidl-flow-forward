@@ -197,7 +197,7 @@ export function ReviewsSection() {
         });
       }}
       className="relative overflow-hidden"
-      style={{ background: "#f0ede8", color: "#161616", fontFamily: "Inter, system-ui, sans-serif" }}
+      style={{ background: "#f0ede8", color: "#161616" }}
     >
       {/* cursor spotlight */}
       <div

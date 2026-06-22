@@ -1,4 +1,5 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useEffect, useMemo, useState } from "react";
 
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function CheckoutPage() {
+  const { openModal: openQuiz } = useQuizModal();
   const [ready, setReady] = useState(false);
   const stored = loadQuizState();
 
@@ -59,9 +61,9 @@ function CheckoutPage() {
         <p className="mt-3 text-muted-foreground">
           Checkout is available after you finish the medical intake.
         </p>
-        <Link to="/quiz" className="btn-primary mt-8 inline-flex justify-center">
+        <button type="button" onClick={() => openQuiz()} className="btn-primary mt-8 inline-flex justify-center">
           Start Assessment
-        </Link>
+        </button>
       </div>
     );
   }

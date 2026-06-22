@@ -81,7 +81,7 @@ export function EducationSection() {
       ref={rootRef}
       id="education"
       className="relative overflow-hidden py-16 sm:py-20 lg:py-28"
-      style={{ background: "#f6f3ec", color: "#161616", fontFamily: "Inter, system-ui, sans-serif" }}
+      style={{ background: "#f6f3ec", color: "#161616" }}
     >
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
         {/* header */}

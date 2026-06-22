@@ -1,5 +1,6 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import { StatusTimeline } from "@/components/account/StatusTimeline";
 import { formatCurrency } from "@/lib/pricing";
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/account/")({
 
 function AccountDashboardPage() {
   const { user } = useAuth();
+  const { openModal: openQuiz } = useQuizModal();
   const [ready, setReady] = useState(false);
   const order = user ? getLatestOrderForUser(user.id) : null;
 
@@ -31,9 +33,9 @@ function AccountDashboardPage() {
         <p className="mt-3 text-muted-foreground">
           Complete your assessment to begin physician review.
         </p>
-        <Link to="/quiz" className="btn-primary mt-6 inline-flex">
+        <button type="button" onClick={() => openQuiz()} className="btn-primary mt-6 inline-flex">
           Start Assessment
-        </Link>
+        </button>
       </div>
     );
   }

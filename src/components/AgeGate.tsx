@@ -262,7 +262,7 @@ export function AgeGate() {
           />
           <span
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "Fraunces, Georgia, serif",
               fontSize: 10,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
@@ -308,7 +308,7 @@ export function AgeGate() {
         <p
           className="ag-item"
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "Fraunces, Georgia, serif",
             fontSize: 13,
             lineHeight: 1.65,
             color: "oklch(0.62 0.008 60)",
@@ -342,7 +342,7 @@ export function AgeGate() {
               color: "oklch(0.13 0.008 60)",
               border: "none",
               borderRadius: 6,
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "Fraunces, Georgia, serif",
               fontSize: 13,
               fontWeight: 600,
               letterSpacing: "0.06em",
@@ -374,7 +374,7 @@ export function AgeGate() {
               color: "oklch(0.55 0.008 60)",
               border: "1px solid oklch(0.28 0.008 60)",
               borderRadius: 6,
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "Fraunces, Georgia, serif",
               fontSize: 13,
               fontWeight: 400,
               letterSpacing: "0.04em",
@@ -403,7 +403,7 @@ export function AgeGate() {
           className="ag-item"
           style={{
             marginTop: 28,
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "Fraunces, Georgia, serif",
             fontSize: 11,
             lineHeight: 1.6,
             color: "oklch(0.38 0.008 60)",
