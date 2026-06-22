@@ -1,147 +1,314 @@
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { MagneticButton } from "@/components/MagneticButton";
-import { SplitWords } from "@/lib/SplitWords";
+import { gsap } from "@/lib/gsap";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 
-import hero from "@/assets/hero image 3d.png";
-import heroBg from "@/assets/hero bg.jpeg";
-import heroMobileBg from "@/assets/hero_section_mobileview.jpeg";
+import product2 from "@/assets/product 2 3d white.png";
+import product3 from "@/assets/product 3 3d pink.png";
+import product4 from "@/assets/product 4 3d.png";
+import product5 from "@/assets/product 5 3d.png";
+
+const styles = `
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400&family=Inter:wght@400;500;600&display=swap');
+
+.tidl-hero { font-family: 'Inter', system-ui, sans-serif; background: #FAFAF7; color: #111111; min-height: 100vh; }
+.tidl-hero * { box-sizing: border-box; }
+.tidl-main-grid, .tidl-quick-grid { perspective: 1400px; perspective-origin: 50% 30%; }
+.tidl-tilt { transform-style: preserve-3d; will-change: transform; }
+.tidl-tilt-inner { transform-style: preserve-3d; }
+.tidl-glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; mix-blend-mode: screen; background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,0.22), transparent 55%); transition: opacity .35s ease; z-index: 4; }
+.tidl-card-cream .tidl-glare { mix-blend-mode: overlay; background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), rgba(243,195,0,0.45), transparent 55%); }
+.tidl-card:hover .tidl-glare { opacity: 1; }
+.tidl-quick .tidl-glare { background: radial-gradient(160px circle at var(--gx, 50%) var(--gy, 50%), rgba(243,195,0,0.35), transparent 60%); mix-blend-mode: multiply; }
+.tidl-gsap-init { opacity: 0; }
+.tidl-fraunces { font-family: 'Fraunces', Georgia, serif; font-weight: 300; letter-spacing: -0.02em; line-height: 0.98; }
+.tidl-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
+
+.tidl-announce { width: 100%; background: #F3C300; color: #111; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: filter .2s ease; }
+.tidl-announce:hover { filter: brightness(0.95); }
+
+.tidl-container { max-width: 1280px; margin: 0 auto; padding: 56px 24px 80px; }
+
+.tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: end; margin-bottom: 48px; }
+@media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; } }
+.tidl-headline { font-size: clamp(2.8rem, 6vw, 5rem); margin: 0; color: #111; }
+.tidl-headline em { font-style: italic; font-weight: 400; color: #2d4a3e; }
+.tidl-sub { margin-top: 18px; font-size: 15px; color: #5a5a55; max-width: 540px; }
+.tidl-hero-visual { display: flex; justify-content: center; align-items: center; min-height: 220px; }
+.tidl-hero-visual img { max-height: 280px; width: auto; filter: drop-shadow(0 30px 40px rgba(45,74,62,0.18)); transform: rotate(-12deg); }
+
+.tidl-main-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+@media (min-width: 900px) { .tidl-main-grid { grid-template-columns: 6fr 4fr; } }
+
+.tidl-card { position: relative; border-radius: 1.5rem; overflow: hidden; cursor: pointer; border: 1px solid transparent; box-shadow: 0 4px 20px rgba(17,17,17,0.06); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease; text-align: left; padding: 0; display: block; width: 100%; font: inherit; isolation: isolate; }
+.tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); }
+.tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1.1fr 1fr; min-height: 340px; }
+.tidl-card-content { position: relative; padding: 28px 28px 28px 32px; display: flex; flex-direction: column; justify-content: space-between; }
+.tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.tidl-card-img img { max-height: 280px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; will-change: transform; }
+
+.tidl-card-dark { background: #1a1a18; color: #fafaf7; }
+.tidl-card-dark .tidl-card-headline { color: #fafaf7; transition: text-shadow 0.5s ease; }
+.tidl-card-dark .tidl-label { color: #F3C300; transition: letter-spacing .4s ease, filter .3s ease; }
+.tidl-card-dark .tidl-card-cta { color: #F3C300; }
+.tidl-card-dark .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(105deg, transparent 46%, rgba(243,195,0,0.30) 49%, rgba(243,195,0,0.65) 50%, rgba(243,195,0,0.30) 51%, transparent 54%); transform: translateX(-120%) translateY(-20%); transition: transform 1.1s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
+.tidl-card-dark:hover .tidl-sweep { transform: translateX(20%) translateY(-20%); }
+.tidl-card-dark .tidl-scan { position: absolute; left: 0; right: 0; top: -20%; height: 3px; background: linear-gradient(90deg, transparent 5%, rgba(243,195,0,0.9) 30%, rgba(255,255,255,0.85) 50%, rgba(243,195,0,0.9) 70%, transparent 95%); box-shadow: 0 0 18px rgba(243,195,0,0.7), 0 0 45px rgba(243,195,0,0.35), 0 10px 40px rgba(243,195,0,0.15); opacity: 0; z-index: 4; pointer-events: none; }
+.tidl-card-dark:hover .tidl-scan { animation: tidlScan 1.6s cubic-bezier(0.22,1,0.36,1) infinite; }
+.tidl-card-dark .tidl-inner-light { position: absolute; inset: 0; background: radial-gradient(500px circle at 30% 60%, rgba(243,195,0,0.16), transparent 60%); opacity: 0; transition: opacity 0.7s ease; z-index: 1; pointer-events: none; }
+.tidl-card-dark:hover .tidl-inner-light { opacity: 1; }
+.tidl-card-dark::after { content: ""; position: absolute; left: 32px; right: 32px; bottom: 26px; height: 2px; background: #F3C300; box-shadow: 0 0 14px rgba(243,195,0,0.7), 0 0 35px rgba(243,195,0,0.3); transform: scaleX(0); transform-origin: left center; transition: transform 0.7s cubic-bezier(0.77,0,0.18,1); z-index: 3; }
+.tidl-card-dark:hover::after { transform: scaleX(1); }
+.tidl-card-dark::before { content: ""; position: absolute; top: 0; left: 0; width: 260px; height: 260px; background: radial-gradient(circle at 0% 0%, rgba(243,195,0,0.55), transparent 60%); opacity: 0; transition: opacity 0.6s ease; z-index: 1; pointer-events: none; }
+.tidl-card-dark:hover::before { opacity: 1; }
+.tidl-card-dark .tidl-aura { position: absolute; inset: -1px; border-radius: 1.5rem; opacity: 0; transition: opacity 0.5s ease; box-shadow: inset 0 0 40px rgba(243,195,0,0.10), 0 0 0 1px rgba(243,195,0,0.25), 0 0 50px rgba(243,195,0,0.18), 0 0 100px rgba(243,195,0,0.08); z-index: 0; pointer-events: none; }
+.tidl-card-dark:hover .tidl-aura { opacity: 1; }
+.tidl-card-dark:hover .tidl-label { letter-spacing: 0.24em; filter: brightness(1.25); }
+.tidl-card-dark:hover .tidl-card-headline { text-shadow: 0 0 30px rgba(243,195,0,0.30), 0 0 70px rgba(243,195,0,0.12); }
+.tidl-card-dark:hover .tidl-card-img img { transform: scale(1.10) rotate(-6deg) translateY(-12px); filter: drop-shadow(0 24px 36px rgba(243,195,0,0.22)); }
+.tidl-card-dark .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+.tidl-card-dark:hover .tidl-card-cta svg { transform: translateX(10px); }
+
+.tidl-card-cream { background: #F0EBE0; color: #111; }
+.tidl-card-cream .tidl-label { color: #2d4a3e; transition: letter-spacing .4s ease; }
+.tidl-card-cream .tidl-card-cta { color: #2d4a3e; }
+.tidl-card-cream:hover { box-shadow: 0 32px 70px rgba(243,195,0,0.25), 0 4px 20px rgba(17,17,17,0.08); }
+.tidl-card-cream .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(115deg, transparent 44%, rgba(243,195,0,0.35) 48%, rgba(45,74,62,0.30) 50%, rgba(243,195,0,0.35) 52%, transparent 56%); transform: translateX(-130%) translateY(10%); transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
+.tidl-card-cream:hover .tidl-sweep { transform: translateX(30%) translateY(10%); }
+.tidl-card-cream .tidl-pulse { position: absolute; top: 50%; left: 72%; width: 80px; height: 80px; transform: translate(-50%, -50%) scale(0.5); border-radius: 50%; border: 2px solid rgba(243,195,0,0.85); box-shadow: 0 0 20px rgba(243,195,0,0.4), 0 0 40px rgba(45,74,62,0.15); opacity: 0; z-index: 3; pointer-events: none; }
+.tidl-card-cream:hover .tidl-pulse { animation: tidlPulse 1.5s cubic-bezier(0.22,1,0.36,1) infinite; }
+.tidl-card-cream .tidl-inner-light { position: absolute; inset: 0; background: radial-gradient(450px circle at 70% 40%, rgba(243,195,0,0.18), transparent 55%); opacity: 0; transition: opacity 0.7s ease; z-index: 1; pointer-events: none; }
+.tidl-card-cream:hover .tidl-inner-light { opacity: 1; }
+.tidl-card-cream::before { content: ""; position: absolute; top: 0; right: 0; width: 240px; height: 240px; background: radial-gradient(circle at 100% 0%, rgba(45,74,62,0.28), transparent 60%); opacity: 0; transition: opacity 0.6s ease; z-index: 1; pointer-events: none; }
+.tidl-card-cream:hover::before { opacity: 1; }
+.tidl-card-cream::after { content: ""; position: absolute; left: 0; top: 24px; bottom: 24px; width: 3px; background: linear-gradient(180deg, #2d4a3e, rgba(45,74,62,0.4)); box-shadow: 0 0 14px rgba(45,74,62,0.45), 0 0 32px rgba(45,74,62,0.20); transform: scaleY(0); transform-origin: top center; transition: transform 0.7s cubic-bezier(0.77,0,0.18,1); z-index: 3; }
+.tidl-card-cream:hover::after { transform: scaleY(1); }
+.tidl-card-cream .tidl-aura { position: absolute; inset: -1px; border-radius: 1.5rem; opacity: 0; transition: opacity 0.5s ease; box-shadow: inset 0 0 40px rgba(243,195,0,0.08), 0 0 0 1px rgba(243,195,0,0.22), 0 0 50px rgba(243,195,0,0.14), 0 0 100px rgba(45,74,62,0.08); z-index: 0; pointer-events: none; }
+.tidl-card-cream:hover .tidl-aura { opacity: 1; }
+.tidl-card-cream:hover .tidl-label { letter-spacing: 0.24em; }
+.tidl-card-cream .tidl-card-headline { transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+.tidl-card-cream:hover .tidl-card-headline { transform: translateX(8px); }
+.tidl-card-cream:hover .tidl-card-img img { transform: scale(1.10) rotate(10deg) translateY(-8px); filter: drop-shadow(0 22px 34px rgba(45,74,62,0.18)); }
+.tidl-card-cream .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+.tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
+
+.tidl-card-headline { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.02; letter-spacing: -0.02em; margin: 18px 0 0; max-width: 360px; }
+.tidl-card-cta { font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; margin-top: 24px; }
+
+.tidl-quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 900px) { .tidl-quick-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.tidl-quick { position: relative; background: #FFFFFF; border: 1px solid #E8E8E3; border-radius: 1rem; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; overflow: hidden; isolation: isolate; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, background 0.3s ease, box-shadow 0.35s ease; width: 100%; font: inherit; text-align: left; }
+.tidl-quick:hover { transform: translateY(-4px); border-color: #F3C300; background: #FFFDF5; box-shadow: 0 14px 30px rgba(17,17,17,0.10); }
+.tidl-quick::before { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: linear-gradient(90deg, #F3C300, #2d4a3e); transform: scaleX(0); transform-origin: left center; transition: transform 0.5s cubic-bezier(0.77,0,0.18,1); z-index: 2; }
+.tidl-quick:hover::before { transform: scaleX(1); }
+.tidl-quick::after { content: ""; position: absolute; inset: 0; background: radial-gradient(180px circle at 85% 50%, rgba(243,195,0,0.18), transparent 60%); opacity: 0; transition: opacity 0.4s ease; z-index: 0; pointer-events: none; }
+.tidl-quick:hover::after { opacity: 1; }
+.tidl-quick-label { position: relative; z-index: 2; font-size: 15px; font-weight: 500; color: #111; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s ease; }
+.tidl-quick:hover .tidl-quick-label { transform: translateX(4px); }
+.tidl-quick-img { position: relative; z-index: 2; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tidl-quick-img img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+.tidl-quick:hover .tidl-quick-img img { transform: scale(1.12) rotate(-6deg); }
+.tidl-quick-arrow { position: relative; z-index: 2; color: #999; transition: color .3s ease, transform .35s cubic-bezier(0.22,1,0.36,1); }
+.tidl-quick:hover .tidl-quick-arrow { color: #F3C300; transform: translateX(6px); }
+
+@keyframes tidlScan {
+  0% { top: -20%; opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 120%; opacity: 0; }
+}
+@keyframes tidlPulse {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tidl-anim { opacity: 1; animation: none; }
+  .tidl-card, .tidl-quick, .tidl-card-img img, .tidl-quick-img img { transition: none; }
+  .tidl-card:hover, .tidl-quick:hover { transform: none; }
+}
+`;
 
 export function HeroSection() {
-  const { openModal: openQuiz } = useQuizModal();
-  const sectionRef = useRef<HTMLElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const discRef = useRef<HTMLDivElement>(null);
-  const discImgRef = useRef<HTMLImageElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const paraRef = useRef<HTMLParagraphElement>(null);
+  const rootRef = useRef<HTMLElement | null>(null);
+  const { openModal } = useQuizModal();
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-    tl.fromTo(bgRef.current, { opacity: 0 }, { opacity: 1, duration: 1.6 }, 0);
-    tl.fromTo(
-      discRef.current,
-      { opacity: 0, scale: 0.7, rotateY: -18, rotateX: 12, y: 60 },
-      { opacity: 1, scale: 1, rotateY: 0, rotateX: 0, y: 0, duration: 2.4, ease: "power4.out" },
-      0.9
-    );
-    tl.fromTo(paraRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.0 }, 2.4);
-    tl.fromTo(
-      ctaRef.current?.children || [],
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.9, stagger: 0.1 },
-      2.8
-    );
+    const root = rootRef.current;
+    if (!root) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cards = Array.from(root.querySelectorAll<HTMLElement>(".tidl-tilt"));
+    const headline = root.querySelector<HTMLElement>(".tidl-headline");
+    const sub = root.querySelector<HTMLElement>(".tidl-sub");
+    const heroVisual = root.querySelector<HTMLElement>(".tidl-hero-visual");
 
-    if (ringRef.current) {
-      gsap.to(ringRef.current, { rotate: 360, duration: 60, ease: "none", repeat: -1, delay: 0.9 });
-    }
+    const ctx = gsap.context(() => {
+      if (reduced) {
+        gsap.set([...cards, headline, sub, heroVisual].filter(Boolean) as HTMLElement[], { clearProps: "all", opacity: 1 });
+        return;
+      }
 
-    gsap.to(discImgRef.current, {
-      y: -14, duration: 5.5, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2.6,
-    });
+      if (headline) {
+        const html = headline.innerHTML;
+        const wrapped = html.replace(/(\S+)/g, '<span class="tidl-word" style="display:inline-block;will-change:transform,opacity">$1</span>');
+        headline.innerHTML = wrapped;
+      }
+      const words = root.querySelectorAll<HTMLElement>(".tidl-word");
+      const mainCards = cards.filter((c) => c.classList.contains("tidl-card"));
+      const quickCards = cards.filter((c) => c.classList.contains("tidl-quick"));
+      const darkCard = mainCards.find((c) => c.classList.contains("tidl-card-dark"));
+      const creamCard = mainCards.find((c) => c.classList.contains("tidl-card-cream"));
 
-    const onMove = (e: MouseEvent) => {
-      const cx = (e.clientX / window.innerWidth - 0.5);
-      const cy = (e.clientY / window.innerHeight - 0.5);
-      gsap.to(discImgRef.current, {
-        rotateY: cx * 10, rotateX: -cy * 8, x: cx * 12, duration: 1.4, ease: "power3.out",
+      gsap.set(words, { yPercent: 110, opacity: 0, rotateX: -60, transformOrigin: "0% 100%" });
+      gsap.set([sub, heroVisual].filter(Boolean) as HTMLElement[], { opacity: 0, y: 24 });
+      if (darkCard) gsap.set(darkCard, { opacity: 0, xPercent: -120, rotateY: 18, rotateX: 4, transformOrigin: "100% 50%" });
+      if (creamCard) gsap.set(creamCard, { opacity: 0, xPercent: 120, rotateY: -18, rotateX: 4, transformOrigin: "0% 50%" });
+      gsap.set(quickCards, { opacity: 0, y: -120, rotateY: 90, rotateX: -30, scale: 0.6, filter: "blur(14px)", transformOrigin: "50% 50% -40px" });
+
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      tl.to(words, { yPercent: 0, opacity: 1, rotateX: 0, duration: 1.4, stagger: 0.1 })
+        .to(sub, { opacity: 1, y: 0, duration: 0.9 }, "-=0.8")
+        .to(heroVisual, { opacity: 1, y: 0, duration: 1.0 }, "-=0.9")
+        .to([darkCard, creamCard].filter(Boolean) as HTMLElement[], { opacity: 1, xPercent: 0, rotateY: 0, rotateX: 0, duration: 2.0, ease: "expo.out", stagger: 0.18 }, "-=0.4")
+        .fromTo([darkCard, creamCard].filter(Boolean) as HTMLElement[], { scale: 1.03 }, { scale: 1, duration: 1.0, ease: "elastic.out(1, 0.6)" }, "-=0.6")
+        .to(quickCards, { opacity: 1, y: 0, rotateY: 0, rotateX: 0, scale: 1, filter: "blur(0px)", duration: 1.4, ease: "back.out(1.4)", stagger: { each: 0.18, from: "start" } }, "-=0.6");
+
+      const cleanups: Array<() => void> = [];
+      cards.forEach((card) => {
+        const inner = card.querySelector<HTMLElement>(".tidl-tilt-inner");
+        const glare = card.querySelector<HTMLElement>(".tidl-glare");
+        const img = card.querySelector<HTMLElement>(".tidl-card-img img, .tidl-quick-img img");
+        const isQuick = card.classList.contains("tidl-quick");
+        const maxRot = isQuick ? 8 : 14;
+        const liftZ = isQuick ? 24 : 60;
+
+        const xTo = gsap.quickTo(card, "rotateY", { duration: 0.5, ease: "power3.out" });
+        const yTo = gsap.quickTo(card, "rotateX", { duration: 0.5, ease: "power3.out" });
+        const zTo = gsap.quickTo(card, "z", { duration: 0.5, ease: "power3.out" });
+        const imgX = img ? gsap.quickTo(img, "x", { duration: 0.6, ease: "power3.out" }) : null;
+        const imgY = img ? gsap.quickTo(img, "y", { duration: 0.6, ease: "power3.out" }) : null;
+
+        const onMove = (e: MouseEvent) => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          const dx = px - 0.5;
+          const dy = py - 0.5;
+          xTo(dx * maxRot);
+          yTo(-dy * maxRot);
+          zTo(liftZ);
+          if (imgX && imgY) { imgX(dx * 22); imgY(dy * 14); }
+          if (glare) { glare.style.setProperty("--gx", `${px * 100}%`); glare.style.setProperty("--gy", `${py * 100}%`); }
+        };
+        const onLeave = () => { xTo(0); yTo(0); zTo(0); if (imgX && imgY) { imgX(0); imgY(0); } };
+        const onEnter = () => {
+          gsap.to(card, { scale: 1.012, duration: 0.5, ease: "power3.out" });
+          if (inner) gsap.to(inner, { z: 30, duration: 0.5, ease: "power3.out" });
+        };
+        const onOut = () => {
+          gsap.to(card, { scale: 1, duration: 0.6, ease: "power3.out" });
+          if (inner) gsap.to(inner, { z: 0, duration: 0.6, ease: "power3.out" });
+          onLeave();
+        };
+        card.addEventListener("mousemove", onMove);
+        card.addEventListener("mouseenter", onEnter);
+        card.addEventListener("mouseleave", onOut);
+        cleanups.push(() => { card.removeEventListener("mousemove", onMove); card.removeEventListener("mouseenter", onEnter); card.removeEventListener("mouseleave", onOut); });
       });
-    };
-    window.addEventListener("mousemove", onMove);
 
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: "top top",
-      end: "bottom top",
-      onUpdate: (self) => {
-        if (discRef.current) {
-          gsap.set(discRef.current, { yPercent: self.progress * 18 });
-        }
-      },
-    });
+      return () => cleanups.forEach((fn) => fn());
+    }, root);
 
-    return () => window.removeEventListener("mousemove", onMove);
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} className="hero relative flex min-h-[88svh] flex-col overflow-hidden bg-background pt-[calc(5.5rem+1.5cm)] pb-8 lg:block lg:min-h-0 lg:pb-10 lg:pt-[calc(5.5rem+0.5cm)]">
-      {/* Mobile-only background image */}
-      <div className="absolute inset-0 lg:hidden">
-        <img
-          src={heroMobileBg}
-          alt=""
-          className="h-full w-full object-cover object-[center_bottom]"
-          draggable={false}
-        />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-background" />
-      </div>
+    <section className="tidl-hero" ref={rootRef}>
+      <style>{styles}</style>
 
-      <div className="relative overflow-visible">
-        <div ref={bgRef} className="absolute inset-0 hidden opacity-0 lg:block">
-          <img
-            src={heroBg}
-            alt=""
-            className="h-full w-full object-cover object-[center_calc(50%-2cm)]"
-            draggable={false}
-          />
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-background" />
+      <button type="button" className="tidl-announce" onClick={openModal}>
+        Physician-supervised longevity care — start your free assessment →
+      </button>
+
+      <div className="tidl-container">
+        <div className="tidl-headline-row">
+          <div>
+            <h1 className="tidl-headline tidl-fraunces">
+              The longevity care <em>you deserve.</em>
+            </h1>
+            <p className="tidl-sub">
+              Clinical diagnostics. Physician-guided therapy. Delivered to your door.
+            </p>
+          </div>
+          <div className="tidl-hero-visual" aria-hidden="true">
+            <img src={product3} alt="" />
+          </div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 xl:gap-14">
-            <div className="text-left">
-              <h1 className="font-display text-[clamp(2rem,4.2vw,3.5rem)] leading-[1.08] tracking-tight text-ink">
-                <span className="block"><SplitWords text="Live better." trigger="immediate" delay={0.7} duration={1.6} /></span>
-                <span className="block"><SplitWords text="Longer." wordClassName="text-gradient-clinical" trigger="immediate" delay={0.95} duration={1.6} /></span>
-                <span className="block"><SplitWords text="Feel like you." trigger="immediate" delay={1.2} duration={1.6} /></span>
-              </h1>
-
-              <p ref={paraRef} className="mt-5 max-w-md text-sm leading-relaxed text-ink-soft opacity-0 sm:text-base">
-                Clinical-grade biomarkers paired<br className="sm:hidden" />
-                with metabolic, hormonal<br className="sm:hidden" />
-                and longevity therapies<br className="sm:hidden" />
-                delivered to your door.
-              </p>
-
-              <div ref={ctaRef} className="mt-7 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <MagneticButton as="button" onClick={() => openQuiz()} className="btn-primary">
-                  Start your assessment →
-                </MagneticButton>
-                <MagneticButton className="btn-ghost">Watch the film</MagneticButton>
+        <div className="tidl-main-grid">
+          {/* Dark card */}
+          <button type="button" className="tidl-card tidl-card-dark tidl-tilt" onClick={openModal}>
+            <span className="tidl-sweep" aria-hidden="true" />
+            <span className="tidl-scan" aria-hidden="true" />
+            <span className="tidl-aura" aria-hidden="true" />
+            <span className="tidl-inner-light" aria-hidden="true" />
+            <span className="tidl-glare" aria-hidden="true" />
+            <div className="tidl-card-inner tidl-tilt-inner">
+              <div className="tidl-card-content">
+                <span className="tidl-label">Metabolic &amp; Weight</span>
+                <div>
+                  <h2 className="tidl-card-headline">Start your longevity journey</h2>
+                  <span className="tidl-card-cta">Find your physician match <ArrowRight size={16} /></span>
+                </div>
+              </div>
+              <div className="tidl-card-img">
+                <img src={product5} alt="TIDL injectable therapy" />
               </div>
             </div>
+          </button>
 
-            <div ref={discRef} className="relative mx-auto hidden h-[min(68vw,380px)] w-full max-w-[560px] [perspective:1400px] sm:h-[440px] lg:mx-0 lg:ml-auto lg:block lg:h-[480px] lg:max-w-none">
-              <div
-                className="absolute inset-x-10 bottom-6 h-12 rounded-full blur-3xl"
-                style={{ background: "radial-gradient(closest-side, rgba(243,195,0,0.22), transparent 70%)" }}
-              />
-              <div
-                ref={ringRef}
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[min(92vw,380px)] w-[min(92vw,380px)] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[520px] sm:w-[520px] lg:h-[560px] lg:w-[560px]"
-                style={{
-                  background: "conic-gradient(from 0deg, transparent 0deg, rgba(216,199,154,0.55) 60deg, transparent 130deg, rgba(216,199,154,0.35) 220deg, transparent 320deg)",
-                  WebkitMaskImage: "radial-gradient(circle, transparent 47%, black 48%, black 50%, transparent 51%)",
-                  maskImage: "radial-gradient(circle, transparent 47%, black 48%, black 50%, transparent 51%)",
-                  opacity: 0.85,
-                }}
-              />
-              <img
-                ref={discImgRef}
-                src={hero}
-                alt="TIDL longevity product"
-                className="absolute inset-0 mx-auto h-full w-auto max-w-full object-contain will-change-transform"
-                style={{
-                  filter: "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))",
-                  background: "transparent",
-                }}
-                draggable={false}
-              />
+          {/* Cream card */}
+          <button type="button" className="tidl-card tidl-card-cream tidl-tilt" onClick={openModal}>
+            <span className="tidl-sweep" aria-hidden="true" />
+            <span className="tidl-pulse" aria-hidden="true" />
+            <span className="tidl-aura" aria-hidden="true" />
+            <span className="tidl-inner-light" aria-hidden="true" />
+            <span className="tidl-glare" aria-hidden="true" />
+            <div className="tidl-card-inner tidl-tilt-inner">
+              <div className="tidl-card-content">
+                <span className="tidl-label">Hormone &amp; Longevity</span>
+                <div>
+                  <h2 className="tidl-card-headline">See what's possible for you</h2>
+                  <span className="tidl-card-cta">Explore treatment tracks <ArrowRight size={16} /></span>
+                </div>
+              </div>
+              <div className="tidl-card-img">
+                <img src={product4} alt="TIDL hormone pen" />
+              </div>
             </div>
-          </div>
+          </button>
+        </div>
+
+        <div className="tidl-quick-grid">
+          {([
+            { label: "Weight Loss",     img: product2 },
+            { label: "Hormonal Health", img: product3 },
+            { label: "Longevity",       img: product4 },
+            { label: "Performance",     img: product5 },
+          ] as const).map((c) => (
+            <button key={c.label} type="button" className="tidl-quick tidl-tilt" onClick={openModal}>
+              <span className="tidl-glare" aria-hidden="true" />
+              <span className="tidl-quick-label">{c.label}</span>
+              <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span className="tidl-quick-img">
+                  <img src={c.img} alt="" />
+                </span>
+                <ArrowRight size={16} className="tidl-quick-arrow" />
+              </span>
+            </button>
+          ))}
         </div>
       </div>
     </section>
