@@ -263,7 +263,7 @@ export function PharmacySection() {
             </p>
           </SlideIn>
           <SlideIn from="right" distance={40} delay={0.1}>
-            <p className="font-mono text-[0.6875rem] tracking-[0.22em] text-ink-mute">
+            <p className="font-display text-[0.6875rem] tracking-[0.22em] text-ink-mute">
               TIDL · LIC. PHARMACY NETWORK
             </p>
           </SlideIn>
@@ -321,7 +321,7 @@ export function PharmacySection() {
             />
             <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
               <span className="mt-2 inline-block h-px w-10 bg-ink/40" />
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-mute">
+              <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-mute">
                 Fig. 01 — Sterile fulfillment station, partner pharmacy network
               </p>
             </div>
@@ -366,10 +366,10 @@ export function PharmacySection() {
                 style={{ y: penY }}
               />
               <div className="pointer-events-none absolute inset-0 z-20 ring-1 ring-inset ring-ink/10" />
-              <div className="absolute left-4 top-4 z-20 font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
+              <div className="absolute left-4 top-4 z-20 font-display text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
                 TIDL · GLP-1 · 01
               </div>
-              <div className="absolute bottom-4 right-4 z-20 font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
+              <div className="absolute bottom-4 right-4 z-20 font-display text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
                 Pre-dosed · Single-use
               </div>
             </motion.div>
@@ -404,7 +404,7 @@ export function PharmacySection() {
               </p>
             </SlideIn>
             <SlideIn from="right" distance={50} delay={0.1}>
-              <p className="font-mono text-[0.6875rem] tracking-[0.22em] text-ink-mute">
+              <p className="font-display text-[0.6875rem] tracking-[0.22em] text-ink-mute">
                 05 stages · avg. 48–72h dispatch
               </p>
             </SlideIn>
@@ -485,10 +485,10 @@ export function PharmacySection() {
                 transition={{ duration: 2.0, ease: EASE_LUX }}
               />
               <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/10" />
-              <div className="absolute left-4 top-4 font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
+              <div className="absolute left-4 top-4 font-display text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
                 TIDL · Peptide · 02
               </div>
-              <div className="absolute bottom-4 right-4 font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
+              <div className="absolute bottom-4 right-4 font-display text-[0.625rem] uppercase tracking-[0.2em] text-ink-mute">
                 Compounding pharmacy
               </div>
             </motion.div>
@@ -526,7 +526,7 @@ export function PharmacySection() {
               />
               <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
                 <span className="mt-2 inline-block h-px w-10 bg-ink/40" />
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-mute">
+                <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-mute">
                   Fig. 02 — Validated cold-pack insulation, unbranded outer parcel
                 </p>
               </div>
@@ -575,7 +575,7 @@ export function PharmacySection() {
               ] as const).map((m, i) => (
                 <SlideIn key={m.k} from={i % 2 === 0 ? "left" : "right"} distance={50} delay={i * 0.08} blur={false}>
                   <div className="h-full bg-cream p-6">
-                    <p className="font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-mute">
+                    <p className="font-display text-[0.625rem] uppercase tracking-[0.22em] text-ink-mute">
                       {m.k}
                     </p>
                     <p className="mt-4 font-serif text-5xl leading-none tracking-tight text-ink">
@@ -623,7 +623,7 @@ export function PharmacySection() {
         </div>
 
         <div className="hairline-grow mt-24" />
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[0.625rem] uppercase tracking-[0.22em] text-ink-mute">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-display text-[0.625rem] uppercase tracking-[0.22em] text-ink-mute">
           <span>TIDL · Pharmacy &amp; Fulfillment</span>
           <span>End of Chapter 04</span>
         </div>
