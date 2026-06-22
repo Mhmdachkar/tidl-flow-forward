@@ -2,12 +2,14 @@ import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SplitWords } from "@/lib/SplitWords";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import hero from "@/assets/hero image 3d.png";
 import heroBg from "@/assets/hero bg.jpeg";
 import heroMobileBg from "@/assets/hero_section_mobileview.jpeg";
 
 export function HeroSection() {
+  const { openModal: openQuiz } = useQuizModal();
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -105,7 +107,7 @@ export function HeroSection() {
               </p>
 
               <div ref={ctaRef} className="mt-7 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <MagneticButton as="a" href="/quiz" className="btn-primary">
+                <MagneticButton as="button" onClick={() => openQuiz()} className="btn-primary">
                   Start your assessment →
                 </MagneticButton>
                 <MagneticButton className="btn-ghost">Watch the film</MagneticButton>

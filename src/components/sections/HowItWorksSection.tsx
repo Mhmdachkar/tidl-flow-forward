@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { gsap, ScrollTrigger, Draggable } from "@/lib/gsap";
 // ─── step data ────────────────────────────────────────────────────────────────
 const STEPS = [
@@ -81,6 +82,7 @@ function cardWidthForStage(w: number) {
   return Math.min(w * 0.56, 250);
 }
 export function HowItWorksSection() {
+  const { openModal: openQuiz } = useQuizModal();
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const proxyRef = useRef<HTMLDivElement>(null);
@@ -536,8 +538,9 @@ export function HowItWorksSection() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2, duration: 0.35 }}
                 >
-                  <Link
-                    to="/quiz"
+                  <button
+                    type="button"
+                    onClick={() => openQuiz()}
                     className="mt-5 inline-flex items-center gap-2.5 rounded-full px-6 py-2.5 text-[13px] font-semibold text-white transition-transform hover:scale-[1.03]"
                     style={{ background: ACCENT }}
                   >
@@ -545,7 +548,7 @@ export function HowItWorksSection() {
                     <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" aria-hidden>
                       <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </Link>
+                  </button>
                 </motion.div>
               )}
             </motion.div>

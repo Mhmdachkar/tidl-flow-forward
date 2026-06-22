@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import footerLogo from "@/assets/tidl_logo.png";
 
@@ -61,6 +62,7 @@ function TidlWordmark() {
 }
 
 export function FooterSection() {
+  const { openModal: openQuiz } = useQuizModal();
   const learnLinks = ["Labs", "Weight Loss", "Sexual Health", "Testosterone", "Hair Regrowth", "Mental Health", "Drug Comparisons", "Drugs & Medications", "About the Company"];
   const toolLinks = ["BMI Calculator", "Low Testosterone Calculator", "TDEE Calculator", "Calorie Deficit Calculator", "Protein Calculator", "Water Intake Calculator"];
   const popularLinks = [
@@ -96,9 +98,9 @@ export function FooterSection() {
               <p className="text-xs uppercase tracking-widest mb-3 font-semibold" style={{ color: "#F3C300" }}>Get started today</p>
               <p className="font-display text-2xl font-black leading-tight">Total care.<br />Totally different.</p>
               <div className="mt-4 flex items-center gap-3">
-                <a href="/quiz" className="btn-primary inline-flex items-center gap-2 text-sm">
+                <button type="button" onClick={() => openQuiz()} className="btn-primary inline-flex items-center gap-2 text-sm">
                   Start Assessment →
-                </a>
+                </button>
               </div>
             </div>
             <div className="flex items-center gap-4">

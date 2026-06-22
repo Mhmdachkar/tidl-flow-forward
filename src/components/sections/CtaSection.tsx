@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { PixelButton } from "@/components/PixelButton";
+import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 export function CtaSection() {
+  const { openModal: openQuiz } = useQuizModal();
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export function CtaSection() {
           A 10-minute clinical intake. A complete lab panel. A protocol designed around the life you intend to live.
         </p>
         <div className="cta-buttons mt-10 flex flex-wrap justify-center gap-4" style={{ opacity: 0 }}>
-          <PixelButton label="Start your assessment" variant="primary" />
+          <PixelButton label="Start your assessment" variant="primary" onClick={() => openQuiz()} />
           <PixelButton label="Speak with a clinician" variant="ghost" />
         </div>
       </div>
