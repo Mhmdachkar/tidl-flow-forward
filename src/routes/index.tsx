@@ -1,19 +1,32 @@
+import { lazy, Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useLenisScroll } from "@/lib/use-lenis";
 
 import { NavSection } from "@/components/sections/NavSection";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TrustSection } from "@/components/sections/TrustSection";
-import { TreatmentCategoriesSection } from "@/components/sections/TreatmentCategoriesSection";
-import { PenSection } from "@/components/sections/PenSection";
-import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
-import { DoctorSection } from "@/components/sections/DoctorSection";
-import { PharmacySection } from "@/components/sections/PharmacySection";
-import { ReviewsSection } from "@/components/sections/ReviewsSection";
-import { EducationSection } from "@/components/sections/EducationSection";
-import { FAQSection } from "@/components/sections/FAQSection";
-import { CtaSection } from "@/components/sections/CtaSection";
-import { FooterSection } from "@/components/sections/FooterSection";
+import { DeferredProductShowcase } from "@/components/sections/DeferredProductShowcase";
+import { AssessmentHeroSection } from "@/components/sections/AssessmentHeroSection";
+import { TIDL_BRAND_STYLES } from "@/lib/tidl-brand";
+const ReviewsSection = lazy(() =>
+  import("@/components/sections/ReviewsSection").then((m) => ({ default: m.ReviewsSection })),
+);
+const EducationSection = lazy(() =>
+  import("@/components/sections/EducationSection").then((m) => ({ default: m.EducationSection })),
+);
+const FAQSection = lazy(() =>
+  import("@/components/sections/FAQSection").then((m) => ({ default: m.FAQSection })),
+);
+const CtaSection = lazy(() =>
+  import("@/components/sections/CtaSection").then((m) => ({ default: m.CtaSection })),
+);
+const FooterSection = lazy(() =>
+  import("@/components/sections/FooterSection").then((m) => ({ default: m.FooterSection })),
+);
+
+function SectionFallback({ minHeight = "28rem" }: { minHeight?: string }) {
+  return <div aria-hidden className="w-full" style={{ minHeight }} />;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,18 +53,27 @@ function Index() {
         <div className="overflow-hidden bg-surface"><TrustSection /></div>
       </div>
 
-      <PenSection />
+      <DeferredProductShowcase />
 
-      <div className="flex flex-col gap-2 px-2 pb-2">
-        <div className="section-card"><HowItWorksSection /></div>
-        <div className="section-card"><TreatmentCategoriesSection /></div>
-        <div className="section-card"><DoctorSection /></div>
-        <div className="section-card"><PharmacySection /></div>
-        <div className="section-card"><ReviewsSection /></div>
-        <div className="section-card"><EducationSection /></div>
-        <div className="section-card"><FAQSection /></div>
-        <div className="section-card-dark"><CtaSection /></div>
-        <div className="section-card-dark"><FooterSection /></div>
+      <AssessmentHeroSection />
+
+      <div className="tidl-brand-section flex flex-col gap-2 px-2 pb-2">
+        <style>{TIDL_BRAND_STYLES}</style>
+        <Suspense fallback={<SectionFallback minHeight="36rem" />}>
+          <div className="section-card"><ReviewsSection /></div>
+        </Suspense>
+        <Suspense fallback={<SectionFallback minHeight="32rem" />}>
+          <div className="section-card"><EducationSection /></div>
+        </Suspense>
+        <Suspense fallback={<SectionFallback minHeight="32rem" />}>
+          <div className="section-card"><FAQSection /></div>
+        </Suspense>
+        <Suspense fallback={<SectionFallback minHeight="20rem" />}>
+          <div className="section-card-dark"><CtaSection /></div>
+        </Suspense>
+        <Suspense fallback={<SectionFallback minHeight="24rem" />}>
+          <div className="section-card-dark"><FooterSection /></div>
+        </Suspense>
       </div>
     </div>
   );

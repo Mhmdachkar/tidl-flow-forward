@@ -6,6 +6,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useAuthModal } from "@/providers/auth-modal-provider";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
+import { getScrollPosition, hasLenis } from "@/lib/lenis-store";
 
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
@@ -24,8 +25,6 @@ const POPULAR_ITEMS = [
 ];
 
 const RESOURCE_ITEMS = [
-  { title: "How it works",      description: "Understand our physician-led care process", href: "/#how-it-works" },
-  { title: "Treatment overview",description: "Explore the full range of available care",  href: "/#treatments"   },
   { title: "FAQs",              description: "Answers to common care questions",          href: "/#faqs"         },
   { title: "Contact support",   description: "Reach our care team whenever you need",    href: "/account/support"},
 ];
@@ -74,21 +73,92 @@ function NavAvatar({
 
 export function NavSection() {
   const ref = useRef<HTMLElement>(null);
+  const menuOpenRef = useRef(false);
   const [scrolled, setScrolled] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal: openQuiz } = useQuizModal();
   const { openModal: openAuthModal } = useAuthModal();
 
+  menuOpenRef.current = menuOpen;
+
   useEffect(() => {
-    gsap.from(ref.current, { y: -40, opacity: 0, duration: 1.2, ease: "expo.out", delay: 0.3 });
+    gsap.from(ref.current, {
+      y: -40,
+      opacity: 0,
+      duration: 1.2,
+      ease: "expo.out",
+      delay: 0.3,
+      clearProps: "transform,opacity",
+    });
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 48);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    if (menuOpen) setHeaderVisible(true);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    let lastScrolled = false;
+    let lastVisible = true;
+    let lastY = getScrollPosition();
+    let pendingY = lastY;
+    let frame = 0;
+
+    const apply = (scrollY: number) => {
+      const nextScrolled = scrollY > 48;
+      if (nextScrolled !== lastScrolled) {
+        lastScrolled = nextScrolled;
+        setScrolled(nextScrolled);
+      }
+
+      let nextVisible = lastVisible;
+      if (menuOpenRef.current) {
+        nextVisible = true;
+      } else if (scrollY < 24) {
+        nextVisible = true;
+      } else {
+        const delta = scrollY - lastY;
+        if (delta > 1) nextVisible = false;
+        else if (delta < -1) nextVisible = true;
+      }
+
+      lastY = scrollY;
+
+      if (nextVisible !== lastVisible) {
+        lastVisible = nextVisible;
+        setHeaderVisible(nextVisible);
+      }
+    };
+
+    const schedule = (scrollY: number) => {
+      pendingY = scrollY;
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        apply(pendingY);
+      });
+    };
+
+    const onNativeScroll = () => {
+      if (hasLenis()) return;
+      schedule(window.scrollY);
+    };
+
+    const onLenisScroll = (event: Event) => {
+      const detail = (event as CustomEvent<{ scroll: number }>).detail;
+      if (typeof detail?.scroll === "number") schedule(detail.scroll);
+    };
+
+    window.addEventListener("scroll", onNativeScroll, { passive: true });
+    window.addEventListener("tidl:lenis-scroll", onLenisScroll);
+    apply(getScrollPosition());
+
+    return () => {
+      window.removeEventListener("scroll", onNativeScroll);
+      window.removeEventListener("tidl:lenis-scroll", onLenisScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
@@ -106,10 +176,16 @@ export function NavSection() {
 
   return (
     <>
-      {/* ── Header ── */}
+      {/* ── Header shell — transform here so GSAP entrance doesn't block hide/show ── */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+          headerVisible ? "translate-y-0 pointer-events-auto" : "-translate-y-full pointer-events-none"
+        }`}
+        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+      >
       <header
         ref={ref}
-        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           scrolled ? "bg-black shadow-[0_4px_20px_-4px_rgba(0,0,0,0.45)]" : "bg-transparent"
         }`}
       >
@@ -121,7 +197,7 @@ export function NavSection() {
         >
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 text-[11px] leading-tight text-ink">
             <span>Personalised longevity care is here.</span>
-            <a href="#treatments" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-black/15 px-2.5 py-0.5 text-[10px] font-medium transition-colors hover:bg-black/25">
+            <a href="/weight-loss" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-black/15 px-2.5 py-0.5 text-[10px] font-medium transition-colors hover:bg-black/25">
               Check it out →
             </a>
           </div>
@@ -166,8 +242,8 @@ export function NavSection() {
                   type="button"
                   aria-label={menuOpen ? "Close menu" : "Open menu"}
                   onClick={() => setMenuOpen((v) => !v)}
-                  className={`flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-65 ${
-                    scrolled ? "h-6 w-6 text-white" : "h-7 w-7 text-ink sm:h-8 sm:w-8"
+                  className={`tidl-touch-target flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-65 ${
+                    scrolled ? "text-white" : "text-ink"
                   }`}
                 >
                   {menuOpen
@@ -179,6 +255,7 @@ export function NavSection() {
           </nav>
         </div>
       </header>
+      </div>
 
       {/* ── Backdrop ── */}
       <div

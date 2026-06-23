@@ -12,6 +12,7 @@
   --font-display: "Archivo Narrow", sans-serif;
   --font-sans:    "Archivo", sans-serif;
   --font-serif:   "Archivo Narrow", sans-serif;
+  --font-body:    "Archivo", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -62,6 +63,53 @@
   --clinical-soft:  oklch(0.34 0.055 155 / 0.08);
   --ink-mute:       oklch(0.55 0.008 60);
   --noir:           oklch(0.13 0.008 60);
+
+  /* ── Product showcase (TIDL brand: Knockout, Recover, Cool Mist, Resolve) ── */
+  --showcase-bg: #fafaf7;
+  --showcase-bg-soft: #f5f4f0;
+  --showcase-bg-glow: rgba(243, 195, 0, 0.08);
+  --showcase-bg-deep: #eeede8;
+  --showcase-panel: #ffffff;
+  --showcase-panel-strong: #f5f4f0;
+  --showcase-surface: #ffffff;
+  --showcase-card-top: #f8f7f3;
+  --showcase-card-bottom: #f0efe9;
+  --showcase-line: rgba(196, 198, 199, 0.55);
+  --showcase-ink-strong: #231f20;
+  --showcase-ink: #6b6a6b;
+  --showcase-ink-muted: #c4c6c7;
+  --showcase-accent: #f3c300;
+  --showcase-accent-strong: #231f20;
+  --showcase-beam-core: oklch(0.98 0.04 90);
+  --showcase-beam-soft: oklch(0.92 0.06 85);
+  --showcase-shadow-soft: oklch(0.35 0.03 40);
+  --showcase-shadow-strong: #231f20;
+  --showcase-button-bg: #f3c300;
+  --showcase-button-foreground: #231f20;
+  --showcase-button-border: rgba(35, 31, 32, 0.08);
+  --showcase-chip-bg: color-mix(in oklab, var(--showcase-surface) 78%, transparent);
+  --showcase-chip-border: color-mix(in oklab, var(--showcase-line) 72%, transparent);
+  --showcase-badge-bg: color-mix(in oklab, var(--showcase-accent) 16%, white);
+  --showcase-badge-foreground: var(--showcase-ink-strong);
+  --showcase-badge-border: color-mix(in oklab, var(--showcase-accent) 32%, transparent);
+  --showcase-rose: oklch(0.87 0.05 4);
+  --showcase-violet: oklch(0.64 0.11 314);
+  --showcase-mint: oklch(0.84 0.07 172);
+  --showcase-sun: oklch(0.93 0.02 84);
+
+  /* ── Mobile-first layout tokens ── */
+  --section-px: 1.25rem;
+  --section-px-sm: 2rem;
+  --section-px-lg: 2.5rem;
+  --section-py: 2.5rem;
+  --section-py-md: 4rem;
+  --section-py-lg: 7rem;
+  --content-max-narrow: 1240px;
+  --content-max-wide: 1360px;
+  --content-max-marketing: 1280px;
+  --content-max-cta: 56rem;
+  --touch-min: 44px;
+  --cta-min-height: 48px;
 }
 
 @layer base {
@@ -87,11 +135,6 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
     overflow-y: visible;
-  }
-  *, *::before, *::after {
-    font-family: "Archivo", sans-serif;
-    font-weight: 400;
-    font-style: normal;
   }
   ::selection { background: var(--clinical); color: white; }
 }
@@ -282,6 +325,7 @@
   position: fixed; top: 0; left: 0; height: 2px; width: 100%;
   background: linear-gradient(90deg, transparent, #F3C300, transparent);
   transform-origin: 0 50%; transform: scaleX(0); z-index: 100;
+  will-change: transform;
 }
 
 /* ──────────── Gold / clinical accent utilities ──────────── */
@@ -355,15 +399,108 @@
   50%      { opacity: 0.85; transform: scale(1.06); }
 }
 
+/* ──────────── Mobile-first section utilities ──────────── */
+.tidl-section-inner {
+  width: 100%;
+  max-width: var(--content-max-wide);
+  margin-inline: auto;
+  padding-inline: var(--section-px);
+}
+@media (min-width: 640px) {
+  :root {
+    --section-px: var(--section-px-sm);
+    --section-py: var(--section-py-md);
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --section-px: var(--section-px-lg);
+    --section-py: var(--section-py-lg);
+  }
+}
+.tidl-section-inner--narrow { max-width: var(--content-max-narrow); }
+.tidl-section-inner--cta { max-width: var(--content-max-cta); }
+.tidl-touch-target {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ──────────── Section cards ──────────── */
 .section-card {
   border-radius: 1.75rem;
   overflow: clip;
   background: var(--color-background);
+  contain: layout style paint;
+}
+/* Sticky / ScrollTrigger pin sections must not clip or contain children */
+.section-card-pin {
+  border-radius: 1.75rem;
+  overflow: visible;
+  background: var(--color-background);
+}
+
+/* ──────────── TIDL section typography (Hero / Showcase / Assessment) ──────────── */
+/* Scoped like .tidl-hero — applies to Doctor → Footer without per-element patches */
+.tidl-brand-section {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.tidl-brand-section :is(h1, h2, h3, h4, h5, h6),
+.tidl-brand-section .tidl-display,
+.tidl-brand-section .font-display,
+.tidl-brand-section .font-serif {
+  font-family: "Archivo Narrow", sans-serif !important;
+  font-weight: 700 !important;
+  font-style: normal;
+  letter-spacing: -0.01em;
+  line-height: 0.96;
+}
+
+.tidl-brand-section .tidl-eyebrow,
+.tidl-brand-section .tidl-label,
+.tidl-brand-section .font-blair,
+.tidl-brand-section .uppercase:not(.font-display):not(.tidl-display):not(.font-serif) {
+  font-family: "Josefin Sans", sans-serif !important;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.tidl-brand-section .tidl-body,
+.tidl-brand-section .font-sans,
+.tidl-brand-section p,
+.tidl-brand-section li {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.tidl-eyebrow {
+  font-family: "Josefin Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.tidl-display {
+  font-family: "Archivo Narrow", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 0.96;
+}
+
+.tidl-body {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 400;
 }
 .section-card-dark {
   border-radius: 1.75rem;
   overflow: clip;
+  contain: layout style paint;
 }
 
 .noise::after {
@@ -409,6 +546,21 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hairline-grow { animation: none !important; transform: scaleX(1); }
+  .assessment-cta--live,
+  .assessment-cta--live .assessment-cta__ring,
+  .assessment-cta--live .assessment-cta__shine::before {
+    animation: none !important;
+  }
+}
+
+/* ── Scroll perf: pause ambient loops during scroll; converging arrows stay live ── */
+html.tidl-scrolling .showcase-product-float--on,
+html.tidl-scrolling .showcase-figure-float--on,
+html.tidl-scrolling .showcase-card::before,
+html.tidl-scrolling .media-panel::before,
+html.tidl-scrolling .trust-track,
+html.tidl-scrolling .float-y {
+  animation-play-state: paused !important;
 }
 
 /* ──────────── Hidden scrollbar (scrollable, no visible bar) ──────────── */

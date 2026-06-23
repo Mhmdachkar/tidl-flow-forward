@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { getProductListItems } from "@/data/products";
+import { observeSectionVisibility } from "@/lib/section-performance";
 
 import categoryHormonal from "@/assets/product 3 3d pink.png";
 import categoryMetabolic from "@/assets/product 1 3d.png";
@@ -42,56 +43,91 @@ export function TreatmentCategoriesSection() {
   useEffect(() => {
     const sec = ref.current;
     if (!sec) return;
-    const cards = sec.querySelectorAll<HTMLElement>(".pcard");
 
-    cards.forEach((card, idx) => {
-      const img = card.querySelector<HTMLImageElement>(".pc-img");
-      const meta = card.querySelectorAll<HTMLElement>(".pc-meta");
-      const imageFilter = card.dataset.lightProduct === "true"
-        ? "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))"
-        : "drop-shadow(0 22px 28px rgba(20,30,60,0.22))";
+    const ambientTweens: gsap.core.Tween[] = [];
+    const cleanups: Array<() => void> = [];
 
-      gsap.fromTo(img, { opacity: 0, y: 60, scale: 0.92, filter: `blur(10px) ${imageFilter}` }, {
-        opacity: 1, y: 0, scale: 1, filter: `blur(0px) ${imageFilter}`, duration: 1.4, ease: "power4.out", delay: idx * 0.12,
-        scrollTrigger: { trigger: card, start: "top 88%" },
-      });
-      gsap.fromTo(meta, { opacity: 0, y: 16 }, {
-        opacity: 1, y: 0, duration: 0.9, ease: "expo.out", stagger: 0.08, delay: 0.4 + idx * 0.12,
-        scrollTrigger: { trigger: card, start: "top 88%" },
-      });
+    const pauseAmbient = () => ambientTweens.forEach((tween) => tween.pause());
+    const resumeAmbient = () => ambientTweens.forEach((tween) => tween.resume());
+    cleanups.push(observeSectionVisibility(sec, resumeAmbient, pauseAmbient));
 
-      if (!img) return;
+    const ctx = gsap.context(() => {
+      const cards = sec.querySelectorAll<HTMLElement>(".pcard");
 
-      const ambient = gsap.to(img, { y: -8, duration: 4.0, ease: "sine.inOut", yoyo: true, repeat: -1, delay: idx * 0.4 });
+      cards.forEach((card, idx) => {
+        const img = card.querySelector<HTMLImageElement>(".pc-img");
+        const meta = card.querySelectorAll<HTMLElement>(".pc-meta");
+        const imageFilter = card.dataset.lightProduct === "true"
+          ? "drop-shadow(0 50px 60px rgba(40,60,100,0.28)) drop-shadow(0 20px 30px rgba(216,199,154,0.18))"
+          : "drop-shadow(0 22px 28px rgba(20,30,60,0.22))";
 
-      let hoverTl: gsap.core.Timeline | null = null;
-      const onEnter = () => {
+        gsap.fromTo(img, { opacity: 0, y: 60, scale: 0.92, filter: `blur(10px) ${imageFilter}` }, {
+          opacity: 1, y: 0, scale: 1, filter: `blur(0px) ${imageFilter}`, duration: 1.4, ease: "power4.out", delay: idx * 0.12,
+          scrollTrigger: { trigger: card, start: "top 88%" },
+        });
+        gsap.fromTo(meta, { opacity: 0, y: 16 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: "expo.out", stagger: 0.08, delay: 0.4 + idx * 0.12,
+          scrollTrigger: { trigger: card, start: "top 88%" },
+        });
+
+        if (!img) return;
+
+        const ambient = gsap.to(img, {
+          y: -8,
+          duration: 4.0,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          delay: idx * 0.4,
+        });
         ambient.pause();
-        gsap.killTweensOf(img);
-        hoverTl = gsap.timeline();
-        hoverTl.to(img, { y: -28, scale: 1.14, rotate: 6, duration: 0.55, ease: "back.out(1.6)" });
-        hoverTl.to(img, { rotate: -6, duration: 2.2, ease: "sine.inOut", yoyo: true, repeat: -1 });
-      };
-      const onLeave = () => {
-        hoverTl?.kill();
-        gsap.killTweensOf(img);
-        gsap.to(img, { y: -8, scale: 1, rotate: 0, duration: 0.65, ease: "power3.out", onComplete: () => ambient.restart() });
-      };
-      card.addEventListener("mouseenter", onEnter);
-      card.addEventListener("mouseleave", onLeave);
-    });
+        ambientTweens.push(ambient);
 
-    const hub = sec.querySelector<HTMLElement>(".cat-hub");
-    if (hub) {
-      gsap.fromTo(
-        hub.querySelectorAll<HTMLElement>(".cat-card, h3"),
-        { opacity: 0, y: 34 },
-        {
-          opacity: 1, y: 0, duration: 0.8, ease: "expo.out", stagger: 0.08,
-          scrollTrigger: { trigger: hub, start: "top 85%" },
-        },
-      );
-    }
+        let hoverTl: gsap.core.Timeline | null = null;
+        const onEnter = () => {
+          ambient.pause();
+          gsap.killTweensOf(img);
+          hoverTl = gsap.timeline();
+          hoverTl.to(img, { y: -28, scale: 1.14, rotate: 6, duration: 0.55, ease: "back.out(1.6)" });
+          hoverTl.to(img, { rotate: -6, duration: 2.2, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        };
+        const onLeave = () => {
+          hoverTl?.kill();
+          gsap.killTweensOf(img);
+          gsap.to(img, {
+            y: -8,
+            scale: 1,
+            rotate: 0,
+            duration: 0.65,
+            ease: "power3.out",
+            onComplete: () => ambient.restart(),
+          });
+        };
+        card.addEventListener("mouseenter", onEnter);
+        card.addEventListener("mouseleave", onLeave);
+        cleanups.push(() => {
+          card.removeEventListener("mouseenter", onEnter);
+          card.removeEventListener("mouseleave", onLeave);
+        });
+      });
+
+      const hub = sec.querySelector<HTMLElement>(".cat-hub");
+      if (hub) {
+        gsap.fromTo(
+          hub.querySelectorAll<HTMLElement>(".cat-card, h3"),
+          { opacity: 0, y: 34 },
+          {
+            opacity: 1, y: 0, duration: 0.8, ease: "expo.out", stagger: 0.08,
+            scrollTrigger: { trigger: hub, start: "top 85%" },
+          },
+        );
+      }
+    }, sec);
+
+    return () => {
+      cleanups.forEach((fn) => fn());
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -124,7 +160,9 @@ export function TreatmentCategoriesSection() {
                 <img
                   src={c.img}
                   alt={c.name}
-                  className="pc-img relative z-10 max-h-full w-auto max-w-full origin-bottom object-contain will-change-transform transition-[filter] duration-500 group-hover:drop-shadow-[0_28px_36px_rgba(243,195,0,0.25)]"
+                  loading="lazy"
+                  decoding="async"
+                  className="pc-img relative z-10 max-h-full w-auto max-w-full origin-bottom object-contain transition-[filter] duration-500 group-hover:drop-shadow-[0_28px_36px_rgba(243,195,0,0.25)]"
                   style={{
                     background: "transparent",
                     filter: c.lightProduct
@@ -149,31 +187,23 @@ export function TreatmentCategoriesSection() {
             <h3 className="font-display text-[clamp(1.4rem,3vw,2.2rem)] leading-tight text-ink">
               Explore by <span className="italic text-gradient-clinical">category.</span>
             </h3>
-            <span className="hidden text-sm text-ink-soft sm:block">Four pillars of whole-system care</span>
+            <Link to="/products" className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-[#A88A00] hover:gap-2 transition-all">
+              View all <ChevronRight size={16} />
+            </Link>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
-            {CATEGORIES.map((c) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {CATEGORIES.map((cat) => (
               <Link
-                key={c.to}
-                to={c.to}
-                className="cat-card group relative flex items-center gap-4 overflow-hidden rounded-[1.25rem] bg-white px-5 py-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_40px_-24px_rgba(20,30,60,0.35)]"
+                key={cat.to}
+                to={cat.to}
+                className="cat-card group relative overflow-hidden rounded-2xl bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
               >
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  style={{ background: "radial-gradient(circle at 80% 50%, rgba(243,195,0,0.18), transparent 65%)" }}
-                />
-                <p className="relative z-10 min-w-0 flex-1 text-[clamp(0.95rem,1.8vw,1.15rem)] leading-snug text-ink">
-                  {c.before}
-                  <span className="text-[#C9A200]">{c.highlight}</span>
-                  {c.after}
-                </p>
-                <div className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                  <img src={c.img} alt="" className="h-full w-full object-contain" draggable={false} />
+                <div className="mb-4 flex h-24 items-end justify-center">
+                  <img src={cat.img} alt="" className="h-full w-full object-contain" draggable={false} loading="lazy" decoding="async" />
                 </div>
-                <ChevronRight
-                  className="relative z-10 h-4 w-4 shrink-0 text-ink/35 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ink/70"
-                  strokeWidth={1.75}
-                />
+                <p className="font-display text-lg leading-tight text-ink">
+                  {cat.before}<span className="italic text-gradient-clinical">{cat.highlight}</span>{cat.after}
+                </p>
               </Link>
             ))}
           </div>

@@ -1,7 +1,14 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { createTiltQuickTo } from "@/lib/gsap-tilt";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
+import {
+  canUseHoverParallax,
+  createScrollGate,
+  observeSectionVisibility,
+  rafThrottle,
+} from "@/lib/section-performance";
 
 import product2 from "@/assets/product 2 3d white.png";
 import product3 from "@/assets/product 3 3d pink.png";
@@ -9,8 +16,6 @@ import product4 from "@/assets/product 4 3d.png";
 import product5 from "@/assets/product 5 3d.png";
 
 const styles = `
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Archivo:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;600&display=swap');
-
 /* ── TIDL Brand Tokens ──────────────────────────────────────
    Knockout  #231f20   primary dark (near-black)
    Resolve   #ffffff   white
@@ -18,10 +23,10 @@ const styles = `
    Recover   #f3c300   gold (brand accent)
    ────────────────────────────────────────────────────────── */
 
-.tidl-hero { font-family: 'Archivo', system-ui, sans-serif; background: #FAFAF7; color: #231f20; min-height: 100vh; }
+.tidl-hero { font-family: 'Archivo', system-ui, sans-serif; background: #FAFAF7; color: #231f20; min-height: 100svh; }
 .tidl-hero * { box-sizing: border-box; }
 .tidl-main-grid, .tidl-quick-grid { perspective: 1400px; perspective-origin: 50% 30%; }
-.tidl-tilt { transform-style: preserve-3d; will-change: transform; }
+.tidl-tilt { transform-style: preserve-3d; }
 .tidl-tilt-inner { transform-style: preserve-3d; }
 .tidl-glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; mix-blend-mode: screen; background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,0.22), transparent 55%); transition: opacity .35s ease; z-index: 4; }
 .tidl-card-cream .tidl-glare { mix-blend-mode: overlay; background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), rgba(243,195,0,0.45), transparent 55%); }
@@ -36,27 +41,39 @@ const styles = `
 .tidl-announce { width: 100%; background: #f3c300; color: #231f20; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; border: none; cursor: pointer; transition: filter .2s ease; }
 .tidl-announce:hover { filter: brightness(0.93); }
 
-.tidl-container { max-width: 1280px; margin: 0 auto; padding: 56px 24px 80px; }
+.tidl-container { max-width: 1280px; margin: 0 auto; padding: 40px 20px 64px; }
+@media (min-width: 640px) { .tidl-container { padding: 56px 24px 80px; } }
 
-.tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: end; margin-bottom: 48px; }
-@media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; } }
+.tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: end; margin-bottom: 20px; }
+@media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; gap: 32px; margin-bottom: 48px; } }
 /* Archivo Narrow Bold — official brand headline */
-.tidl-headline { font-size: clamp(2.8rem, 6vw, 5rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
+.tidl-headline { font-size: clamp(2rem, 9vw, 5rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
 /* em: italic Archivo Narrow Bold in brand gold */
 .tidl-headline em { font-style: italic; font-weight: 700; color: #f3c300; }
 .tidl-sub { margin-top: 18px; font-size: 15px; color: #6b6a6b; max-width: 540px; font-family: 'Archivo', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
-.tidl-hero-visual { display: flex; justify-content: center; align-items: center; min-height: 220px; }
-.tidl-hero-visual img { max-height: 280px; width: auto; filter: drop-shadow(0 30px 40px rgba(35,31,32,0.14)); transform: rotate(-12deg); }
+.tidl-hero-visual { display: none; justify-content: center; align-items: center; min-height: 220px; }
+@media (min-width: 900px) { .tidl-hero-visual { display: flex; } }
+.tidl-hero-visual img { max-height: 220px; width: auto; filter: drop-shadow(0 30px 40px rgba(35,31,32,0.14)); transform: rotate(-12deg); }
+@media (min-width: 768px) { .tidl-hero-visual img { max-height: 280px; } }
 
-.tidl-main-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
-@media (min-width: 900px) { .tidl-main-grid { grid-template-columns: 6fr 4fr; } }
+.tidl-main-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+@media (min-width: 640px) { .tidl-main-grid { gap: 14px; margin-bottom: 16px; } }
+@media (min-width: 900px) { .tidl-main-grid { grid-template-columns: 6fr 4fr; gap: 16px; } }
 
-.tidl-card { position: relative; border-radius: 1.5rem; overflow: hidden; cursor: pointer; border: 1px solid transparent; box-shadow: 0 4px 20px rgba(17,17,17,0.06); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease; text-align: left; padding: 0; display: block; width: 100%; font: inherit; isolation: isolate; }
+.tidl-card { position: relative; border-radius: 1.25rem; overflow: hidden; cursor: pointer; border: 1px solid transparent; box-shadow: 0 4px 20px rgba(17,17,17,0.06); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease; text-align: left; padding: 0; display: block; width: 100%; font: inherit; isolation: isolate; min-width: 0; }
+@media (min-width: 900px) { .tidl-card { border-radius: 1.5rem; } }
 .tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); }
-.tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1.1fr 1fr; min-height: 340px; }
-.tidl-card-content { position: relative; padding: 28px 28px 28px 32px; display: flex; flex-direction: column; justify-content: space-between; }
-.tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 16px; }
-.tidl-card-img img { max-height: 280px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; will-change: transform; }
+.tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; min-height: auto; }
+@media (min-width: 900px) { .tidl-card-inner { grid-template-columns: 1.1fr 1fr; min-height: 340px; } }
+.tidl-card-content { position: relative; padding: 14px 12px 10px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
+@media (min-width: 640px) { .tidl-card-content { padding: 20px 18px 16px; } }
+@media (min-width: 900px) { .tidl-card-content { padding: 28px 28px 28px 32px; } }
+.tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding: 4px 8px 10px; min-height: 88px; }
+@media (min-width: 640px) { .tidl-card-img { padding: 8px 12px 14px; min-height: 120px; } }
+@media (min-width: 900px) { .tidl-card-img { align-items: center; padding: 16px; min-height: auto; } }
+.tidl-card-img img { max-height: 96px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; }
+@media (min-width: 640px) { .tidl-card-img img { max-height: 140px; } }
+@media (min-width: 900px) { .tidl-card-img img { max-height: 280px; } }
 
 /* Dark card uses Knockout #231f20 — official TIDL primary dark */
 .tidl-card-dark { background: #231f20; color: #ffffff; }
@@ -107,25 +124,41 @@ const styles = `
 .tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
 
 /* Archivo Narrow Bold — official TIDL headline font for cards */
-.tidl-card-headline { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height: 1.0; letter-spacing: -0.01em; margin: 18px 0 0; max-width: 360px; }
-/* Archivo Bold — official TIDL primary for CTAs */
-.tidl-card-cta { font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; margin-top: 24px; }
+.tidl-card-headline { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(0.95rem, 3.8vw, 2.5rem); line-height: 1.05; letter-spacing: -0.01em; margin: 8px 0 0; max-width: none; }
+@media (min-width: 640px) { .tidl-card-headline { font-size: clamp(1.2rem, 3vw, 2.5rem); margin: 12px 0 0; } }
+@media (min-width: 900px) { .tidl-card-headline { font-size: clamp(1.7rem, 3vw, 2.5rem); margin: 18px 0 0; max-width: 360px; } }
+.tidl-card-cta { font-size: 10px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; line-height: 1.2; }
+@media (min-width: 640px) { .tidl-card-cta { font-size: 11px; margin-top: 14px; gap: 5px; } }
+@media (min-width: 900px) { .tidl-card-cta { font-size: 13px; letter-spacing: 0.06em; gap: 6px; margin-top: 24px; } }
+.tidl-card-dark .tidl-label,
+.tidl-card-cream .tidl-label { font-size: 9px; letter-spacing: 0.12em; }
+@media (min-width: 640px) { .tidl-card-dark .tidl-label, .tidl-card-cream .tidl-label { font-size: 10px; letter-spacing: 0.15em; } }
+@media (min-width: 900px) { .tidl-card-dark .tidl-label, .tidl-card-cream .tidl-label { font-size: 11px; letter-spacing: 0.18em; } }
 
-.tidl-quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-@media (min-width: 900px) { .tidl-quick-grid { grid-template-columns: repeat(4, 1fr); } }
+/* mobile: horizontal swipe row */
+.tidl-quick-grid { display: flex; flex-direction: row; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 10px; padding-bottom: 4px; }
+.tidl-quick-grid::-webkit-scrollbar { display: none; }
+/* desktop: 4-col grid */
+@media (min-width: 900px) { .tidl-quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; overflow: visible; } }
 
-.tidl-quick { position: relative; background: #FFFFFF; border: 1px solid #E8E8E3; border-radius: 1rem; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; overflow: hidden; isolation: isolate; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, background 0.3s ease, box-shadow 0.35s ease; width: 100%; font: inherit; text-align: left; }
+.tidl-quick { position: relative; background: #FFFFFF; border: 1px solid #E8E8E3; border-radius: 1rem; padding: 16px 14px 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; cursor: pointer; overflow: hidden; isolation: isolate; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, background 0.3s ease, box-shadow 0.35s ease; flex: 0 0 38vw; max-width: 160px; min-width: 120px; font: inherit; text-align: center; scroll-snap-align: start; }
+@media (min-width: 900px) { .tidl-quick { flex: unset; max-width: none; min-width: 0; flex-direction: row; align-items: center; justify-content: space-between; border-radius: 1rem; padding: 18px 20px; gap: 12px; text-align: left; scroll-snap-align: unset; } }
 .tidl-quick:hover { transform: translateY(-4px); border-color: #F3C300; background: #FFFDF5; box-shadow: 0 14px 30px rgba(17,17,17,0.10); }
 .tidl-quick::before { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: linear-gradient(90deg, #F3C300, #2d4a3e); transform: scaleX(0); transform-origin: left center; transition: transform 0.5s cubic-bezier(0.77,0,0.18,1); z-index: 2; }
 .tidl-quick:hover::before { transform: scaleX(1); }
 .tidl-quick::after { content: ""; position: absolute; inset: 0; background: radial-gradient(180px circle at 85% 50%, rgba(243,195,0,0.18), transparent 60%); opacity: 0; transition: opacity 0.4s ease; z-index: 0; pointer-events: none; }
 .tidl-quick:hover::after { opacity: 1; }
-.tidl-quick-label { position: relative; z-index: 2; font-size: 15px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.01em; color: #231f20; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s ease; }
+.tidl-quick-label { position: relative; z-index: 2; font-size: 12px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.01em; line-height: 1.2; color: #231f20; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s ease; }
+@media (min-width: 900px) { .tidl-quick-label { font-size: 15px; } }
 .tidl-quick:hover .tidl-quick-label { transform: translateX(4px); }
-.tidl-quick-img { position: relative; z-index: 2; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tidl-quick-media { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 0; flex-shrink: 0; }
+@media (min-width: 900px) { .tidl-quick-media { gap: 10px; } }
+.tidl-quick-img { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+@media (min-width: 900px) { .tidl-quick-img { width: 56px; height: 56px; } }
 .tidl-quick-img img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-quick:hover .tidl-quick-img img { transform: scale(1.12) rotate(-6deg); }
-.tidl-quick-arrow { position: relative; z-index: 2; color: #999; transition: color .3s ease, transform .35s cubic-bezier(0.22,1,0.36,1); }
+.tidl-quick-arrow { display: none; position: relative; z-index: 2; color: #999; transition: color .3s ease, transform .35s cubic-bezier(0.22,1,0.36,1); }
+@media (min-width: 900px) { .tidl-quick-arrow { display: block; } }
 .tidl-quick:hover .tidl-quick-arrow { color: #F3C300; transform: translateX(6px); }
 
 @keyframes tidlScan {
@@ -159,6 +192,17 @@ export function HeroSection() {
     const headline = root.querySelector<HTMLElement>(".tidl-headline");
     const sub = root.querySelector<HTMLElement>(".tidl-sub");
     const heroVisual = root.querySelector<HTMLElement>(".tidl-hero-visual");
+    const sectionActive = { current: true };
+    const scrollGate = createScrollGate();
+    const hoverParallax = canUseHoverParallax();
+    const cleanups: Array<() => void> = [];
+
+    const visibilityCleanup = observeSectionVisibility(
+      root,
+      () => { sectionActive.current = true; },
+      () => { sectionActive.current = false; },
+    );
+    cleanups.push(visibilityCleanup, scrollGate.dispose);
 
     const ctx = gsap.context(() => {
       if (reduced) {
@@ -168,7 +212,7 @@ export function HeroSection() {
 
       if (headline) {
         const html = headline.innerHTML;
-        const wrapped = html.replace(/(\S+)/g, '<span class="tidl-word" style="display:inline-block;will-change:transform,opacity">$1</span>');
+        const wrapped = html.replace(/(\S+)/g, '<span class="tidl-word" style="display:inline-block">$1</span>');
         headline.innerHTML = wrapped;
       }
       const words = root.querySelectorAll<HTMLElement>(".tidl-word");
@@ -179,65 +223,93 @@ export function HeroSection() {
 
       gsap.set(words, { yPercent: 110, opacity: 0, rotateX: -60, transformOrigin: "0% 100%" });
       gsap.set([sub, heroVisual].filter(Boolean) as HTMLElement[], { opacity: 0, y: 24 });
-      if (darkCard) gsap.set(darkCard, { opacity: 0, xPercent: -120, rotateY: 18, rotateX: 4, transformOrigin: "100% 50%" });
-      if (creamCard) gsap.set(creamCard, { opacity: 0, xPercent: 120, rotateY: -18, rotateX: 4, transformOrigin: "0% 50%" });
-      gsap.set(quickCards, { opacity: 0, y: -120, rotateY: 90, rotateX: -30, scale: 0.6, filter: "blur(14px)", transformOrigin: "50% 50% -40px" });
+      if (darkCard) {
+        gsap.set(darkCard, { opacity: 0, xPercent: -120, rotateY: 18, transformOrigin: "100% 50%" });
+      }
+      if (creamCard) {
+        gsap.set(creamCard, { opacity: 0, xPercent: 120, rotateY: -18, transformOrigin: "0% 50%" });
+      }
+      gsap.set(quickCards, { opacity: 0, y: -120, scale: 0.6, filter: "blur(14px)", transformOrigin: "50% 50% -40px" });
 
+      const entranceCards = [darkCard, creamCard].filter(Boolean) as HTMLElement[];
+      const isMobile = window.matchMedia("(max-width: 639px)").matches;
+      const wordDur = isMobile ? 0.85 : 1.4;
+      const cardDur = isMobile ? 1.1 : 2.0;
+      const quickDur = isMobile ? 0.9 : 1.4;
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-      tl.to(words, { yPercent: 0, opacity: 1, rotateX: 0, duration: 1.4, stagger: 0.1 })
-        .to(sub, { opacity: 1, y: 0, duration: 0.9 }, "-=0.8")
-        .to(heroVisual, { opacity: 1, y: 0, duration: 1.0 }, "-=0.9")
-        .to([darkCard, creamCard].filter(Boolean) as HTMLElement[], { opacity: 1, xPercent: 0, rotateY: 0, rotateX: 0, duration: 2.0, ease: "expo.out", stagger: 0.18 }, "-=0.4")
-        .fromTo([darkCard, creamCard].filter(Boolean) as HTMLElement[], { scale: 1.03 }, { scale: 1, duration: 1.0, ease: "elastic.out(1, 0.6)" }, "-=0.6")
-        .to(quickCards, { opacity: 1, y: 0, rotateY: 0, rotateX: 0, scale: 1, filter: "blur(0px)", duration: 1.4, ease: "back.out(1.4)", stagger: { each: 0.18, from: "start" } }, "-=0.6");
+      tl.to(words, { yPercent: 0, opacity: 1, rotateX: 0, duration: wordDur, stagger: isMobile ? 0.06 : 0.1 })
+        .to(sub, { opacity: 1, y: 0, duration: isMobile ? 0.6 : 0.9 }, "-=0.8")
+        .to(heroVisual, { opacity: 1, y: 0, duration: isMobile ? 0.7 : 1.0 }, "-=0.9")
+        .to(entranceCards, { opacity: 1, xPercent: 0, rotateY: 0, duration: cardDur, ease: "expo.out", stagger: 0.18 }, "-=0.4")
+        .fromTo(entranceCards, { scale: 1.03 }, { scale: 1, duration: isMobile ? 0.7 : 1.0, ease: "elastic.out(1, 0.6)" }, "-=0.6")
+        .to(quickCards, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: quickDur, ease: "back.out(1.4)", stagger: { each: isMobile ? 0.12 : 0.18, from: "start" } }, "-=0.6");
 
-      const cleanups: Array<() => void> = [];
+      if (!hoverParallax) return;
+
       cards.forEach((card) => {
         const inner = card.querySelector<HTMLElement>(".tidl-tilt-inner");
         const glare = card.querySelector<HTMLElement>(".tidl-glare");
         const img = card.querySelector<HTMLElement>(".tidl-card-img img, .tidl-quick-img img");
         const isQuick = card.classList.contains("tidl-quick");
         const maxRot = isQuick ? 8 : 14;
-        const liftZ = isQuick ? 24 : 60;
 
-        const xTo = gsap.quickTo(card, "rotateY", { duration: 0.5, ease: "power3.out" });
-        const yTo = gsap.quickTo(card, "rotateX", { duration: 0.5, ease: "power3.out" });
-        const zTo = gsap.quickTo(card, "z", { duration: 0.5, ease: "power3.out" });
+        const tiltEl = inner ?? card;
+        const tilt = createTiltQuickTo(tiltEl);
         const imgX = img ? gsap.quickTo(img, "x", { duration: 0.6, ease: "power3.out" }) : null;
         const imgY = img ? gsap.quickTo(img, "y", { duration: 0.6, ease: "power3.out" }) : null;
 
-        const onMove = (e: MouseEvent) => {
+        const resetTilt = () => {
+          tilt.reset();
+          if (imgX && imgY) {
+            imgX(0);
+            imgY(0);
+          }
+        };
+
+        const onMove = rafThrottle((e: MouseEvent) => {
+          if (!sectionActive.current || scrollGate.isScrolling()) return;
           const r = card.getBoundingClientRect();
           const px = (e.clientX - r.left) / r.width;
           const py = (e.clientY - r.top) / r.height;
           const dx = px - 0.5;
           const dy = py - 0.5;
-          xTo(dx * maxRot);
-          yTo(-dy * maxRot);
-          zTo(liftZ);
-          if (imgX && imgY) { imgX(dx * 22); imgY(dy * 14); }
-          if (glare) { glare.style.setProperty("--gx", `${px * 100}%`); glare.style.setProperty("--gy", `${py * 100}%`); }
-        };
-        const onLeave = () => { xTo(0); yTo(0); zTo(0); if (imgX && imgY) { imgX(0); imgY(0); } };
+          tilt.rotateY(dx * maxRot);
+          if (imgX && imgY) {
+            imgX(dx * 22);
+            imgY(dy * 14);
+          }
+          if (glare) {
+            glare.style.setProperty("--gx", `${px * 100}%`);
+            glare.style.setProperty("--gy", `${py * 100}%`);
+          }
+        });
+
         const onEnter = () => {
-          gsap.to(card, { scale: 1.012, duration: 0.5, ease: "power3.out" });
-          if (inner) gsap.to(inner, { z: 30, duration: 0.5, ease: "power3.out" });
+          if (!sectionActive.current) return;
+          if (!isQuick) gsap.to(card, { scale: 1.012, duration: 0.5, ease: "power3.out" });
+          card.addEventListener("mousemove", onMove, { passive: true });
         };
+
         const onOut = () => {
-          gsap.to(card, { scale: 1, duration: 0.6, ease: "power3.out" });
-          if (inner) gsap.to(inner, { z: 0, duration: 0.6, ease: "power3.out" });
-          onLeave();
+          card.removeEventListener("mousemove", onMove);
+          if (!isQuick) gsap.to(card, { scale: 1, duration: 0.6, ease: "power3.out" });
+          resetTilt();
         };
-        card.addEventListener("mousemove", onMove);
+
         card.addEventListener("mouseenter", onEnter);
         card.addEventListener("mouseleave", onOut);
-        cleanups.push(() => { card.removeEventListener("mousemove", onMove); card.removeEventListener("mouseenter", onEnter); card.removeEventListener("mouseleave", onOut); });
+        cleanups.push(() => {
+          card.removeEventListener("mousemove", onMove);
+          card.removeEventListener("mouseenter", onEnter);
+          card.removeEventListener("mouseleave", onOut);
+        });
       });
-
-      return () => cleanups.forEach((fn) => fn());
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      cleanups.forEach((fn) => fn());
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -259,7 +331,7 @@ export function HeroSection() {
             </p>
           </div>
           <div className="tidl-hero-visual" aria-hidden="true">
-            <img src={product3} alt="" />
+            <img src={product3} alt="" fetchPriority="high" decoding="async" />
           </div>
         </div>
 
@@ -280,7 +352,7 @@ export function HeroSection() {
                 </div>
               </div>
               <div className="tidl-card-img">
-                <img src={product5} alt="TIDL injectable therapy" />
+                <img src={product5} alt="TIDL injectable therapy" loading="lazy" decoding="async" />
               </div>
             </div>
           </button>
@@ -301,7 +373,7 @@ export function HeroSection() {
                 </div>
               </div>
               <div className="tidl-card-img">
-                <img src={product4} alt="TIDL hormone pen" />
+                <img src={product4} alt="TIDL hormone pen" loading="lazy" decoding="async" />
               </div>
             </div>
           </button>
@@ -317,9 +389,9 @@ export function HeroSection() {
             <button key={c.label} type="button" className="tidl-quick tidl-tilt" onClick={openModal}>
               <span className="tidl-glare" aria-hidden="true" />
               <span className="tidl-quick-label">{c.label}</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span className="tidl-quick-media">
                 <span className="tidl-quick-img">
-                  <img src={c.img} alt="" />
+                  <img src={c.img} alt="" loading="lazy" decoding="async" />
                 </span>
                 <ArrowRight size={16} className="tidl-quick-arrow" />
               </span>

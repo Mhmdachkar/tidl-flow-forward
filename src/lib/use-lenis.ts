@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { markPageScrolling } from "@/lib/section-performance";
+import { registerLenis, unregisterLenis } from "@/lib/lenis-store";
 
 export function useLenisScroll() {
   const lenisRef = useRef<Lenis | null>(null);
@@ -12,17 +14,51 @@ export function useLenisScroll() {
       wheelMultiplier: 1,
     });
     lenisRef.current = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
+    registerLenis(lenis);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Scroll progress bar — driven by Lenis, not a duplicate window listener
+    ScrollTrigger.scrollerProxy(document.documentElement, {
+      scrollTop(value) {
+        if (arguments.length) {
+          lenis.scrollTo(value, { immediate: true });
+        }
+        return lenis.scroll;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+    });
+
     const bar = document.querySelector<HTMLElement>(".scroll-progress");
-    const onScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
-      if (!bar) return;
-      const p = scroll / (limit || 1);
-      bar.style.transform = `scaleX(${Math.min(1, Math.max(0, p))})`;
+    let stQueued = false;
+
+    const onLenisScroll = ({ scroll, limit }: { scroll: number; limit: number }) => {
+      markPageScrolling();
+
+      if (!stQueued) {
+        stQueued = true;
+        requestAnimationFrame(() => {
+          ScrollTrigger.update();
+          stQueued = false;
+        });
+      }
+
+      if (bar) {
+        const p = scroll / (limit || 1);
+        bar.style.transform = `scale3d(${Math.min(1, Math.max(0, p))}, 1, 1)`;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("tidl:lenis-scroll", { detail: { scroll, limit } }),
+      );
     };
-    lenis.on("scroll", onScroll);
-    onScroll({ scroll: lenis.scroll, limit: lenis.limit });
+    lenis.on("scroll", onLenisScroll);
+    onLenisScroll({ scroll: lenis.scroll, limit: lenis.limit });
 
     const onScrollLock = (event: Event) => {
       const locked = (event as CustomEvent<{ locked: boolean }>).detail?.locked;
@@ -35,13 +71,22 @@ export function useLenisScroll() {
       lenis.raf(time * 1000);
     };
     gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
+
+    if (reducedMotion) {
+      unregisterLenis(lenis);
+      lenis.destroy();
+      gsap.ticker.remove(raf);
+      return () => {
+        window.removeEventListener("tidl:scroll-lock", onScrollLock);
+      };
+    }
 
     return () => {
       window.removeEventListener("tidl:scroll-lock", onScrollLock);
       gsap.ticker.remove(raf);
+      ScrollTrigger.scrollerProxy(document.documentElement, {});
+      unregisterLenis(lenis);
       lenis.destroy();
-      ScrollTrigger.getAll().forEach((s) => s.kill());
     };
   }, []);
   return lenisRef;

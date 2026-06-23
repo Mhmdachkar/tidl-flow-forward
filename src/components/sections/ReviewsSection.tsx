@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
 import { gsap } from "@/lib/gsap";
+import { observeSectionVisibility } from "@/lib/section-performance";
+import { TIDL_BRAND } from "@/lib/tidl-brand";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 // TODO: Replace with real patient reviews before launch
@@ -94,6 +97,7 @@ function RevLine({
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 export function ReviewsSection() {
+  const reduced = useReducedMotion();
   const rootRef    = useRef<HTMLElement | null>(null);
   const cursorRef  = useRef<HTMLDivElement | null>(null);
   const headRef    = useRef<HTMLDivElement | null>(null);
@@ -104,7 +108,15 @@ export function ReviewsSection() {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const loopTweens: gsap.core.Tween[] = [];
+    const cleanups: Array<() => void> = [];
+
+    const pauseLoops = () => loopTweens.forEach((tween) => tween.pause());
+    const resumeLoops = () => {
+      if (!reducedMotion) loopTweens.forEach((tween) => tween.resume());
+    };
+    cleanups.push(observeSectionVisibility(root, resumeLoops, pauseLoops));
 
     const ctx = gsap.context(() => {
       // ── cursor spotlight ────────────────────────────────────────────────
@@ -118,10 +130,11 @@ export function ReviewsSection() {
           qx(e.clientX - r.left - 200);
           qy(e.clientY - r.top  - 200);
         };
-        root.addEventListener("mousemove", onMove);
+        root.addEventListener("mousemove", onMove, { passive: true });
+        cleanups.push(() => root.removeEventListener("mousemove", onMove));
       }
 
-      if (reduced) return;
+      if (reducedMotion) return;
 
       // ── headline word reveal ────────────────────────────────────────────
       const words = headRef.current?.querySelectorAll<HTMLElement>(".rv-w");
@@ -167,37 +180,47 @@ export function ReviewsSection() {
       // ── reviews auto slider (text only) ─────────────────────────────────
       const rmq = reviewsRef.current;
       if (rmq) {
-        const tween = gsap.to(rmq, { xPercent: -50, duration: 50, ease: "none", repeat: -1 });
-        rmq.addEventListener("mouseenter", () => tween.pause());
-        rmq.addEventListener("mouseleave", () => tween.resume());
+        const tween = gsap.to(rmq, { xPercent: -50, duration: 50, ease: "none", repeat: -1, paused: true });
+        loopTweens.push(tween);
+        const pauseSlider = () => tween.pause();
+        const resumeSlider = () => {
+          if (root.getBoundingClientRect().bottom > 0 && root.getBoundingClientRect().top < window.innerHeight) {
+            tween.resume();
+          }
+        };
+        rmq.addEventListener("mouseenter", pauseSlider);
+        rmq.addEventListener("mouseleave", resumeSlider);
+        rmq.addEventListener("touchstart", pauseSlider, { passive: true });
+        rmq.addEventListener("touchend", resumeSlider, { passive: true });
+        rmq.addEventListener("touchcancel", resumeSlider, { passive: true });
+        cleanups.push(() => {
+          rmq.removeEventListener("mouseenter", pauseSlider);
+          rmq.removeEventListener("mouseleave", resumeSlider);
+          rmq.removeEventListener("touchstart", pauseSlider);
+          rmq.removeEventListener("touchend", resumeSlider);
+          rmq.removeEventListener("touchcancel", resumeSlider);
+        });
       }
 
       // ── marquee ─────────────────────────────────────────────────────────
       const mq = marqueeRef.current?.firstElementChild as HTMLElement | null;
       if (mq) {
-        gsap.to(mq, { xPercent: -50, duration: 28, ease: "none", repeat: -1 });
+        loopTweens.push(gsap.to(mq, { xPercent: -50, duration: 28, ease: "none", repeat: -1, paused: true }));
       }
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      cleanups.forEach((fn) => fn());
+      ctx.revert();
+    };
   }, []);
 
   return (
     <section
       ref={rootRef}
       aria-label="Patient outcomes"
-      onMouseMove={(e) => {
-        const cur = cursorRef.current;
-        if (!cur) return;
-        const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        gsap.to(cur, {
-          x: e.clientX - r.left - 200,
-          y: e.clientY - r.top  - 200,
-          duration: 0, overwrite: "auto",
-        });
-      }}
-      className="relative overflow-hidden"
-      style={{ background: "#f0ede8", color: "#161616" }}
+      className="tidl-brand-section relative overflow-hidden"
+      style={{ background: TIDL_BRAND.bg, color: TIDL_BRAND.ink }}
     >
       {/* cursor spotlight */}
       <div
@@ -206,7 +229,7 @@ export function ReviewsSection() {
         className="pointer-events-none absolute left-0 top-0 z-0"
         style={{
           width: 400, height: 400,
-          background: "radial-gradient(circle, rgba(45,74,62,0.07) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(243,195,0,0.07) 0%, transparent 70%)",
           filter: "blur(6px)",
         }}
       />
@@ -216,7 +239,7 @@ export function ReviewsSection() {
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          backgroundImage: "radial-gradient(circle, rgba(22,22,22,0.04) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, rgba(35,31,32,0.04) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
         }}
       />
@@ -228,12 +251,9 @@ export function ReviewsSection() {
         <div className="mb-10 flex items-center gap-4">
           <span
             className="eyebrow-line h-px w-10 flex-shrink-0"
-            style={{ background: "#2d4a3e" }}
+            style={{ background: TIDL_BRAND.accent }}
           />
-          <span
-            className="text-[11px] font-medium uppercase"
-            style={{ letterSpacing: "0.32em", color: "#2d4a3e" }}
-          >
+          <span className="tidl-eyebrow" style={{ color: TIDL_BRAND.accent }}>
             §05 — Patient Outcomes
           </span>
         </div>
@@ -243,17 +263,9 @@ export function ReviewsSection() {
 
           {/* headline */}
           <div ref={headRef}>
-            <h2
-              className="leading-[0.9]"
-              style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontSize: "clamp(44px, 6vw, 88px)",
-                fontWeight: 400,
-                letterSpacing: "-0.025em",
-              }}
-            >
+            <h2 className="tidl-display text-[clamp(44px,6vw,88px)] tracking-[-0.025em]">
               <RevLine text="What happens" />
-              <RevLine text="when medicine" italic color="#2d4a3e" />
+              <RevLine text="when medicine" italic color={TIDL_BRAND.accent} />
               <RevLine text="meets real people." />
             </h2>
           </div>
@@ -265,21 +277,13 @@ export function ReviewsSection() {
           >
             {STATS.map((s, i) => (
               <div key={s.label}>
-                <p
-                  style={{
-                    fontFamily: '"Fraunces", Georgia, serif',
-                    fontSize: "clamp(28px, 3vw, 44px)",
-                    color: "#2d4a3e",
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1,
-                  }}
-                >
+                <p className="font-display text-[clamp(28px,3vw,44px)] font-bold leading-none tracking-[-0.02em]" style={{ color: TIDL_BRAND.accent }}>
                   <span data-si={i}>0</span>
                   {s.suffix}
                 </p>
                 <p
                   className="mt-1 text-[10px] uppercase"
-                  style={{ letterSpacing: "0.22em", color: "rgba(22,22,22,0.5)" }}
+                  style={{ letterSpacing: "0.22em", color: "rgba(35,31,32,0.5)" }}
                 >
                   {s.label}
                 </p>
@@ -291,46 +295,58 @@ export function ReviewsSection() {
 
       {/* thin rule */}
       <div className="relative z-10 mx-auto max-w-[1360px] px-8 sm:px-10 lg:px-16">
-        <div className="h-px" style={{ background: "rgba(22,22,22,0.1)" }} />
+        <div className="h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
       </div>
 
       {/* ── reviews auto slider — text only, no container, no border ──────── */}
-      <div className="relative z-10 overflow-hidden py-10 sm:py-14 lg:py-16">
-        <div ref={reviewsRef} className="flex w-max items-start">
-          {[...REVIEWS, ...REVIEWS].map((r, i) => (
-            <div
-              key={i}
-              className="flex-shrink-0 w-[280px] sm:w-[400px] lg:w-[480px] px-8 sm:px-12 lg:px-16"
-            >
-              <p
-                style={{
-                  fontFamily: '"Fraunces", Georgia, serif',
-                  fontSize: "clamp(20px, 1.8vw, 28px)",
-                  lineHeight: 1.35,
-                  letterSpacing: "-0.01em",
-                  color: "#161616",
-                  fontStyle: "italic",
-                }}
-              >
-                &ldquo;{r.quote}&rdquo;
-              </p>
-              <p
-                className="mt-5 text-[11px] font-medium uppercase"
-                style={{ letterSpacing: "0.24em", color: "#2d4a3e" }}
-              >
-                {r.name}, {r.age}
-              </p>
-            </div>
-          ))}
+      {reduced ? (
+        <div className="relative z-10 mx-auto max-w-[1360px] px-6 py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-16">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {REVIEWS.slice(0, 3).map((r) => (
+              <div key={r.id}>
+                <p
+                  className="tidl-body text-[clamp(20px,1.8vw,28px)] italic leading-[1.35] tracking-[-0.01em]"
+                  style={{ color: TIDL_BRAND.ink }}
+                >
+                  &ldquo;{r.quote}&rdquo;
+                </p>
+                <p className="tidl-eyebrow mt-5" style={{ color: TIDL_BRAND.accent }}>
+                  {r.name}, {r.age}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="relative z-10 overflow-hidden py-10 sm:py-14 lg:py-16">
+          <div ref={reviewsRef} className="flex w-max items-start">
+            {[...REVIEWS, ...REVIEWS].map((r, i) => (
+              <div
+                key={i}
+                className="flex-shrink-0 w-[280px] sm:w-[400px] lg:w-[480px] px-8 sm:px-12 lg:px-16"
+              >
+                <p
+                  className="tidl-body text-[clamp(20px,1.8vw,28px)] italic leading-[1.35] tracking-[-0.01em]"
+                  style={{ color: TIDL_BRAND.ink }}
+                >
+                  &ldquo;{r.quote}&rdquo;
+                </p>
+                <p className="tidl-eyebrow mt-5" style={{ color: TIDL_BRAND.accent }}>
+                  {r.name}, {r.age}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── marquee ─────────────────────────────────────────────────────── */}
+      {!reduced && (
       <div
         className="relative z-10 overflow-hidden py-10"
         style={{
-          borderTop: "1px solid rgba(22,22,22,0.08)",
-          borderBottom: "1px solid rgba(22,22,22,0.08)",
+          borderTop: "1px solid rgba(35,31,32,0.08)",
+          borderBottom: "1px solid rgba(35,31,32,0.08)",
         }}
       >
         <div ref={marqueeRef} className="w-full overflow-hidden">
@@ -338,13 +354,11 @@ export function ReviewsSection() {
             {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
               <span key={i} className="flex items-center gap-12">
                 <span
+                  className="font-display text-[clamp(28px,3.5vw,52px)] font-bold tracking-[-0.01em]"
                   style={{
-                    fontFamily: '"Fraunces", Georgia, serif',
-                    fontSize: "clamp(28px, 3.5vw, 52px)",
-                    color: i % 2 === 0 ? "#161616" : "transparent",
-                    WebkitTextStroke: i % 2 === 0 ? "0" : "1px #161616",
+                    color: i % 2 === 0 ? TIDL_BRAND.ink : "transparent",
+                    WebkitTextStroke: i % 2 === 0 ? "0" : `1px ${TIDL_BRAND.ink}`,
                     fontStyle: i % 2 === 0 ? "normal" : "italic",
-                    letterSpacing: "-0.01em",
                   }}
                 >
                   {item}
@@ -355,7 +369,7 @@ export function ReviewsSection() {
                     display: "inline-block",
                     width: 6, height: 6,
                     borderRadius: "50%",
-                    background: "#2d4a3e",
+                    background: TIDL_BRAND.accent,
                   }}
                 />
               </span>
@@ -363,20 +377,21 @@ export function ReviewsSection() {
           </div>
         </div>
       </div>
+      )}
 
       {/* ── footer rule ─────────────────────────────────────────────────── */}
       <div className="relative z-10 mx-auto max-w-[1360px] px-6 pb-10 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14">
-        <div className="mt-10 h-px" style={{ background: "rgba(22,22,22,0.1)" }} />
+        <div className="mt-10 h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
           <span
             className="text-[10px] font-medium uppercase"
-            style={{ letterSpacing: "0.28em", color: "rgba(22,22,22,0.4)" }}
+            style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.4)" }}
           >
             TIDL · Patient Outcomes
           </span>
           <span
             className="text-[10px] font-medium uppercase"
-            style={{ letterSpacing: "0.28em", color: "rgba(22,22,22,0.4)" }}
+            style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.4)" }}
           >
             End of §05
           </span>

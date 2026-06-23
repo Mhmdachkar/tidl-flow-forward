@@ -85,6 +85,25 @@ Large Desktop:
 1440px+
 ```
 
+### Layout tokens (`styles.css`)
+
+Shared responsive variables used across homepage sections:
+
+| Token | Mobile (xs) | sm (640px+) | lg (1024px+) |
+|-------|-------------|-------------|--------------|
+| `--section-px` | 1.25rem (20px) | 2rem (32px) | 2.5rem (40px) |
+| `--section-py` | 2.5rem | 4rem | 5rem |
+| `--content-max-narrow` | 1240px | — | Education |
+| `--content-max-wide` | 1360px | — | Reviews, FAQ |
+| `--content-max-hero` | 1280px | — | Nav, Hero |
+| `--content-max-cta` | 896px | — | CTA |
+| `--touch-min` | 44px | — | Icon controls |
+| `--cta-min-height` | 48px | — | Primary CTAs |
+
+Utility classes: `.tidl-section-inner`, `.tidl-touch-target`.
+
+**Legacy breakpoints** (consolidate over time): `720px` (Assessment, Showcase), `900px` (Hero), `980px` (Showcase grids).
+
 ---
 
 # Hero Requirements

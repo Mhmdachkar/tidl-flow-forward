@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { TIDL_BRAND } from "@/lib/tidl-brand";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -60,17 +61,17 @@ const FAQS = [
 
 function PlusMinusIcon({ open }: { open: boolean }) {
   return (
-    <span
-      className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center"
-      style={{
-        border: "1px solid rgba(22,22,22,0.15)",
-        borderRadius: 4,
-        color: open ? "#2d4a3e" : "#161616",
-        transition: "color 0.3s, border-color 0.3s",
-        borderColor: open ? "rgba(45,74,62,0.35)" : "rgba(22,22,22,0.15)",
-      }}
-      aria-hidden
-    >
+    <span className="tidl-touch-target flex-shrink-0" aria-hidden>
+      <span
+        className="relative flex h-7 w-7 items-center justify-center"
+        style={{
+          border: "1px solid rgba(35,31,32,0.15)",
+          borderRadius: 4,
+          color: open ? TIDL_BRAND.accent : TIDL_BRAND.ink,
+          transition: "color 0.3s, border-color 0.3s",
+          borderColor: open ? "rgba(243,195,0,0.35)" : "rgba(35,31,32,0.15)",
+        }}
+      >
       {/* horizontal bar always visible */}
       <span
         className="absolute"
@@ -91,6 +92,7 @@ function PlusMinusIcon({ open }: { open: boolean }) {
           opacity: open ? 0 : 1,
         }}
       />
+    </span>
     </span>
   );
 }
@@ -152,7 +154,7 @@ function FAQItem({
           className="absolute left-0 top-0 w-[2px] origin-top"
           style={{
             height: "100%",
-            background: "#2d4a3e",
+            background: TIDL_BRAND.accent,
             transform: "scaleY(0)",
           }}
         />
@@ -161,12 +163,9 @@ function FAQItem({
           {/* ghost number */}
           <span
             aria-hidden
-            className="flex-shrink-0 leading-none transition-colors duration-300"
+            className="flex-shrink-0 font-display text-[clamp(28px,2.8vw,40px)] font-bold leading-none tracking-[-0.02em]"
             style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontSize: "clamp(28px, 2.8vw, 40px)",
-              color: isOpen ? "#2d4a3e" : "rgba(22,22,22,0.1)",
-              letterSpacing: "-0.02em",
+              color: isOpen ? TIDL_BRAND.accent : "rgba(35,31,32,0.1)",
               minWidth: 48,
             }}
           >
@@ -175,14 +174,8 @@ function FAQItem({
 
           {/* question */}
           <span
-            className="flex-1 pt-1 transition-colors duration-200"
-            style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontSize: "clamp(16px, 1.6vw, 21px)",
-              color: isOpen ? "#161616" : "rgba(22,22,22,0.78)",
-              letterSpacing: "-0.01em",
-              lineHeight: 1.25,
-            }}
+            className="tidl-body flex-1 pt-1 text-[clamp(16px,1.6vw,21px)] font-semibold leading-[1.25] tracking-[-0.01em] transition-colors duration-200"
+            style={{ color: isOpen ? TIDL_BRAND.ink : "rgba(35,31,32,0.78)" }}
           >
             {item.q}
           </span>
@@ -200,20 +193,15 @@ function FAQItem({
         aria-hidden={!isOpen}
       >
         <p
-          className="px-5 pb-7 pl-5 sm:pl-[calc(1.25rem+48px+1.25rem)]"
-          style={{
-            fontSize: 16,
-            lineHeight: 1.65,
-            color: "rgba(22,22,22,0.62)",
-            maxWidth: 680,
-          }}
+          className="tidl-body px-5 pb-7 pl-5 text-base leading-[1.65] sm:pl-[calc(1.25rem+48px+1.25rem)]"
+          style={{ color: "rgba(35,31,32,0.62)", maxWidth: 680 }}
         >
           {item.a}
         </p>
       </div>
 
       {/* hairline separator */}
-      <div className="mx-5" style={{ height: 1, background: "rgba(22,22,22,0.08)" }} />
+      <div className="mx-5" style={{ height: 1, background: "rgba(35,31,32,0.08)" }} />
     </div>
   );
 }
@@ -322,10 +310,11 @@ export function FAQSection() {
 
   return (
     <section
+      id="faqs"
       ref={rootRef}
       aria-label="Frequently asked questions"
-      className="relative overflow-hidden"
-      style={{ background: "#f6f3ec", color: "#161616" }}
+      className="tidl-brand-section relative overflow-hidden"
+      style={{ background: TIDL_BRAND.bg, color: TIDL_BRAND.ink }}
     >
       {/* cursor spotlight */}
       <div
@@ -334,7 +323,7 @@ export function FAQSection() {
         className="pointer-events-none absolute left-0 top-0 z-0"
         style={{
           width: 440, height: 440,
-          background: "radial-gradient(circle, rgba(45,74,62,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(243,195,0,0.06) 0%, transparent 70%)",
           filter: "blur(8px)",
         }}
       />
@@ -350,30 +339,19 @@ export function FAQSection() {
             <div className="mb-10 flex items-center gap-4">
               <span
                 className="fq-eyebrow-line h-px w-10 flex-shrink-0"
-                style={{ background: "#2d4a3e" }}
+                style={{ background: TIDL_BRAND.accent }}
               />
-              <span
-                className="text-[11px] font-medium uppercase"
-                style={{ letterSpacing: "0.32em", color: "#2d4a3e" }}
-              >
+              <span className="tidl-eyebrow" style={{ color: TIDL_BRAND.accent }}>
                 §06 — Questions
               </span>
             </div>
 
             <div ref={headRef}>
-              <h2
-                className="leading-[0.9]"
-                style={{
-                  fontFamily: '"Fraunces", Georgia, serif',
-                  fontSize: "clamp(42px, 5.5vw, 80px)",
-                  fontWeight: 400,
-                  letterSpacing: "-0.025em",
-                }}
-              >
+              <h2 className="tidl-display text-[clamp(42px,5.5vw,80px)] tracking-[-0.025em]">
                 <span className="block overflow-hidden pb-[0.05em]">
                   <Word text="Everything" />
                 </span>
-                <span className="block overflow-hidden pb-[0.05em] italic" style={{ color: "#2d4a3e" }}>
+                <span className="block overflow-hidden pb-[0.05em] italic" style={{ color: TIDL_BRAND.accent }}>
                   <Word text="you need" />
                 </span>
                 <span className="block overflow-hidden pb-[0.05em]">
@@ -383,14 +361,7 @@ export function FAQSection() {
             </div>
 
             {/* sub copy */}
-            <p
-              className="mt-8 max-w-xs"
-              style={{
-                fontSize: 16,
-                lineHeight: 1.65,
-                color: "rgba(22,22,22,0.55)",
-              }}
-            >
+            <p className="tidl-body mt-8 max-w-xs text-base leading-[1.65]" style={{ color: "rgba(35,31,32,0.55)" }}>
               Prescription treatment involves real physicians and licensed pharmacies.
               Here is what to expect at every step.
             </p>
@@ -398,29 +369,29 @@ export function FAQSection() {
             {/* contact line */}
             <div
               className="mt-10 flex items-center gap-4 pt-8"
-              style={{ borderTop: "1px solid rgba(22,22,22,0.1)" }}
+              style={{ borderTop: "1px solid rgba(35,31,32,0.1)" }}
             >
               <div
                 className="flex h-8 w-8 flex-shrink-0 items-center justify-center"
                 style={{
-                  border: "1px solid rgba(45,74,62,0.3)",
+                  border: "1px solid rgba(243,195,0,0.3)",
                   borderRadius: 4,
-                  background: "rgba(45,74,62,0.05)",
+                  background: "rgba(243,195,0,0.05)",
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
                   <path
                     d="M2 4.5C2 3.4 2.9 2.5 4 2.5h6c1.1 0 2 .9 2 2v5c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-5z"
-                    stroke="#2d4a3e" strokeWidth="1.1" fill="none"
+                    stroke={TIDL_BRAND.accent} strokeWidth="1.1" fill="none"
                   />
-                  <path d="M2 5l5 3.5L12 5" stroke="#2d4a3e" strokeWidth="1.1" strokeLinecap="round" />
+                  <path d="M2 5l5 3.5L12 5" stroke={TIDL_BRAND.accent} strokeWidth="1.1" strokeLinecap="round" />
                 </svg>
               </div>
               <div>
-                <p className="text-[11px] font-medium" style={{ color: "#161616" }}>
+                <p className="text-[11px] font-medium" style={{ color: TIDL_BRAND.ink }}>
                   Still have questions?
                 </p>
-                <p className="text-[11px]" style={{ color: "rgba(22,22,22,0.5)" }}>
+                <p className="text-[11px]" style={{ color: "rgba(35,31,32,0.5)" }}>
                   Medical questions go to a physician — never a bot.
                 </p>
               </div>
@@ -431,28 +402,28 @@ export function FAQSection() {
           <div
             className="overflow-hidden"
             style={{
-              border: "1px solid rgba(22,22,22,0.1)",
+              border: "1px solid rgba(35,31,32,0.1)",
               borderRadius: 8,
               background: "rgba(250,249,246,0.7)",
             }}
           >
             {/* top hairline accent */}
-            <div style={{ height: 2, background: "#2d4a3e" }} />
+            <div style={{ height: 2, background: TIDL_BRAND.accent }} />
 
             {/* count label */}
             <div
               className="flex items-center justify-between px-5 py-3"
-              style={{ borderBottom: "1px solid rgba(22,22,22,0.08)" }}
+              style={{ borderBottom: "1px solid rgba(35,31,32,0.08)" }}
             >
               <span
                 className="text-[10px] font-medium uppercase"
-                style={{ letterSpacing: "0.28em", color: "rgba(22,22,22,0.4)" }}
+                style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.4)" }}
               >
                 {FAQS.length} questions
               </span>
               <span
                 className="text-[10px] font-medium uppercase"
-                style={{ letterSpacing: "0.28em", color: "#2d4a3e" }}
+                style={{ letterSpacing: "0.28em", color: TIDL_BRAND.accent }}
               >
                 TIDL · Clinical FAQ
               </span>
@@ -473,11 +444,11 @@ export function FAQSection() {
             {/* bottom disclaimer */}
             <div
               className="px-5 py-4"
-              style={{ borderTop: "1px solid rgba(22,22,22,0.08)" }}
+              style={{ borderTop: "1px solid rgba(35,31,32,0.08)" }}
             >
               <p
                 className="text-[11px]"
-                style={{ color: "rgba(22,22,22,0.4)", lineHeight: 1.6 }}
+                style={{ color: "rgba(35,31,32,0.4)", lineHeight: 1.6 }}
               >
                 Treatment eligibility is determined solely by a licensed physician.
                 Nothing on this page constitutes medical advice.
@@ -488,21 +459,12 @@ export function FAQSection() {
 
         {/* ── closing statement ───────────────────────────────────────── */}
         <div className="fq-closing mt-4">
-          <div className="h-px" style={{ background: "rgba(22,22,22,0.1)" }} />
+          <div className="h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
 
           <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-            <p
-              style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontSize: "clamp(22px, 2.8vw, 38px)",
-                color: "#161616",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.1,
-                maxWidth: 680,
-              }}
-            >
+            <p className="tidl-display text-[clamp(22px,2.8vw,38px)] font-bold leading-[1.1] tracking-[-0.02em]" style={{ color: TIDL_BRAND.ink, maxWidth: 680 }}>
               Every treatment plan is reviewed by a real doctor.{" "}
-              <span className="italic" style={{ color: "#2d4a3e" }}>
+              <span className="italic" style={{ color: TIDL_BRAND.accent }}>
                 Every order is filled by a real pharmacy.
               </span>
             </p>
@@ -516,15 +478,15 @@ export function FAQSection() {
               ].map((tag) => (
                 <span
                   key={tag}
-                  className="flex items-center gap-2.5 text-[11px] font-medium uppercase"
-                  style={{ letterSpacing: "0.2em", color: "rgba(22,22,22,0.5)" }}
+                  className="tidl-eyebrow flex items-center gap-2.5"
+                  style={{ color: "rgba(35,31,32,0.5)" }}
                 >
                   <span
                     aria-hidden
                     style={{
                       width: 5, height: 5,
                       borderRadius: "50%",
-                      background: "#2d4a3e",
+                      background: TIDL_BRAND.accent,
                       display: "inline-block",
                       flexShrink: 0,
                     }}
@@ -535,17 +497,17 @@ export function FAQSection() {
             </div>
           </div>
 
-          <div className="mt-12 h-px" style={{ background: "rgba(22,22,22,0.1)" }} />
+          <div className="mt-12 h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
             <span
               className="text-[10px] font-medium uppercase"
-              style={{ letterSpacing: "0.28em", color: "rgba(22,22,22,0.35)" }}
+              style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.35)" }}
             >
               TIDL · FAQ
             </span>
             <span
               className="text-[10px] font-medium uppercase"
-              style={{ letterSpacing: "0.28em", color: "rgba(22,22,22,0.35)" }}
+              style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.35)" }}
             >
               End of §06
             </span>

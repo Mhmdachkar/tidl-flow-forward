@@ -7,17 +7,6 @@ import { gsap, ScrollTrigger, Draggable } from "@/lib/gsap";
 const STEPS = [
   {
     num: "01",
-    label: "Online intake",
-    title: "Take the\nAssessment",
-    body: "Answer a short clinical intake in about 10 minutes. No clinic visit. No waiting room.",
-    detail:
-      "A guided questionnaire covers your goals, symptoms, medical history and current medications — so your provider has the full picture before they ever review your file.",
-    points: ["~10 minutes to complete", "100% online, on your schedule", "Encrypted & HIPAA-compliant"],
-    image:
-      "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&h=1100&q=80&fit=crop",
-  },
-  {
-    num: "02",
     label: "Licensed provider",
     title: "Doctor\nReview",
     body: "A licensed physician reads your intake and health history within 24 hours.",
@@ -28,7 +17,7 @@ const STEPS = [
       "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=1100&q=80&fit=crop",
   },
   {
-    num: "03",
+    num: "02",
     label: "Real prescription",
     title: "Receive\nPrescription",
     body: "If clinically appropriate, a personalised prescription is written to your protocol.",
@@ -39,7 +28,7 @@ const STEPS = [
       "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=800&h=1100&q=80&fit=crop",
   },
   {
-    num: "04",
+    num: "03",
     label: "Licensed facility",
     title: "Pharmacy\nFulfillment",
     body: "Your medication is compounded in a licensed, regulated pharmacy to your exact specification.",
@@ -50,7 +39,7 @@ const STEPS = [
       "https://images.unsplash.com/photo-1576602976047-174e57a47881?w=800&h=1100&q=80&fit=crop",
   },
   {
-    num: "05",
+    num: "04",
     label: "Cold-chain delivery",
     title: "Delivered\nto Your Door",
     body: "Cold-chain shipped directly to your home. Ongoing physician-supervised care included.",
@@ -64,7 +53,6 @@ const STEPS = [
 
 // ─── SVG line-art for each step (drawn with stroke-dashoffset) ──────────────
 const SHAPES = [
-  ["M 40 72 L 160 72", "M 40 92 L 128 92", "M 40 112 L 148 112", "M 40 132 L 108 132"],
   ["M 100 48 L 100 152", "M 48 100 L 152 100"],
   ["M 100 48 L 155 145 L 45 145 Z"],
   ["M 100 44 L 153 72 L 153 128 L 100 156 L 47 128 L 47 72 Z"],
@@ -328,7 +316,7 @@ export function HowItWorksSection() {
                 letterSpacing: "-0.025em",
               }}
             >
-              Five steps,{" "}
+              Four steps,{" "}
               <span className="italic" style={{ color: ACCENT }}>
                 fully guided.
               </span>
@@ -339,7 +327,7 @@ export function HowItWorksSection() {
             className="hiw-head max-w-[300px] text-[14px] leading-[1.55]"
             style={{ color: "rgba(22,22,22,0.62)" }}
           >
-            From a 10-minute intake to cold-chain delivery — the journey runs on its own.
+            From physician review to cold-chain delivery — the journey runs on its own.
             Hover any card for the detail.
           </p>        </div>
       </div>
@@ -572,14 +560,6 @@ export function HowItWorksSection() {
           ))}
         </div>
 
-        <motion.p
-          className="mt-5 text-[10px] uppercase tracking-[0.24em]"
-          style={{ color: "rgba(22,22,22,0.4)" }}
-          animate={{ opacity: [0.45, 0.75, 0.45] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        >
-          Auto-playing · hover to pause
-        </motion.p>
       </div>    </section>
   );
 }
