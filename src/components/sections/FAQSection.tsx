@@ -215,6 +215,7 @@ export function FAQSection() {
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const headRef   = useRef<HTMLDivElement | null>(null);
   const visualRef = useRef<HTMLDivElement | null>(null);
+  const visualImgRef = useRef<HTMLImageElement | null>(null);
   const itemEls   = useRef<(HTMLDivElement | null)[]>([]);
 
   const [openId, setOpenId] = useState<number | null>(0);
@@ -273,14 +274,21 @@ export function FAQSection() {
       }
 
       const visual = visualRef.current;
-      const visualImg = visual?.querySelector<HTMLElement>(".fq-visual-img");
+      const visualImg = visualImgRef.current;
       if (visual) {
         if (reduced) {
           gsap.set(visual, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1 });
           if (visualImg) gsap.set(visualImg, { yPercent: 0, scale: 1 });
         } else {
           gsap.set(visual, { clipPath: "inset(0% 0% 100% 0%)", opacity: 0.75 });
-          if (visualImg) gsap.set(visualImg, { yPercent: -10, scale: 1.08 });
+          if (visualImg) {
+            gsap.set(visualImg, {
+              yPercent: -10,
+              scale: 1.08,
+              transformOrigin: "center top",
+              force3D: true,
+            });
+          }
 
           const reveal = gsap.timeline({
             scrollTrigger: {
@@ -288,11 +296,16 @@ export function FAQSection() {
               start: "top 95%",
               end: "top 12%",
               scrub: 3.4,
+              invalidateOnRefresh: true,
             },
           });
           reveal.to(visual, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1, ease: "none" }, 0);
           if (visualImg) {
-            reveal.to(visualImg, { yPercent: 0, scale: 1, ease: "none" }, 0);
+            reveal.to(visualImg, { yPercent: 0, scale: 1, ease: "none", force3D: true }, 0);
+          }
+
+          if (visual.getBoundingClientRect().top < window.innerHeight * 0.95) {
+            requestAnimationFrame(() => ScrollTrigger.refresh());
           }
         }
       }
@@ -328,6 +341,8 @@ export function FAQSection() {
       });
 
     }, root);
+
+    requestAnimationFrame(() => ScrollTrigger.refresh());
 
     return () => ctx.revert();
   }, []);
@@ -400,10 +415,11 @@ export function FAQSection() {
               }}
             >
               <img
+                ref={visualImgRef}
                 src={faqVisual}
                 alt=""
                 className="fq-visual-img block h-auto w-full object-cover object-top"
-                loading="lazy"
+                loading="eager"
                 decoding="async"
               />
             </div>

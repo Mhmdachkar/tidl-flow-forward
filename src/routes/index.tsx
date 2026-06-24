@@ -65,7 +65,7 @@ function Index() {
           <div className="section-card" data-reveal><EducationSection /></div>
         </Suspense>
         <Suspense fallback={<SectionFallback minHeight="32rem" />}>
-          <div className="section-card" data-reveal><FAQSection /></div>
+          <div className="section-card"><FAQSection /></div>
         </Suspense>
         <Suspense fallback={<SectionFallback minHeight="20rem" />}>
           <div className="section-card-dark" data-reveal><CtaSection /></div>

@@ -117,7 +117,9 @@ export function LifestyleRevealSection() {
       () => section.classList.remove("lifestyle-reveal--active"),
     );
 
-    requestAnimationFrame(() => ScrollTrigger.refresh());
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    });
 
     return () => {
       visObserver();
