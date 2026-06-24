@@ -62,16 +62,16 @@ const styles = `
 @media (min-width: 900px) { .tidl-card { border-radius: 1.5rem; } }
 .tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); }
 .tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; min-height: auto; }
-@media (min-width: 900px) { .tidl-card-inner { grid-template-columns: 1.1fr 1fr; min-height: 340px; } }
-.tidl-card-content { position: relative; padding: 14px 12px 10px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
-@media (min-width: 640px) { .tidl-card-content { padding: 20px 18px 16px; } }
-@media (min-width: 900px) { .tidl-card-content { padding: 28px 28px 28px 32px; } }
-.tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding: 4px 8px 10px; min-height: 88px; }
-@media (min-width: 640px) { .tidl-card-img { padding: 8px 12px 14px; min-height: 120px; } }
-@media (min-width: 900px) { .tidl-card-img { align-items: center; padding: 16px; min-height: auto; } }
-.tidl-card-img img { max-height: 96px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; }
-@media (min-width: 640px) { .tidl-card-img img { max-height: 140px; } }
-@media (min-width: 900px) { .tidl-card-img img { max-height: 280px; } }
+@media (min-width: 900px) { .tidl-card-inner { grid-template-columns: 1.1fr 1fr; min-height: 240px; } }
+.tidl-card-content { position: relative; padding: 12px 10px 8px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
+@media (min-width: 640px) { .tidl-card-content { padding: 16px 14px 12px; } }
+@media (min-width: 900px) { .tidl-card-content { padding: 20px 22px 20px 24px; } }
+.tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding: 2px 6px 6px; min-height: 72px; }
+@media (min-width: 640px) { .tidl-card-img { padding: 6px 10px 10px; min-height: 96px; } }
+@media (min-width: 900px) { .tidl-card-img { align-items: center; padding: 12px; min-height: auto; } }
+.tidl-card-img img { max-height: 72px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; }
+@media (min-width: 640px) { .tidl-card-img img { max-height: 100px; } }
+@media (min-width: 900px) { .tidl-card-img img { max-height: 200px; } }
 
 /* Dark card uses Knockout #231f20 — official TIDL primary dark */
 .tidl-card-dark { background: #231f20; color: #ffffff; }
@@ -122,12 +122,12 @@ const styles = `
 .tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
 
 /* Archivo Narrow Bold — official TIDL headline font for cards */
-.tidl-card-headline { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(0.95rem, 3.8vw, 2.5rem); line-height: 1.05; letter-spacing: -0.01em; margin: 8px 0 0; max-width: none; }
-@media (min-width: 640px) { .tidl-card-headline { font-size: clamp(1.2rem, 3vw, 2.5rem); margin: 12px 0 0; } }
-@media (min-width: 900px) { .tidl-card-headline { font-size: clamp(1.7rem, 3vw, 2.5rem); margin: 18px 0 0; max-width: 360px; } }
-.tidl-card-cta { font-size: 10px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; line-height: 1.2; }
-@media (min-width: 640px) { .tidl-card-cta { font-size: 11px; margin-top: 14px; gap: 5px; } }
-@media (min-width: 900px) { .tidl-card-cta { font-size: 13px; letter-spacing: 0.06em; gap: 6px; margin-top: 24px; } }
+.tidl-card-headline { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(0.95rem, 3.8vw, 2.5rem); line-height: 1.05; letter-spacing: -0.01em; margin: 6px 0 0; max-width: none; }
+@media (min-width: 640px) { .tidl-card-headline { font-size: clamp(1.1rem, 2.8vw, 2rem); margin: 8px 0 0; } }
+@media (min-width: 900px) { .tidl-card-headline { font-size: clamp(1.45rem, 2.6vw, 2.1rem); margin: 12px 0 0; max-width: 320px; } }
+.tidl-card-cta { font-size: 10px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; line-height: 1.2; }
+@media (min-width: 640px) { .tidl-card-cta { font-size: 11px; margin-top: 10px; gap: 5px; } }
+@media (min-width: 900px) { .tidl-card-cta { font-size: 12px; letter-spacing: 0.06em; gap: 6px; margin-top: 16px; } }
 .tidl-card-dark .tidl-label,
 .tidl-card-cream .tidl-label { font-size: 9px; letter-spacing: 0.12em; }
 @media (min-width: 640px) { .tidl-card-dark .tidl-label, .tidl-card-cream .tidl-label { font-size: 10px; letter-spacing: 0.15em; } }

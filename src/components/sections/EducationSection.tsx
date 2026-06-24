@@ -28,7 +28,10 @@ export function EducationSection() {
   const rootRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [userEngaged, setUserEngaged] = useState(false);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+
+  const ambientPreview = playing && !userEngaged;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -50,6 +53,7 @@ export function EducationSection() {
     const pauseVideo = () => {
       video.pause();
       setPlaying(false);
+      setUserEngaged(false);
     };
 
     const ctx = gsap.context(() => {
@@ -94,10 +98,11 @@ export function EducationSection() {
     return () => ctx.revert();
   }, []);
 
-  const play = () => {
+  const engage = () => {
     const v = videoRef.current;
     if (!v) return;
     v.muted = false;
+    setUserEngaged(true);
     v.play()
       .then(() => {
         setPlaying(true);
@@ -134,59 +139,79 @@ export function EducationSection() {
             maxHeight: "60vh",
           }}
         >
-          <video
-            ref={videoRef}
-            poster={penPoster}
-            controls={playing}
-            playsInline
-            muted
-            preload="auto"
-            className={`edu-video-el h-full w-full object-cover${playing ? " edu-video-el--playing" : ""}`}
+          <div
+            className={`edu-video-frame absolute inset-0 overflow-hidden${ambientPreview ? " edu-video-frame--ambient" : ""}`}
           >
-            <source src={eduVideo} type="video/mp4" />
-          </video>
+            <video
+              ref={videoRef}
+              poster={penPoster}
+              controls={userEngaged}
+              playsInline
+              muted={!userEngaged}
+              preload="auto"
+              className="edu-video-el block h-full w-full object-cover"
+            >
+              <source src={eduVideo} type="video/mp4" />
+            </video>
+          </div>
 
-          {!playing && (
+          {!userEngaged && (
             <button
               type="button"
-              onClick={play}
-              aria-label="Play the pen walkthrough"
-              className="group absolute inset-0 flex flex-col items-center justify-center gap-4"
+              onClick={engage}
+              aria-label="Play the pen walkthrough with sound"
+              className="group absolute inset-0 z-10 flex flex-col items-center justify-center gap-4"
               style={{
-                background:
-                  "linear-gradient(180deg, rgba(11,16,13,0.15) 0%, rgba(11,16,13,0.45) 100%)",
+                background: playing
+                  ? "linear-gradient(180deg, transparent 0%, rgba(11,16,13,0.35) 100%)"
+                  : "linear-gradient(180deg, rgba(11,16,13,0.15) 0%, rgba(11,16,13,0.45) 100%)",
               }}
             >
-              <span
-                className="flex h-16 w-16 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20"
-                style={{ background: "rgba(246,243,236,0.95)" }}
-              >
-                <svg className="ml-1 h-6 w-6 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill={TIDL_BRAND.accent} aria-hidden>
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </span>
+              {!playing && (
+                <span
+                  className="flex h-16 w-16 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20"
+                  style={{ background: "rgba(246,243,236,0.95)" }}
+                >
+                  <svg className="ml-1 h-6 w-6 sm:h-7 sm:w-7" viewBox="0 0 24 24" fill={TIDL_BRAND.accent} aria-hidden>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+              )}
               <span className="tidl-eyebrow text-white/90">
-                {autoplayBlocked ? "Tap to play · How to use your pen" : "Watch · How to use your pen"}
+                {autoplayBlocked || !playing
+                  ? "Tap to play · How to use your pen"
+                  : "Tap for sound and controls"}
               </span>
             </button>
           )}
         </div>
 
         <style>{`
-          .edu-video-el {
+          .edu-video-frame {
             transform: scale(1);
             transform-origin: center center;
-            will-change: transform;
           }
-          .edu-video-el--playing {
+          .edu-video-frame--ambient .edu-video-el {
             animation: eduVideoZoom 14s ease-out forwards;
+            will-change: transform;
           }
           @keyframes eduVideoZoom {
             from { transform: scale(1); }
             to { transform: scale(1.14); }
           }
+          .edu-video-el {
+            transform: scale(1);
+            transform-origin: center center;
+          }
+          .edu-video-frame:not(.edu-video-frame--ambient) .edu-video-el {
+            animation: none;
+            transform: scale(1);
+          }
           @media (prefers-reduced-motion: reduce) {
-            .edu-video-el--playing { animation: none; transform: scale(1); }
+            .edu-video-frame--ambient .edu-video-el {
+              animation: none;
+              transform: scale(1);
+            }
           }
         `}</style>
 

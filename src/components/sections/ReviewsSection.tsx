@@ -59,11 +59,6 @@ const REVIEWS = [
   },
 ] as const;
 
-const MARQUEE_ITEMS = [
-  "4.9 Stars", "Physician Reviewed", "Real Outcomes", "50 States",
-  "Board-Certified", "Discreet Delivery", "Real Patients", "HIPAA Compliant",
-];
-
 // ─── Headline line with per-word mask reveal spans ────────────────────────────
 
 function RevLine({
@@ -96,7 +91,6 @@ export function ReviewsSection() {
   const rootRef    = useRef<HTMLElement | null>(null);
   const cursorRef  = useRef<HTMLDivElement | null>(null);
   const headRef    = useRef<HTMLDivElement | null>(null);
-  const marqueeRef  = useRef<HTMLDivElement | null>(null);
   const reviewsRef  = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -167,11 +161,6 @@ export function ReviewsSection() {
         });
       }
 
-      // ── marquee ─────────────────────────────────────────────────────────
-      const mq = marqueeRef.current?.firstElementChild as HTMLElement | null;
-      if (mq) {
-        loopTweens.push(gsap.to(mq, { xPercent: -50, duration: 28, ease: "none", repeat: -1, paused: true }));
-      }
     }, root);
 
     return () => {
@@ -265,45 +254,6 @@ export function ReviewsSection() {
             ))}
           </div>
         </div>
-      )}
-
-      {/* ── marquee ─────────────────────────────────────────────────────── */}
-      {!reduced && (
-      <div
-        className="relative z-10 overflow-hidden py-10"
-        style={{
-          borderTop: "1px solid rgba(35,31,32,0.08)",
-          borderBottom: "1px solid rgba(35,31,32,0.08)",
-        }}
-      >
-        <div ref={marqueeRef} className="w-full overflow-hidden">
-          <div className="flex w-max items-center gap-12 whitespace-nowrap">
-            {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-              <span key={i} className="flex items-center gap-12">
-                <span
-                  className="font-display text-[clamp(28px,3.5vw,52px)] font-bold tracking-[-0.01em]"
-                  style={{
-                    color: i % 2 === 0 ? TIDL_BRAND.ink : "transparent",
-                    WebkitTextStroke: i % 2 === 0 ? "0" : `1px ${TIDL_BRAND.ink}`,
-                    fontStyle: i % 2 === 0 ? "normal" : "italic",
-                  }}
-                >
-                  {item}
-                </span>
-                <span
-                  aria-hidden
-                  style={{
-                    display: "inline-block",
-                    width: 6, height: 6,
-                    borderRadius: "50%",
-                    background: TIDL_BRAND.accent,
-                  }}
-                />
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
       )}
 
     </section>

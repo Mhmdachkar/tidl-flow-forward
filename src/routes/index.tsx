@@ -61,7 +61,7 @@ function Index() {
       <div className="tidl-brand-section flex flex-col gap-2 px-2 pb-2" style={{ marginTop: 0 }}>
         <style>{TIDL_BRAND_STYLES}</style>
         <div className="section-card" data-reveal><ReviewsSection /></div>
-        <Suspense fallback={<SectionFallback minHeight="32rem" />}>
+        <Suspense fallback={<SectionFallback minHeight="28rem" />}>
           <div className="section-card" data-reveal><EducationSection /></div>
         </Suspense>
         <Suspense fallback={<SectionFallback minHeight="32rem" />}>

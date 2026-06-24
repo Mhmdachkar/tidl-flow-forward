@@ -25,7 +25,6 @@ const SHOWCASE_PRODUCTS = [
     image: product1,
     name: "Lirosiome",
     subtitle: "GLP-1 weight protocol",
-    price: "$249 / mo",
     accent: "var(--showcase-rose)",
   },
   {
@@ -33,7 +32,6 @@ const SHOWCASE_PRODUCTS = [
     image: product4,
     name: "Tirosane",
     subtitle: "Cellular renewal",
-    price: "$329 / mo",
     accent: "var(--showcase-violet)",
   },
   {
@@ -41,7 +39,6 @@ const SHOWCASE_PRODUCTS = [
     image: product2,
     name: "TIDL Core",
     subtitle: "Foundational longevity",
-    price: "$48 / mo",
     accent: "var(--showcase-sun)",
   },
   {
@@ -49,7 +46,6 @@ const SHOWCASE_PRODUCTS = [
     image: product3,
     name: "TIDL Cycle",
     subtitle: "Female hormonal balance",
-    price: "$58 / mo",
     accent: "var(--showcase-mint)",
   },
 ] as const;
@@ -443,20 +439,7 @@ export function ProductShowcaseSection() {
                     "0 24px 70px color-mix(in oklab, var(--showcase-shadow-soft) 24%, transparent), inset 0 1px 0 color-mix(in oklab, var(--showcase-surface) 85%, transparent)",
                 }}
               >
-                <div className="showcase-card-badges relative z-10 flex items-center justify-end">
-                  <span
-                    className="showcase-card-badge rounded-full px-3 py-1 text-xs"
-                    style={{
-                      background: "color-mix(in oklab, var(--showcase-surface) 90%, transparent)",
-                      color: "var(--showcase-ink)",
-                      border: "1px solid var(--showcase-line)",
-                    }}
-                  >
-                    {product.price}
-                  </span>
-                </div>
-
-                <div className="showcase-card-media-wrap relative z-10 mt-5 flex min-h-[18rem] items-center justify-center overflow-hidden rounded-[1.6rem]">
+                <div className="showcase-card-media-wrap relative z-10 flex min-h-[18rem] items-center justify-center overflow-hidden rounded-[1.6rem]">
                   <img
                     className="showcase-card-media relative z-10"
                     src={product.image}

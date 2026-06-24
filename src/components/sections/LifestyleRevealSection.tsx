@@ -13,15 +13,15 @@ const TRUST_POINTS = [
   "Cold-chain delivery nationwide to your door",
 ] as const;
 
-const SCROLL_TRACK_EXTRA_VH = 200;
+const SCROLL_TRACK_EXTRA_VH = 320;
 
 const T = {
-  BG_HALF: 0.4,
-  FIGURE_START: 0.4,
-  FIGURE_END: 0.58,
-  COPY_START: 0.58,
-  COPY_END: 0.72,
-  HOLD_START: 0.72,
+  BG_HALF: 0.42,
+  FIGURE_START: 0.42,
+  FIGURE_END: 0.62,
+  COPY_START: 0.62,
+  COPY_END: 0.86,
+  HOLD_START: 0.86,
 } as const;
 
 const GPU = { force3D: true } as const;
@@ -52,9 +52,11 @@ export function LifestyleRevealSection() {
         gsap.set(visual, { scaleY: 1, opacity: 1 });
         gsap.set(visualImg, { yPercent: 0, scale: 1 });
         gsap.set(figure, { opacity: 1, y: 0 });
-        gsap.set(copy, { opacity: 1, y: 0 });
+        gsap.set(copy.querySelectorAll(".lifestyle-reveal-line"), { opacity: 1, y: 0, scale: 1 });
         return;
       }
+
+      const copyLines = copy.querySelectorAll<HTMLElement>(".lifestyle-reveal-line");
 
       gsap.set(visual, {
         scaleY: 0,
@@ -64,14 +66,14 @@ export function LifestyleRevealSection() {
       });
       gsap.set(visualImg, { yPercent: -8, scale: 1.06, transformOrigin: "center top", ...GPU });
       gsap.set(figure, { opacity: 0, y: 56, ...GPU });
-      gsap.set(copy, { opacity: 0, y: 32, ...GPU });
+      gsap.set(copyLines, { opacity: 0, y: 28, scale: 0.96, ...GPU });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: track,
           start: "top bottom+=48%",
           end: "bottom top",
-          scrub: 2,
+          scrub: 3.5,
           fastScrollEnd: true,
           invalidateOnRefresh: true,
           onEnter: () => panel.classList.add("lifestyle-reveal-panel--live"),
@@ -106,7 +108,16 @@ export function LifestyleRevealSection() {
       tl.to(figure, { opacity: 1, y: 0, ease: "none", duration: figureDur, ...GPU }, T.FIGURE_START);
 
       const copyDur = T.COPY_END - T.COPY_START;
-      tl.to(copy, { opacity: 1, y: 0, ease: "none", duration: copyDur, ...GPU }, T.COPY_START);
+      const lineCount = copyLines.length || 1;
+      const lineSlot = copyDur / lineCount;
+
+      copyLines.forEach((line, i) => {
+        tl.to(
+          line,
+          { opacity: 1, y: 0, scale: 1, ease: "none", duration: lineSlot * 1.15, ...GPU },
+          T.COPY_START + i * lineSlot,
+        );
+      });
 
       tl.to({}, { duration: 1 - T.HOLD_START }, T.HOLD_START);
     }, track);
@@ -193,11 +204,10 @@ export function LifestyleRevealSection() {
           <div
             ref={copyRef}
             className="lifestyle-reveal-copy absolute inset-0 z-20 flex flex-col justify-end px-6 pb-10 sm:px-10 sm:pb-12 md:max-w-[min(44vw,520px)] md:justify-center md:pb-0 md:pl-12 lg:pl-16"
-            style={{ opacity: 0, transform: "translate3d(0, 32px, 0)" }}
           >
             <p
-              className="mb-3 font-[Josefin_Sans,sans-serif] text-[11px] font-semibold uppercase tracking-[0.18em] sm:text-[12px]"
-              style={{ color: "rgba(255,255,255,0.52)" }}
+              className="lifestyle-reveal-line mb-3 font-[Josefin_Sans,sans-serif] text-[11px] font-semibold uppercase tracking-[0.18em] sm:text-[12px]"
+              style={{ color: "rgba(255,255,255,0.52)", opacity: 0, transform: "translate3d(0, 28px, 0)" }}
             >
               Why patients trust TIDL
             </p>
@@ -205,12 +215,22 @@ export function LifestyleRevealSection() {
               className="font-[Archivo_Narrow,sans-serif] text-[clamp(1.65rem,4.5vw,2.75rem)] font-bold leading-[1.06] tracking-[-0.025em]"
               style={{ color: "#ffffff" }}
             >
-              Real physicians.{" "}
-              <span style={{ color: TIDL_BRAND.accent }}>Real care.</span>
+              <span
+                className="lifestyle-reveal-line block"
+                style={{ opacity: 0, transform: "translate3d(0, 28px, 0)" }}
+              >
+                Real physicians.
+              </span>
+              <span
+                className="lifestyle-reveal-line block"
+                style={{ color: TIDL_BRAND.accent, opacity: 0, transform: "translate3d(0, 28px, 0)" }}
+              >
+                Real care.
+              </span>
             </h2>
             <p
-              className="mt-3 max-w-md text-[14px] leading-relaxed sm:text-[15px]"
-              style={{ color: "rgba(255,255,255,0.75)" }}
+              className="lifestyle-reveal-line mt-3 max-w-md text-[14px] leading-relaxed sm:text-[15px]"
+              style={{ color: "rgba(255,255,255,0.75)", opacity: 0, transform: "translate3d(0, 28px, 0)" }}
             >
               Every path starts with a licensed clinician, a legitimate
               prescription, and pharmacy partners you can verify.
@@ -219,8 +239,8 @@ export function LifestyleRevealSection() {
               {TRUST_POINTS.map((point) => (
                 <li
                   key={point}
-                  className="flex items-start gap-3 text-[13px] leading-snug sm:text-[14px]"
-                  style={{ color: "rgba(255,255,255,0.90)" }}
+                  className="lifestyle-reveal-line flex items-start gap-3 text-[13px] leading-snug sm:text-[14px]"
+                  style={{ color: "rgba(255,255,255,0.90)", opacity: 0, transform: "translate3d(0, 28px, 0)" }}
                 >
                   <span
                     aria-hidden
@@ -233,6 +253,19 @@ export function LifestyleRevealSection() {
                 </li>
               ))}
             </ul>
+            <a
+              href="#discover"
+              className="lifestyle-reveal-line lifestyle-reveal-cta mt-7 inline-flex w-fit items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-semibold sm:mt-8 sm:text-[14px]"
+              style={{
+                background: TIDL_BRAND.accent,
+                color: TIDL_BRAND.ink,
+                boxShadow: "0 8px 28px rgba(243,195,0,0.35)",
+                opacity: 0,
+                transform: "translate3d(0, 28px, 0) scale(0.96)",
+              }}
+            >
+              Check it out →
+            </a>
           </div>
         </div>
       </div>
@@ -250,7 +283,7 @@ export function LifestyleRevealSection() {
           will-change: transform;
         }
         .lifestyle-reveal-panel--live .lifestyle-reveal-figure-wrap,
-        .lifestyle-reveal-panel--live .lifestyle-reveal-copy {
+        .lifestyle-reveal-panel--live .lifestyle-reveal-line {
           will-change: transform, opacity;
         }
         .lifestyle-reveal-visual {
@@ -274,6 +307,13 @@ export function LifestyleRevealSection() {
         }
         html.tidl-scrolling .lifestyle-reveal-panel {
           box-shadow: none;
+        }
+        .lifestyle-reveal-cta {
+          font-family: 'Archivo', system-ui, sans-serif;
+          transition: filter 0.2s ease;
+        }
+        .lifestyle-reveal-cta:hover {
+          filter: brightness(1.05);
         }
       `}</style>
     </section>
