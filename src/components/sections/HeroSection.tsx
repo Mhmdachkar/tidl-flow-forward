@@ -61,7 +61,7 @@ const styles = `
 
 .tidl-card { position: relative; border-radius: 1.25rem; overflow: hidden; cursor: pointer; border: 1px solid transparent; box-shadow: 0 4px 20px rgba(17,17,17,0.06); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease; text-align: left; padding: 0; display: block; width: 100%; font: inherit; isolation: isolate; min-width: 0; height: 100%; }
 @media (min-width: 900px) { .tidl-card { border-radius: 1.5rem; } }
-.tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); overflow: visible; }
+.tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); }
 .tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; min-height: auto; height: 100%; }
 @media (min-width: 900px) { .tidl-card-inner { grid-template-columns: 1.1fr 1fr; min-height: calc(260px - 2cm); } }
 .tidl-card-content { position: relative; padding: 10px 10px 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
@@ -101,23 +101,17 @@ const styles = `
 .tidl-card-cream { background: #f5f4f0; color: #231f20; }
 .tidl-card-cream .tidl-label { color: #231f20; transition: letter-spacing .4s ease; }
 .tidl-card-cream .tidl-card-cta { color: #231f20; }
-.tidl-card-cream:hover { box-shadow: 0 32px 70px rgba(243,195,0,0.25), 0 4px 20px rgba(35,31,32,0.10); }
-.tidl-card-cream .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(115deg, transparent 44%, rgba(243,195,0,0.35) 48%, rgba(35,31,32,0.12) 50%, rgba(243,195,0,0.35) 52%, transparent 56%); transform: translateX(-130%) translateY(10%); transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
+.tidl-card-cream:hover { box-shadow: inset 3px 0 0 rgba(243,195,0,0.55), 0 32px 70px rgba(243,195,0,0.22), 0 4px 20px rgba(35,31,32,0.10); }
+.tidl-card-cream .tidl-sweep { position: absolute; inset: -50%; width: 200%; height: 200%; background: linear-gradient(115deg, transparent 44%, rgba(243,195,0,0.22) 48%, rgba(35,31,32,0.08) 50%, rgba(243,195,0,0.22) 52%, transparent 56%); transform: translateX(-130%) translateY(10%); transition: transform 1.2s cubic-bezier(0.22,1,0.36,1); z-index: 1; pointer-events: none; }
 .tidl-card-cream:hover .tidl-sweep { transform: translateX(30%) translateY(10%); }
-.tidl-card-cream .tidl-pulse { position: absolute; top: 50%; left: 72%; width: 80px; height: 80px; transform: translate(-50%, -50%) scale(0.5); border-radius: 50%; border: 2px solid rgba(243,195,0,0.85); box-shadow: 0 0 20px rgba(243,195,0,0.4), 0 0 40px rgba(35,31,32,0.08); opacity: 0; z-index: 3; pointer-events: none; }
-.tidl-card-cream:hover .tidl-pulse { animation: tidlPulse 1.5s cubic-bezier(0.22,1,0.36,1) infinite; }
 .tidl-card-cream .tidl-inner-light { position: absolute; inset: 0; background: radial-gradient(450px circle at 70% 40%, rgba(243,195,0,0.14), transparent 55%); opacity: 0; transition: opacity 0.7s ease; z-index: 1; pointer-events: none; }
 .tidl-card-cream:hover .tidl-inner-light { opacity: 1; }
 .tidl-card-cream::before { content: ""; position: absolute; top: 0; right: 0; width: 240px; height: 240px; background: radial-gradient(circle at 100% 0%, rgba(243,195,0,0.18), transparent 60%); opacity: 0; transition: opacity 0.6s ease; z-index: 1; pointer-events: none; }
 .tidl-card-cream:hover::before { opacity: 1; }
-/* Brand gold accent line on left edge */
-.tidl-card-cream::after { content: ""; position: absolute; left: 0; top: 24px; bottom: 24px; width: 3px; background: linear-gradient(180deg, #f3c300, rgba(243,195,0,0.3)); box-shadow: 0 0 14px rgba(243,195,0,0.5), 0 0 32px rgba(243,195,0,0.20); transform: scaleY(0); transform-origin: top center; transition: transform 0.7s cubic-bezier(0.77,0,0.18,1); z-index: 3; }
-.tidl-card-cream:hover::after { transform: scaleY(1); }
 .tidl-card-cream .tidl-aura { position: absolute; inset: -1px; border-radius: 1.5rem; opacity: 0; transition: opacity 0.5s ease; box-shadow: inset 0 0 40px rgba(243,195,0,0.08), 0 0 0 1px rgba(243,195,0,0.22), 0 0 50px rgba(243,195,0,0.14), 0 0 100px rgba(35,31,32,0.06); z-index: 0; pointer-events: none; }
 .tidl-card-cream:hover .tidl-aura { opacity: 1; }
 .tidl-card-cream:hover .tidl-label { letter-spacing: 0.26em; }
-.tidl-card-cream .tidl-card-headline { transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
-.tidl-card-cream:hover .tidl-card-headline { transform: translateX(8px); }
+.tidl-card-cream .tidl-card-headline { transition: color 0.4s ease; }
 .tidl-card-cream:hover .tidl-card-img img { filter: drop-shadow(0 22px 34px rgba(35,31,32,0.14)); }
 .tidl-card-cream .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
@@ -301,7 +295,6 @@ export function HeroSection() {
 
         const onEnter = () => {
           if (!sectionActive.current) return;
-          if (!isQuick) gsap.to(card, { scale: 1.012, duration: 0.5, ease: "power3.out" });
           if (imgRotate && imgScale) {
             imgRotate(baseRotate);
             imgScale(baseScale);
@@ -312,7 +305,6 @@ export function HeroSection() {
 
         const onOut = () => {
           card.removeEventListener("mousemove", onMove);
-          if (!isQuick) gsap.to(card, { scale: 1, duration: 0.6, ease: "power3.out" });
           resetTilt();
         };
 
@@ -378,7 +370,6 @@ export function HeroSection() {
           {/* Cream card */}
           <button type="button" className="tidl-card tidl-card-cream tidl-tilt" onClick={openModal}>
             <span className="tidl-sweep" aria-hidden="true" />
-            <span className="tidl-pulse" aria-hidden="true" />
             <span className="tidl-aura" aria-hidden="true" />
             <span className="tidl-inner-light" aria-hidden="true" />
             <span className="tidl-glare" aria-hidden="true" />

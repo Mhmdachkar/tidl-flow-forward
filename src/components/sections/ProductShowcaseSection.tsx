@@ -8,7 +8,6 @@ import {
   ShowcaseCinematicBeam,
   ShowcaseHeroVideo,
 } from "@/components/sections/ShowcaseCinematicBeam";
-import { ShowcaseFigureStage } from "@/components/sections/ShowcaseFigureStage";
 import type { ProductSlug } from "@/types/product";
 
 import productVideo from "@/assets/product_video.mp4";
@@ -16,8 +15,6 @@ import product1 from "@/assets/product 1 3d.png";
 import product2 from "@/assets/product 2 3d white.png";
 import product3 from "@/assets/product 3 3d pink.png";
 import product4 from "@/assets/product 4 3d.png";
-import tidlGif from "@/assets/TIDL GIF 2.gif";
-import menFigure from "@/assets/men 2 3d.png";
 
 const SHOWCASE_PRODUCTS = [
   {
@@ -54,7 +51,6 @@ export function ProductShowcaseSection() {
   const stageRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
   const { openModal } = useQuizModal();
@@ -154,16 +150,6 @@ export function ProductShowcaseSection() {
         );
       });
 
-      const mediaPanels = gsap.utils.toArray<HTMLElement>(".media-panel");
-      gsap.from(mediaPanels, {
-        y: 100,
-        opacity: 0,
-        scale: 0.95,
-        stagger: 0.18,
-        duration: 1.1,
-        ease: "power3.out",
-        delay: 0.45,
-      });
     }, stageRef);
 
     const cardInteractions = () => {
@@ -292,17 +278,7 @@ export function ProductShowcaseSection() {
           letter-spacing: 0.18em;
           text-transform: uppercase;
         }
-        .showcase-card, .media-panel { transform-style: preserve-3d; }
-        .media-panel::before {
-          content: "";
-          position: absolute;
-          inset: 1px;
-          border-radius: inherit;
-          border: 1px solid color-mix(in oklab, var(--showcase-line) 74%, transparent);
-          opacity: 0.55;
-          pointer-events: none;
-          animation: cardBorder 5s ease-in-out infinite;
-        }
+        .showcase-card { transform-style: preserve-3d; }
         /* Cream band — curved bottom edge (mirrors video top radius) */
         .showcase-cream-band {
           background: rgb(251, 251, 248);
@@ -430,41 +406,6 @@ export function ProductShowcaseSection() {
           padding: 0.875rem 1.125rem 1.125rem;
         }
         .showcase-card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-        .media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .showcase-figure-stage {
-          overflow: visible;
-        }
-        .showcase-figure-glow {
-          position: absolute;
-          bottom: 8%;
-          left: 50%;
-          width: min(72%, 340px);
-          height: 38%;
-          transform: translateX(-50%);
-          border-radius: 50%;
-          background: radial-gradient(closest-side, rgba(243, 195, 0, 0.28) 0%, rgba(243, 195, 0, 0.08) 42%, transparent 100%);
-          filter: blur(28px);
-          pointer-events: none;
-        }
-        .showcase-figure-3d {
-          position: relative;
-          z-index: 2;
-          width: min(100%, 440px);
-          height: auto;
-          object-fit: contain;
-          object-position: bottom center;
-          mix-blend-mode: multiply;
-          filter:
-            drop-shadow(0 0 42px rgba(243, 195, 0, 0.38))
-            drop-shadow(0 0 90px rgba(243, 195, 0, 0.16))
-            drop-shadow(-30px 52px 68px rgba(35, 31, 32, 0.26));
-        }
-        @media (max-width: 980px) {
-          .media-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 720px) {
-          .media-grid { grid-template-columns: 1fr; }
-        }
       `}</style>
 
       <section className="showcase-video-block relative z-20">
@@ -577,50 +518,6 @@ export function ProductShowcaseSection() {
         </div>
       </section>
       </div>
-
-      <section ref={mediaRef} className="relative z-20 px-5 pb-24 pt-10 md:px-10 lg:px-14">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 max-w-2xl">
-            <h3
-              className="showcase-headline"
-              style={{
-                color: "var(--showcase-ink-strong)",
-                fontSize: "clamp(2rem, 4vw, 3.2rem)",
-              }}
-            >
-              Built for precision. Delivered with care.
-            </h3>
-          </div>
-
-          <div className="media-grid grid gap-6">
-            <article
-              className="media-panel relative flex flex-col items-center justify-center overflow-hidden rounded-[2.25rem] p-6 md:p-8"
-              style={{
-                minHeight: "28rem",
-                background: "var(--showcase-bg)",
-              }}
-            >
-              <img
-                src={tidlGif}
-                alt=""
-                aria-hidden="true"
-                className="max-w-full object-contain"
-                loading="lazy"
-                decoding="async"
-                style={{ maxHeight: "320px" }}
-              />
-              <p className="showcase-body mt-6 text-center text-sm" style={{ color: "var(--showcase-ink)" }}>
-                Cold-chain pharmacy dispatch. Every order physician-approved.
-              </p>
-            </article>
-
-            <ShowcaseFigureStage
-              src={menFigure}
-              alt="Athletic figure standing on rock · TIDL performance and longevity"
-            />
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
