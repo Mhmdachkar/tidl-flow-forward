@@ -47,7 +47,7 @@ function Index() {
     <div className="relative bg-[#e2e2e2] text-foreground">
       <div className="scroll-progress" />
 
-      <NavSection />
+      <NavSection integrateAtTop />
       <HeroSection />
 
       <DeferredProductShowcase />
@@ -62,7 +62,7 @@ function Index() {
         <style>{TIDL_BRAND_STYLES}</style>
         <div className="section-card" data-reveal><ReviewsSection /></div>
         <Suspense fallback={<SectionFallback minHeight="28rem" />}>
-          <div className="section-card" data-reveal><EducationSection /></div>
+          <div data-reveal><EducationSection /></div>
         </Suspense>
         <Suspense fallback={<SectionFallback minHeight="32rem" />}>
           <div className="section-card"><FAQSection /></div>

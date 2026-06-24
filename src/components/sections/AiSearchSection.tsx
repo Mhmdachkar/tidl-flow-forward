@@ -92,22 +92,9 @@ export function AiSearchSection() {
     >
       <div
         ref={shellRef}
-        className="ai-discover-shell relative overflow-hidden rounded-[2rem] px-5 py-12 sm:rounded-[2.5rem] sm:px-8 sm:py-16 lg:px-14 lg:py-20"
-        style={{
-          background: `linear-gradient(180deg, ${TIDL_BRAND.bg} 0%, ${TIDL_BRAND.bgSoft} 100%)`,
-          border: "1px solid rgba(35,31,32,0.08)",
-          willChange: "transform, opacity",
-        }}
+        className="ai-discover-shell relative overflow-hidden px-5 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-20"
+        style={{ willChange: "transform, opacity" }}
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.55]"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 50% 0%, rgba(243,195,0,0.12) 0%, transparent 70%)",
-          }}
-        />
-
         <div className="relative mx-auto max-w-3xl text-center">
               <p
                 className="ai-discover-reveal tidl-eyebrow mb-4"

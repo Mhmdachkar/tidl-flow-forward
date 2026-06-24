@@ -116,7 +116,7 @@ export function EducationSection() {
       ref={rootRef}
       id="education"
       className="tidl-brand-section relative overflow-hidden py-16 sm:py-20 lg:py-28"
-      style={{ background: TIDL_BRAND.bg, color: TIDL_BRAND.ink }}
+      style={{ color: TIDL_BRAND.ink }}
     >
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
         {/* header */}
@@ -218,7 +218,7 @@ export function EducationSection() {
         {/* text steps — accessible fallback / always available */}
         <div className="edu-steps mt-10 grid grid-cols-1 gap-px sm:grid-cols-3" style={{ background: "rgba(35,31,32,0.1)" }}>
           {STEPS.map((s) => (
-            <div key={s.k} className="edu-step flex flex-col gap-2 p-6" style={{ background: TIDL_BRAND.bg }}>
+            <div key={s.k} className="edu-step flex flex-col gap-2 p-6">
               <span className="tidl-eyebrow" style={{ color: TIDL_BRAND.accent }}>
                 {s.k} · {s.title}
               </span>

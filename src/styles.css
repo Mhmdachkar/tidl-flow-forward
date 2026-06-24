@@ -420,6 +420,12 @@
 }
 .tidl-section-inner--narrow { max-width: var(--content-max-narrow); }
 .tidl-section-inner--cta { max-width: var(--content-max-cta); }
+.tidl-announce-bar {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
 .tidl-touch-target {
   min-width: var(--touch-min);
   min-height: var(--touch-min);

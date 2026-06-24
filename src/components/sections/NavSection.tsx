@@ -77,19 +77,26 @@ function NavAvatar({
   );
 }
 
-export function NavSection() {
+const ANNOUNCEMENT_HEIGHT_PX = 55;
+
+interface NavSectionProps {
+  /** Homepage: header sits in page flow at top, pins + follows on scroll (Hims-style). */
+  integrateAtTop?: boolean;
+}
+
+export function NavSection({ integrateAtTop = false }: NavSectionProps) {
   const ref = useRef<HTMLElement>(null);
-  const menuOpenRef = useRef(false);
   const [scrolled, setScrolled] = useState(false);
-  const [headerVisible, setHeaderVisible] = useState(true);
+  const [headerHeight, setHeaderHeight] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal: openQuiz } = useQuizModal();
   const { openModal: openAuthModal } = useAuthModal();
 
-  menuOpenRef.current = menuOpen;
+  const isPinned = integrateAtTop ? scrolled : true;
 
   useEffect(() => {
+    if (integrateAtTop || !ref.current) return;
     gsap.from(ref.current, {
       y: -40,
       opacity: 0,
@@ -98,42 +105,36 @@ export function NavSection() {
       delay: 0.3,
       clearProps: "transform,opacity",
     });
-  }, []);
+  }, [integrateAtTop]);
 
   useEffect(() => {
-    if (menuOpen) setHeaderVisible(true);
-  }, [menuOpen]);
+    const el = ref.current;
+    if (!el) return;
+
+    const measure = () => setHeaderHeight(el.offsetHeight);
+    measure();
+
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    ro?.observe(el);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [scrolled, menuOpen, integrateAtTop]);
 
   useEffect(() => {
     let lastScrolled = false;
-    let lastVisible = true;
-    let lastY = getScrollPosition();
-    let pendingY = lastY;
+    let pendingY = getScrollPosition();
     let frame = 0;
 
     const apply = (scrollY: number) => {
-      const nextScrolled = scrollY > 48;
+      const threshold = integrateAtTop ? 8 : 48;
+      const nextScrolled = scrollY > threshold;
       if (nextScrolled !== lastScrolled) {
         lastScrolled = nextScrolled;
         setScrolled(nextScrolled);
-      }
-
-      let nextVisible = lastVisible;
-      if (menuOpenRef.current) {
-        nextVisible = true;
-      } else if (scrollY < 24) {
-        nextVisible = true;
-      } else {
-        const delta = scrollY - lastY;
-        if (delta > 1) nextVisible = false;
-        else if (delta < -1) nextVisible = true;
-      }
-
-      lastY = scrollY;
-
-      if (nextVisible !== lastVisible) {
-        lastVisible = nextVisible;
-        setHeaderVisible(nextVisible);
       }
     };
 
@@ -165,7 +166,7 @@ export function NavSection() {
       window.removeEventListener("tidl:lenis-scroll", onLenisScroll);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [integrateAtTop]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setMenuOpen(false); };
@@ -182,37 +183,58 @@ export function NavSection() {
 
   return (
     <>
-      {/* ── Header shell — transform here so GSAP entrance doesn't block hide/show ── */}
+      {/* Spacer prevents layout jump when homepage header pins on scroll */}
+      {integrateAtTop && isPinned && headerHeight > 0 && (
+        <div aria-hidden style={{ height: headerHeight }} />
+      )}
+
       <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
-          headerVisible ? "translate-y-0 pointer-events-auto" : "-translate-y-full pointer-events-none"
+        className={`z-50 transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isPinned ? "fixed top-0 left-0 right-0" : "relative"
         }`}
-        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+        style={{ paddingTop: isPinned ? "env(safe-area-inset-top, 0px)" : undefined }}
       >
       <header
         ref={ref}
         className={`transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          scrolled ? "bg-black shadow-[0_4px_20px_-4px_rgba(0,0,0,0.45)]" : "bg-transparent"
+          scrolled ? "bg-black shadow-[0_4px_20px_-4px_rgba(0,0,0,0.45)]" : "bg-[#FAFAF7]"
         }`}
       >
-        {/* Gold announcement bar */}
-        <div
-          className={`overflow-hidden bg-[#F3C300] transition-[max-height,opacity,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            scrolled ? "max-h-0 opacity-0 py-0" : "max-h-12 opacity-100 py-1"
-          }`}
-        >
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 text-[11px] leading-tight text-ink">
-            <span>Personalised longevity care is here.</span>
-            <a href="/weight-loss" className="inline-flex shrink-0 items-center gap-1 rounded-full bg-black/15 px-2.5 py-0.5 text-[10px] font-medium transition-colors hover:bg-black/25">
-              Check it out →
-            </a>
+        {/* Announcement bar — flat 55px, yellow fills corner gaps above curved nav */}
+        {!scrolled && (
+          <div style={{ height: "55px", background: "#F3C300", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className="flex items-center justify-center gap-2 px-4 sm:gap-3">
+              <span style={{ fontSize: "11px", lineHeight: 1, color: "#231f20" }}>
+                Personalised longevity care is here.
+              </span>
+              <a
+                href="/weight-loss"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "4px",
+                  borderRadius: "999px", background: "rgba(0,0,0,0.15)",
+                  padding: "3px 10px", fontSize: "10px", fontWeight: 500,
+                  color: "#231f20", textDecoration: "none", lineHeight: 1, whiteSpace: "nowrap",
+                }}
+              >
+                Check it out →
+              </a>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className={`transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "bg-transparent" : "bg-[#F3C300]"}`}>
-          <nav className={`px-4 sm:px-6 lg:px-10 transition-[background-color,border-radius,box-shadow,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            scrolled ? "rounded-none bg-transparent py-1.5 shadow-none" : "rounded-t-[2rem] bg-white py-2 shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-          }`}>
+        {/* Nav bar — yellow background shows through the rounded top corners */}
+        <div style={{ background: scrolled ? "transparent" : "#F3C300" }}>
+          <nav
+            className={`px-4 sm:px-6 lg:px-10 transition-[background-color,border-radius,box-shadow,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              scrolled
+                ? "rounded-none bg-transparent py-1.5 shadow-none"
+                : "bg-[#FAFAF7] py-2.5"
+            }`}
+            style={!scrolled ? {
+              borderTopLeftRadius: "1.75rem",
+              borderTopRightRadius: "1.75rem",
+            } : undefined}
+          >
             <div className="mx-auto flex max-w-6xl items-center justify-between">
               <Link to="/" className="flex items-center">
                 <img

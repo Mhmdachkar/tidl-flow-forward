@@ -119,12 +119,15 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
 
 // ─── ShowcaseHeroVideo ────────────────────────────────────────────────────────
 
+const VIDEO_TOP_RADIUS = "clamp(2.75rem, 6vw, 4rem)";
+
 type ShowcaseHeroVideoProps = {
   src: string;
   videoRef?: RefObject<HTMLDivElement | null>;
+  overlay?: ReactNode;
 };
 
-export function ShowcaseHeroVideo({ src, videoRef: externalRef }: ShowcaseHeroVideoProps) {
+export function ShowcaseHeroVideo({ src, videoRef: externalRef, overlay }: ShowcaseHeroVideoProps) {
   const localRef = useRef<HTMLDivElement>(null);
   const innerRef = externalRef ?? localRef;
   const wrapRef  = useRef<HTMLDivElement>(null);
@@ -137,39 +140,25 @@ export function ShowcaseHeroVideo({ src, videoRef: externalRef }: ShowcaseHeroVi
 
     const ctx = gsap.context(() => {
       if (reduced) {
-        gsap.set(inner, { opacity: 1, y: 0 });
+        gsap.set(inner, { opacity: 1 });
         return;
       }
 
-      // Entrance: slide up + fade in when section scrolls into view
-      gsap.set(inner, { y: 64, opacity: 0 });
+      gsap.set(inner, { opacity: 0 });
 
       const reveal = () =>
-        gsap.to(inner, { y: 0, opacity: 1, duration: 1.5, ease: "expo.out", overwrite: "auto" });
+        gsap.to(inner, { opacity: 1, duration: 1.2, ease: "expo.out", overwrite: "auto" });
 
       ScrollTrigger.create({
         trigger: wrap,
-        start: "top 88%",
+        start: "top 90%",
         once: true,
         onEnter: reveal,
       });
 
-      // If already visible on mount
-      if (wrap.getBoundingClientRect().top < window.innerHeight * 0.88) {
+      if (wrap.getBoundingClientRect().top < window.innerHeight * 0.9) {
         reveal();
       }
-
-      // Scroll parallax: video drifts upward as the section is scrolled past
-      gsap.to(inner, {
-        yPercent: -13,
-        ease: "none",
-        scrollTrigger: {
-          trigger: wrap,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.4,
-        },
-      });
     }, wrap);
 
     return () => ctx.revert();
@@ -178,17 +167,20 @@ export function ShowcaseHeroVideo({ src, videoRef: externalRef }: ShowcaseHeroVi
   return (
     <div
       ref={wrapRef}
-      className="relative mx-auto mt-10 overflow-visible"
-      style={{ maxWidth: 1140, height: "min(60svh, 70vh, 760px)" }}
+      className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden"
+      style={{
+        height: "100svh",
+        minHeight: "100svh",
+        borderTopLeftRadius: VIDEO_TOP_RADIUS,
+        borderTopRightRadius: VIDEO_TOP_RADIUS,
+      }}
     >
       <div
         ref={innerRef}
-        className="absolute"
+        className="absolute inset-0 overflow-hidden"
         style={{
-          top: "4%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "min(700px, 82%)",
+          borderTopLeftRadius: VIDEO_TOP_RADIUS,
+          borderTopRightRadius: VIDEO_TOP_RADIUS,
         }}
       >
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
@@ -201,8 +193,9 @@ export function ShowcaseHeroVideo({ src, videoRef: externalRef }: ShowcaseHeroVi
           style={{
             display: "block",
             width: "100%",
-            height: "auto",
-            mixBlendMode: "multiply",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
             pointerEvents: "none",
             userSelect: "none",
           }}
@@ -211,18 +204,31 @@ export function ShowcaseHeroVideo({ src, videoRef: externalRef }: ShowcaseHeroVi
         </video>
       </div>
 
-      {/* ambient glow under the product */}
+      {overlay && (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-[2] flex justify-center px-5 pt-10 text-center md:px-10 md:pt-14 lg:pt-16"
+        >
+          {overlay}
+        </div>
+      )}
+
       <div
         aria-hidden
-        className="pointer-events-none absolute"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1]"
         style={{
-          bottom: "6%",
-          left: "30%",
-          width: "60%",
-          height: "14%",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(closest-side, rgba(243,195,0,0.22) 0%, rgba(243,195,0,0.07) 45%, transparent 100%)",
+          height: "42%",
+          background: "linear-gradient(to bottom, rgba(250, 250, 247, 0.92) 0%, rgba(250, 250, 247, 0.45) 38%, transparent 100%)",
+          borderTopLeftRadius: VIDEO_TOP_RADIUS,
+          borderTopRightRadius: VIDEO_TOP_RADIUS,
+        }}
+      />
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1]"
+        style={{
+          height: "28%",
+          background: "linear-gradient(to top, rgb(251, 251, 248) 0%, transparent 100%)",
         }}
       />
     </div>

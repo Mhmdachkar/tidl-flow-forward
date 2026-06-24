@@ -34,44 +34,45 @@ const styles = `
 .tidl-quick .tidl-glare { background: radial-gradient(160px circle at var(--gx, 50%) var(--gy, 50%), rgba(243,195,0,0.35), transparent 60%); mix-blend-mode: multiply; }
 .tidl-gsap-init { opacity: 0; }
 /* Archivo Narrow Bold — official TIDL primary headline font */
-.tidl-fraunces { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
+.tidl-fraunces { font-family: 'Archivo Narrow', sans-serif; font-weight: 400; letter-spacing: -0.01em; line-height: 1.08; }
 /* Josefin Sans — closest free match to Blair ITC (geometric all-caps secondary) */
 .tidl-label { font-family: 'Josefin Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
 
 .tidl-announce { width: 100%; background: #f3c300; color: #231f20; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; border: none; cursor: pointer; transition: filter .2s ease; }
 .tidl-announce:hover { filter: brightness(0.93); }
 
-.tidl-container { max-width: 1280px; margin: 0 auto; padding: 40px 20px 20px; }
-@media (min-width: 640px) { .tidl-container { padding: 56px 24px 28px; } }
+.tidl-container { max-width: 1280px; margin: 0 auto; padding: 24px 20px 20px; }
+@media (min-width: 640px) { .tidl-container { padding: 32px 24px 28px; } }
 
 .tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: end; margin-bottom: 20px; }
 @media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; gap: 32px; margin-bottom: 48px; } }
 /* Archivo Narrow Bold — official brand headline */
-.tidl-headline { font-size: clamp(2rem, 9vw, 5rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
-/* em: italic Archivo Narrow Bold in brand gold */
+.tidl-headline { font-size: clamp(1.52rem, 5.57vw, 2.65rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 400; letter-spacing: -0.01em; line-height: 1.08; }
+.tidl-headline-line { display: block; }
+/* em: brand gold accent — regular weight */
 .tidl-word { display: inline-block; }
-.tidl-headline em { font-style: normal; font-weight: 700; color: inherit; }
-.tidl-headline-accent { color: #f3c300; font-weight: 700; }
+.tidl-headline em { font-style: normal; font-weight: 400; color: inherit; }
+.tidl-headline-accent { color: #f3c300; font-weight: 400; }
 .tidl-sub { margin-top: 18px; font-size: 15px; color: #6b6a6b; max-width: 540px; font-family: 'Archivo', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
 
 .tidl-main-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
 @media (min-width: 640px) { .tidl-main-grid { gap: 14px; margin-bottom: 16px; } }
-@media (min-width: 900px) { .tidl-main-grid { grid-template-columns: 6fr 4fr; gap: 16px; } }
+@media (min-width: 900px) { .tidl-main-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
 
-.tidl-card { position: relative; border-radius: 1.25rem; overflow: hidden; cursor: pointer; border: 1px solid transparent; box-shadow: 0 4px 20px rgba(17,17,17,0.06); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease; text-align: left; padding: 0; display: block; width: 100%; font: inherit; isolation: isolate; min-width: 0; }
+.tidl-card { position: relative; border-radius: 1.25rem; overflow: hidden; cursor: pointer; border: 1px solid transparent; box-shadow: 0 4px 20px rgba(17,17,17,0.06); transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.4s ease; text-align: left; padding: 0; display: block; width: 100%; font: inherit; isolation: isolate; min-width: 0; height: 100%; }
 @media (min-width: 900px) { .tidl-card { border-radius: 1.5rem; } }
-.tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); }
-.tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; min-height: auto; }
-@media (min-width: 900px) { .tidl-card-inner { grid-template-columns: 1.1fr 1fr; min-height: 240px; } }
-.tidl-card-content { position: relative; padding: 12px 10px 8px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
-@media (min-width: 640px) { .tidl-card-content { padding: 16px 14px 12px; } }
-@media (min-width: 900px) { .tidl-card-content { padding: 20px 22px 20px 24px; } }
-.tidl-card-img { position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding: 2px 6px 6px; min-height: 72px; }
-@media (min-width: 640px) { .tidl-card-img { padding: 6px 10px 10px; min-height: 96px; } }
-@media (min-width: 900px) { .tidl-card-img { align-items: center; padding: 12px; min-height: auto; } }
-.tidl-card-img img { max-height: 72px; max-width: 100%; object-fit: contain; transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; }
-@media (min-width: 640px) { .tidl-card-img img { max-height: 100px; } }
-@media (min-width: 900px) { .tidl-card-img img { max-height: 200px; } }
+.tidl-card:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(243,195,0,0.45); box-shadow: 0 32px 70px rgba(17,17,17,0.22); overflow: visible; }
+.tidl-card-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; min-height: auto; height: 100%; }
+@media (min-width: 900px) { .tidl-card-inner { grid-template-columns: 1.1fr 1fr; min-height: calc(260px - 2cm); } }
+.tidl-card-content { position: relative; padding: 10px 10px 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 0; }
+@media (min-width: 640px) { .tidl-card-content { padding: 12px 14px 10px; } }
+@media (min-width: 900px) { .tidl-card-content { padding: 14px 22px 14px 24px; } }
+.tidl-card-img { position: relative; overflow: visible; display: flex; align-items: flex-end; justify-content: center; padding: 2px 6px 4px; min-height: calc(72px - 0.5cm); z-index: 3; }
+@media (min-width: 640px) { .tidl-card-img { padding: 4px 10px 8px; min-height: calc(96px - 0.5cm); } }
+@media (min-width: 900px) { .tidl-card-img { align-items: center; padding: 8px 12px; min-height: auto; } }
+.tidl-card-img img { max-height: calc(72px - 0.5cm); max-width: 100%; object-fit: contain; transform-origin: center center; transition: transform 0.55s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease; will-change: transform; }
+@media (min-width: 640px) { .tidl-card-img img { max-height: calc(100px - 0.5cm); } }
+@media (min-width: 900px) { .tidl-card-img img { max-height: calc(200px - 1.25cm); } }
 
 /* Dark card uses Knockout #231f20 — official TIDL primary dark */
 .tidl-card-dark { background: #231f20; color: #ffffff; }
@@ -92,7 +93,7 @@ const styles = `
 .tidl-card-dark:hover .tidl-aura { opacity: 1; }
 .tidl-card-dark:hover .tidl-label { letter-spacing: 0.24em; filter: brightness(1.25); }
 .tidl-card-dark:hover .tidl-card-headline { text-shadow: 0 0 30px rgba(243,195,0,0.30), 0 0 70px rgba(243,195,0,0.12); }
-.tidl-card-dark:hover .tidl-card-img img { transform: scale(1.10) rotate(-6deg) translateY(-12px); filter: drop-shadow(0 24px 36px rgba(243,195,0,0.22)); }
+.tidl-card-dark:hover .tidl-card-img img { filter: drop-shadow(0 24px 36px rgba(243,195,0,0.22)); }
 .tidl-card-dark .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-dark:hover .tidl-card-cta svg { transform: translateX(10px); }
 
@@ -117,7 +118,7 @@ const styles = `
 .tidl-card-cream:hover .tidl-label { letter-spacing: 0.26em; }
 .tidl-card-cream .tidl-card-headline { transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-cream:hover .tidl-card-headline { transform: translateX(8px); }
-.tidl-card-cream:hover .tidl-card-img img { transform: scale(1.10) rotate(10deg) translateY(-8px); filter: drop-shadow(0 22px 34px rgba(35,31,32,0.14)); }
+.tidl-card-cream:hover .tidl-card-img img { filter: drop-shadow(0 22px 34px rgba(35,31,32,0.14)); }
 .tidl-card-cream .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
 
@@ -140,8 +141,8 @@ const styles = `
 @media (min-width: 900px) { .tidl-quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; overflow: visible; } }
 
 .tidl-quick { position: relative; background: #FFFFFF; border: 1px solid #E8E8E3; border-radius: 1rem; padding: 16px 14px 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; cursor: pointer; overflow: hidden; isolation: isolate; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease, background 0.3s ease, box-shadow 0.35s ease; flex: 0 0 38vw; max-width: 160px; min-width: 120px; font: inherit; text-align: center; scroll-snap-align: start; }
+.tidl-quick:hover { transform: translateY(-4px); border-color: #F3C300; background: #FFFDF5; box-shadow: 0 14px 30px rgba(17,17,17,0.10); overflow: visible; z-index: 4; }
 @media (min-width: 900px) { .tidl-quick { flex: unset; max-width: none; min-width: 0; flex-direction: row; align-items: center; justify-content: space-between; border-radius: 1rem; padding: 18px 20px; gap: 12px; text-align: left; scroll-snap-align: unset; } }
-.tidl-quick:hover { transform: translateY(-4px); border-color: #F3C300; background: #FFFDF5; box-shadow: 0 14px 30px rgba(17,17,17,0.10); }
 .tidl-quick::before { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: linear-gradient(90deg, #F3C300, #2d4a3e); transform: scaleX(0); transform-origin: left center; transition: transform 0.5s cubic-bezier(0.77,0,0.18,1); z-index: 2; }
 .tidl-quick:hover::before { transform: scaleX(1); }
 .tidl-quick::after { content: ""; position: absolute; inset: 0; background: radial-gradient(180px circle at 85% 50%, rgba(243,195,0,0.18), transparent 60%); opacity: 0; transition: opacity 0.4s ease; z-index: 0; pointer-events: none; }
@@ -149,12 +150,11 @@ const styles = `
 .tidl-quick-label { position: relative; z-index: 2; font-size: 12px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.01em; line-height: 1.2; color: #231f20; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.3s ease; }
 @media (min-width: 900px) { .tidl-quick-label { font-size: 15px; } }
 .tidl-quick:hover .tidl-quick-label { transform: translateX(4px); }
-.tidl-quick-media { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 0; flex-shrink: 0; }
+.tidl-quick-media { position: relative; z-index: 5; display: flex; align-items: center; justify-content: center; gap: 0; flex-shrink: 0; overflow: visible; }
 @media (min-width: 900px) { .tidl-quick-media { gap: 10px; } }
-.tidl-quick-img { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tidl-quick-img { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: visible; z-index: 5; }
 @media (min-width: 900px) { .tidl-quick-img { width: 56px; height: 56px; } }
-.tidl-quick-img img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
-.tidl-quick:hover .tidl-quick-img img { transform: scale(1.12) rotate(-6deg); }
+.tidl-quick-img img { max-width: 100%; max-height: 100%; object-fit: contain; transform-origin: center center; transition: filter 0.45s ease; will-change: transform; }
 .tidl-quick-arrow { display: none; position: relative; z-index: 2; color: #999; transition: color .3s ease, transform .35s cubic-bezier(0.22,1,0.36,1); }
 @media (min-width: 900px) { .tidl-quick-arrow { display: block; } }
 .tidl-quick:hover .tidl-quick-arrow { color: #F3C300; transform: translateX(6px); }
@@ -175,6 +175,8 @@ const styles = `
   .tidl-anim { opacity: 1; animation: none; }
   .tidl-card, .tidl-quick, .tidl-card-img img, .tidl-quick-img img { transition: none; }
   .tidl-card:hover, .tidl-quick:hover { transform: none; }
+  .tidl-card:hover .tidl-card-img img { transform: scale(2) rotate(10deg) translateY(-6px); }
+  .tidl-quick:hover .tidl-quick-img img { transform: scale(2) rotate(12deg); }
 }
 `;
 
@@ -256,19 +258,26 @@ export function HeroSection() {
         const glare = card.querySelector<HTMLElement>(".tidl-glare");
         const img = card.querySelector<HTMLElement>(".tidl-card-img img, .tidl-quick-img img");
         const isQuick = card.classList.contains("tidl-quick");
+        const isMainCard = card.classList.contains("tidl-card");
         const maxRot = isQuick ? 8 : 14;
+        const baseRotate = isQuick ? 12 : 14;
+        const baseScale = 2;
+        const rotateRange = isQuick ? 16 : 18;
 
         const tiltEl = inner ?? card;
         const tilt = createTiltQuickTo(tiltEl);
-        const imgX = img ? gsap.quickTo(img, "x", { duration: 0.6, ease: "power3.out" }) : null;
-        const imgY = img ? gsap.quickTo(img, "y", { duration: 0.6, ease: "power3.out" }) : null;
+        const useProductHover = Boolean(img && (isMainCard || isQuick));
+        const imgRotate = useProductHover ? gsap.quickTo(img!, "rotation", { duration: 0.55, ease: "power3.out" }) : null;
+        const imgLift = useProductHover && isMainCard ? gsap.quickTo(img!, "y", { duration: 0.55, ease: "power3.out" }) : null;
+        const imgScale = useProductHover ? gsap.quickTo(img!, "scale", { duration: 0.55, ease: "power3.out" }) : null;
 
         const resetTilt = () => {
           tilt.reset();
-          if (imgX && imgY) {
-            imgX(0);
-            imgY(0);
+          if (imgRotate && imgScale) {
+            imgRotate(0);
+            imgScale(1);
           }
+          if (imgLift) imgLift(0);
         };
 
         const onMove = rafThrottle((e: MouseEvent) => {
@@ -279,9 +288,10 @@ export function HeroSection() {
           const dx = px - 0.5;
           const dy = py - 0.5;
           tilt.rotateY(dx * maxRot);
-          if (imgX && imgY) {
-            imgX(dx * 22);
-            imgY(dy * 14);
+          if (imgRotate && imgScale) {
+            imgRotate(baseRotate + dx * rotateRange);
+            imgScale(baseScale);
+            if (imgLift) imgLift(-10 + dy * 8);
           }
           if (glare) {
             glare.style.setProperty("--gx", `${px * 100}%`);
@@ -292,6 +302,11 @@ export function HeroSection() {
         const onEnter = () => {
           if (!sectionActive.current) return;
           if (!isQuick) gsap.to(card, { scale: 1.012, duration: 0.5, ease: "power3.out" });
+          if (imgRotate && imgScale) {
+            imgRotate(baseRotate);
+            imgScale(baseScale);
+            if (imgLift) imgLift(-10);
+          }
           card.addEventListener("mousemove", onMove, { passive: true });
         };
 
@@ -321,19 +336,19 @@ export function HeroSection() {
     <section className="tidl-hero" ref={rootRef}>
       <style>{styles}</style>
 
-      <button type="button" className="tidl-announce" onClick={openModal}>
-        Physician-supervised longevity care, start your free assessment →
-      </button>
-
       <div className="tidl-container">
         <div className="tidl-headline-row">
           <div>
             <h1 className="tidl-headline tidl-fraunces">
-              <span className="tidl-word">The</span>{" "}
-              <span className="tidl-word">longevity</span>{" "}
-              <span className="tidl-word">care</span>{" "}
-              <span className="tidl-word">you</span>{" "}
-              <span className="tidl-word tidl-headline-accent">deserve.</span>
+              <span className="tidl-headline-line">
+                <span className="tidl-word">The</span>{" "}
+                <span className="tidl-word">longevity</span>{" "}
+                <span className="tidl-word">care</span>
+              </span>
+              <span className="tidl-headline-line">
+                <span className="tidl-word">you</span>{" "}
+                <span className="tidl-word tidl-headline-accent">deserve.</span>
+              </span>
             </h1>
           </div>
         </div>
