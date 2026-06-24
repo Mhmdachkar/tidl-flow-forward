@@ -188,7 +188,7 @@ export function AssessmentHeroSection() {
                 color: "#ffffff",
               }}
             >
-              Answer a short clinical intake in about 10 minutes — no clinic visit, no waiting room.
+              Answer a short clinical intake in about 10 minutes, no clinic visit, no waiting room.
             </h2>
           </motion.div>
 

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { TIDL_BRAND } from "@/lib/tidl-brand";
 
+import faqVisual from "@/assets/ChatGPT Image Jun 24, 2026, 04_09_35 AM.png";
+
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const FAQS = [
@@ -212,6 +214,7 @@ export function FAQSection() {
   const rootRef   = useRef<HTMLElement | null>(null);
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const headRef   = useRef<HTMLDivElement | null>(null);
+  const visualRef = useRef<HTMLDivElement | null>(null);
   const itemEls   = useRef<(HTMLDivElement | null)[]>([]);
 
   const [openId, setOpenId] = useState<number | null>(0);
@@ -236,19 +239,65 @@ export function FAQSection() {
         root.addEventListener("mousemove", onMove);
       }
 
-      if (reduced) return;
-
       // ── headline word reveal ──────────────────────────────────────────
-      const words = headRef.current?.querySelectorAll<HTMLElement>(".fq-w");
+      const head = headRef.current;
+      const words = head?.querySelectorAll<HTMLElement>(".fq-w");
       if (words?.length) {
-        gsap.set(words, { yPercent: 115, opacity: 0 });
-        gsap.to(words, {
-          yPercent: 0, opacity: 1,
-          duration: 1.0, ease: "expo.out",
-          stagger: 0.055,
-          scrollTrigger: { trigger: headRef.current, start: "top 82%" },
-        });
+        const revealHeadline = () => {
+          gsap.to(words, {
+            yPercent: 0,
+            opacity: 1,
+            duration: 1.0,
+            ease: "expo.out",
+            stagger: 0.055,
+            overwrite: "auto",
+          });
+        };
+
+        if (reduced) {
+          gsap.set(words, { yPercent: 0, opacity: 1 });
+        } else {
+          gsap.set(words, { yPercent: 115, opacity: 0 });
+          if (head) {
+            ScrollTrigger.create({
+              trigger: head,
+              start: "top 88%",
+              once: true,
+              onEnter: revealHeadline,
+            });
+            if (head.getBoundingClientRect().top < window.innerHeight * 0.88) {
+              revealHeadline();
+            }
+          }
+        }
       }
+
+      const visual = visualRef.current;
+      const visualImg = visual?.querySelector<HTMLElement>(".fq-visual-img");
+      if (visual) {
+        if (reduced) {
+          gsap.set(visual, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1 });
+          if (visualImg) gsap.set(visualImg, { yPercent: 0, scale: 1 });
+        } else {
+          gsap.set(visual, { clipPath: "inset(0% 0% 100% 0%)", opacity: 0.75 });
+          if (visualImg) gsap.set(visualImg, { yPercent: -10, scale: 1.08 });
+
+          const reveal = gsap.timeline({
+            scrollTrigger: {
+              trigger: visual,
+              start: "top 95%",
+              end: "top 12%",
+              scrub: 3.4,
+            },
+          });
+          reveal.to(visual, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1, ease: "none" }, 0);
+          if (visualImg) {
+            reveal.to(visualImg, { yPercent: 0, scale: 1, ease: "none" }, 0);
+          }
+        }
+      }
+
+      if (reduced) return;
 
       // ── eyebrow line grow ─────────────────────────────────────────────
       const eLine = root.querySelector<HTMLElement>(".fq-eyebrow-line");
@@ -278,15 +327,6 @@ export function FAQSection() {
         });
       });
 
-      // ── closing statement reveal ──────────────────────────────────────
-      const closing = root.querySelector<HTMLElement>(".fq-closing");
-      if (closing) {
-        gsap.set(closing, { opacity: 0, y: 40 });
-        gsap.to(closing, {
-          opacity: 1, y: 0, duration: 1.0, ease: "expo.out",
-          scrollTrigger: { trigger: closing, start: "top 88%" },
-        });
-      }
     }, root);
 
     return () => ctx.revert();
@@ -335,17 +375,6 @@ export function FAQSection() {
 
           {/* left — sticky headline */}
           <div className="lg:sticky lg:top-28 lg:self-start">
-            {/* eyebrow */}
-            <div className="mb-10 flex items-center gap-4">
-              <span
-                className="fq-eyebrow-line h-px w-10 flex-shrink-0"
-                style={{ background: TIDL_BRAND.accent }}
-              />
-              <span className="tidl-eyebrow" style={{ color: TIDL_BRAND.accent }}>
-                §06 — Questions
-              </span>
-            </div>
-
             <div ref={headRef}>
               <h2 className="tidl-display text-[clamp(42px,5.5vw,80px)] tracking-[-0.025em]">
                 <span className="block overflow-hidden pb-[0.05em]">
@@ -359,42 +388,24 @@ export function FAQSection() {
                 </span>
               </h2>
             </div>
-
-            {/* sub copy */}
-            <p className="tidl-body mt-8 max-w-xs text-base leading-[1.65]" style={{ color: "rgba(35,31,32,0.55)" }}>
-              Prescription treatment involves real physicians and licensed pharmacies.
-              Here is what to expect at every step.
-            </p>
-
-            {/* contact line */}
             <div
-              className="mt-10 flex items-center gap-4 pt-8"
-              style={{ borderTop: "1px solid rgba(35,31,32,0.1)" }}
+              ref={visualRef}
+              className="fq-visual mt-8 -ml-3 w-full max-w-[min(100%,26rem)] sm:-ml-4 lg:-ml-5"
+              style={{
+                border: "1px solid rgba(35,31,32,0.08)",
+                borderRadius: "2rem",
+                boxShadow: "0 24px 48px -28px rgba(35,31,32,0.35)",
+                overflow: "hidden",
+                willChange: "clip-path, opacity",
+              }}
             >
-              <div
-                className="flex h-8 w-8 flex-shrink-0 items-center justify-center"
-                style={{
-                  border: "1px solid rgba(243,195,0,0.3)",
-                  borderRadius: 4,
-                  background: "rgba(243,195,0,0.05)",
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-                  <path
-                    d="M2 4.5C2 3.4 2.9 2.5 4 2.5h6c1.1 0 2 .9 2 2v5c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-5z"
-                    stroke={TIDL_BRAND.accent} strokeWidth="1.1" fill="none"
-                  />
-                  <path d="M2 5l5 3.5L12 5" stroke={TIDL_BRAND.accent} strokeWidth="1.1" strokeLinecap="round" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[11px] font-medium" style={{ color: TIDL_BRAND.ink }}>
-                  Still have questions?
-                </p>
-                <p className="text-[11px]" style={{ color: "rgba(35,31,32,0.5)" }}>
-                  Medical questions go to a physician — never a bot.
-                </p>
-              </div>
+              <img
+                src={faqVisual}
+                alt=""
+                className="fq-visual-img block h-auto w-full object-cover object-top"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
 
@@ -454,63 +465,6 @@ export function FAQSection() {
                 Nothing on this page constitutes medical advice.
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* ── closing statement ───────────────────────────────────────── */}
-        <div className="fq-closing mt-4">
-          <div className="h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
-
-          <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-            <p className="tidl-display text-[clamp(22px,2.8vw,38px)] font-bold leading-[1.1] tracking-[-0.02em]" style={{ color: TIDL_BRAND.ink, maxWidth: 680 }}>
-              Every treatment plan is reviewed by a real doctor.{" "}
-              <span className="italic" style={{ color: TIDL_BRAND.accent }}>
-                Every order is filled by a real pharmacy.
-              </span>
-            </p>
-
-            <div className="flex flex-col gap-3 lg:items-end lg:pb-1">
-              {[
-                "Physician reviewed",
-                "Licensed pharmacy",
-                "HIPAA compliant",
-                "50 states",
-              ].map((tag) => (
-                <span
-                  key={tag}
-                  className="tidl-eyebrow flex items-center gap-2.5"
-                  style={{ color: "rgba(35,31,32,0.5)" }}
-                >
-                  <span
-                    aria-hidden
-                    style={{
-                      width: 5, height: 5,
-                      borderRadius: "50%",
-                      background: TIDL_BRAND.accent,
-                      display: "inline-block",
-                      flexShrink: 0,
-                    }}
-                  />
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-12 h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-            <span
-              className="text-[10px] font-medium uppercase"
-              style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.35)" }}
-            >
-              TIDL · FAQ
-            </span>
-            <span
-              className="text-[10px] font-medium uppercase"
-              style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.35)" }}
-            >
-              End of §06
-            </span>
           </div>
         </div>
       </div>

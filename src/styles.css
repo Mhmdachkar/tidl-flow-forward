@@ -553,7 +553,7 @@
   }
 }
 
-/* ── Scroll perf: pause ambient loops during scroll; converging arrows stay live ── */
+/* ── Scroll perf: pause ambient loops during scroll ── */
 html.tidl-scrolling .showcase-product-float--on,
 html.tidl-scrolling .showcase-figure-float--on,
 html.tidl-scrolling .showcase-card::before,

@@ -58,12 +58,6 @@ const REVIEWS = [
   },
 ] as const;
 
-const STATS = [
-  { value: 4.9,  suffix: "/5",  label: "Avg. rating",     isDecimal: true  },
-  { value: 2400, suffix: "+",   label: "Verified reviews", isDecimal: false },
-  { value: 50,   suffix: "",    label: "States served",    isDecimal: false },
-] as const;
-
 const MARQUEE_ITEMS = [
   "4.9 Stars", "Physician Reviewed", "Real Outcomes", "50 States",
   "Board-Certified", "Discreet Delivery", "Real Patients", "HIPAA Compliant",
@@ -101,7 +95,6 @@ export function ReviewsSection() {
   const rootRef    = useRef<HTMLElement | null>(null);
   const cursorRef  = useRef<HTMLDivElement | null>(null);
   const headRef    = useRef<HTMLDivElement | null>(null);
-  const statsRef    = useRef<HTMLDivElement | null>(null);
   const marqueeRef  = useRef<HTMLDivElement | null>(null);
   const reviewsRef  = useRef<HTMLDivElement | null>(null);
 
@@ -145,35 +138,6 @@ export function ReviewsSection() {
           duration: 1.0, ease: "expo.out",
           stagger: 0.055,
           scrollTrigger: { trigger: headRef.current, start: "top 82%" },
-        });
-      }
-
-      // ── eyebrow line grow ───────────────────────────────────────────────
-      const eyebrowLine = root.querySelector<HTMLElement>(".eyebrow-line");
-      if (eyebrowLine) {
-        gsap.set(eyebrowLine, { scaleX: 0, transformOrigin: "left center" });
-        gsap.to(eyebrowLine, {
-          scaleX: 1, duration: 1.0, ease: "expo.out",
-          scrollTrigger: { trigger: eyebrowLine, start: "top 90%" },
-        });
-      }
-
-      // ── stats count-up ──────────────────────────────────────────────────
-      const st = statsRef.current;
-      if (st) {
-        STATS.forEach((s, i) => {
-          const el = st.querySelector<HTMLElement>(`[data-si="${i}"]`);
-          if (!el) return;
-          const proxy = { v: 0 };
-          gsap.to(proxy, {
-            v: s.value, duration: 1.8, ease: "power3.out",
-            scrollTrigger: { trigger: st, start: "top 88%" },
-            onUpdate: () => {
-              el.textContent = s.isDecimal
-                ? proxy.v.toFixed(1)
-                : Math.round(proxy.v).toLocaleString();
-            },
-          });
         });
       }
 
@@ -246,50 +210,12 @@ export function ReviewsSection() {
 
       {/* ── header zone ─────────────────────────────────────────────────── */}
       <div className="relative z-10 mx-auto max-w-[1360px] px-6 pt-12 pb-8 sm:px-10 sm:pt-16 lg:px-16 lg:pt-24 lg:pb-10">
-
-        {/* eyebrow */}
-        <div className="mb-10 flex items-center gap-4">
-          <span
-            className="eyebrow-line h-px w-10 flex-shrink-0"
-            style={{ background: TIDL_BRAND.accent }}
-          />
-          <span className="tidl-eyebrow" style={{ color: TIDL_BRAND.accent }}>
-            §05 — Patient Outcomes
-          </span>
-        </div>
-
-        {/* headline + stats grid */}
-        <div className="grid grid-cols-1 items-end gap-12 lg:grid-cols-[1fr_auto]">
-
-          {/* headline */}
-          <div ref={headRef}>
-            <h2 className="tidl-display text-[clamp(44px,6vw,88px)] tracking-[-0.025em]">
-              <RevLine text="What happens" />
-              <RevLine text="when medicine" italic color={TIDL_BRAND.accent} />
-              <RevLine text="meets real people." />
-            </h2>
-          </div>
-
-          {/* stat counters */}
-          <div
-            ref={statsRef}
-            className="flex flex-col gap-4 pb-2 sm:flex-row sm:gap-8 lg:flex-col lg:gap-6"
-          >
-            {STATS.map((s, i) => (
-              <div key={s.label}>
-                <p className="font-display text-[clamp(28px,3vw,44px)] font-bold leading-none tracking-[-0.02em]" style={{ color: TIDL_BRAND.accent }}>
-                  <span data-si={i}>0</span>
-                  {s.suffix}
-                </p>
-                <p
-                  className="mt-1 text-[10px] uppercase"
-                  style={{ letterSpacing: "0.22em", color: "rgba(35,31,32,0.5)" }}
-                >
-                  {s.label}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div ref={headRef}>
+          <h2 className="tidl-display text-[clamp(44px,6vw,88px)] tracking-[-0.025em]">
+            <RevLine text="What happens" />
+            <RevLine text="when medicine" italic color={TIDL_BRAND.accent} />
+            <RevLine text="meets real people." />
+          </h2>
         </div>
       </div>
 
@@ -379,24 +305,6 @@ export function ReviewsSection() {
       </div>
       )}
 
-      {/* ── footer rule ─────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-[1360px] px-6 pb-10 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14">
-        <div className="mt-10 h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-          <span
-            className="text-[10px] font-medium uppercase"
-            style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.4)" }}
-          >
-            TIDL · Patient Outcomes
-          </span>
-          <span
-            className="text-[10px] font-medium uppercase"
-            style={{ letterSpacing: "0.28em", color: "rgba(35,31,32,0.4)" }}
-          >
-            End of §05
-          </span>
-        </div>
-      </div>
     </section>
   );
 }

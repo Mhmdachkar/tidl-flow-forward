@@ -23,7 +23,7 @@ const styles = `
    Recover   #f3c300   gold (brand accent)
    ────────────────────────────────────────────────────────── */
 
-.tidl-hero { font-family: 'Archivo', system-ui, sans-serif; background: #FAFAF7; color: #231f20; min-height: 100svh; }
+.tidl-hero { font-family: 'Archivo', system-ui, sans-serif; background: #FAFAF7; color: #231f20; }
 .tidl-hero * { box-sizing: border-box; }
 .tidl-main-grid, .tidl-quick-grid { perspective: 1400px; perspective-origin: 50% 30%; }
 .tidl-tilt { transform-style: preserve-3d; }
@@ -41,20 +41,18 @@ const styles = `
 .tidl-announce { width: 100%; background: #f3c300; color: #231f20; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; border: none; cursor: pointer; transition: filter .2s ease; }
 .tidl-announce:hover { filter: brightness(0.93); }
 
-.tidl-container { max-width: 1280px; margin: 0 auto; padding: 40px 20px 64px; }
-@media (min-width: 640px) { .tidl-container { padding: 56px 24px 80px; } }
+.tidl-container { max-width: 1280px; margin: 0 auto; padding: 40px 20px 20px; }
+@media (min-width: 640px) { .tidl-container { padding: 56px 24px 28px; } }
 
 .tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: end; margin-bottom: 20px; }
 @media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; gap: 32px; margin-bottom: 48px; } }
 /* Archivo Narrow Bold — official brand headline */
 .tidl-headline { font-size: clamp(2rem, 9vw, 5rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 700; letter-spacing: -0.01em; line-height: 0.96; }
 /* em: italic Archivo Narrow Bold in brand gold */
-.tidl-headline em { font-style: italic; font-weight: 700; color: #f3c300; }
+.tidl-word { display: inline-block; }
+.tidl-headline em { font-style: normal; font-weight: 700; color: inherit; }
+.tidl-headline-accent { color: #f3c300; font-weight: 700; }
 .tidl-sub { margin-top: 18px; font-size: 15px; color: #6b6a6b; max-width: 540px; font-family: 'Archivo', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
-.tidl-hero-visual { display: none; justify-content: center; align-items: center; min-height: 220px; }
-@media (min-width: 900px) { .tidl-hero-visual { display: flex; } }
-.tidl-hero-visual img { max-height: 220px; width: auto; filter: drop-shadow(0 30px 40px rgba(35,31,32,0.14)); transform: rotate(-12deg); }
-@media (min-width: 768px) { .tidl-hero-visual img { max-height: 280px; } }
 
 .tidl-main-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
 @media (min-width: 640px) { .tidl-main-grid { gap: 14px; margin-bottom: 16px; } }
@@ -190,8 +188,6 @@ export function HeroSection() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const cards = Array.from(root.querySelectorAll<HTMLElement>(".tidl-tilt"));
     const headline = root.querySelector<HTMLElement>(".tidl-headline");
-    const sub = root.querySelector<HTMLElement>(".tidl-sub");
-    const heroVisual = root.querySelector<HTMLElement>(".tidl-hero-visual");
     const sectionActive = { current: true };
     const scrollGate = createScrollGate();
     const hoverParallax = canUseHoverParallax();
@@ -206,15 +202,10 @@ export function HeroSection() {
 
     const ctx = gsap.context(() => {
       if (reduced) {
-        gsap.set([...cards, headline, sub, heroVisual].filter(Boolean) as HTMLElement[], { clearProps: "all", opacity: 1 });
+        gsap.set([...cards, headline].filter(Boolean) as HTMLElement[], { clearProps: "all", opacity: 1 });
         return;
       }
 
-      if (headline) {
-        const html = headline.innerHTML;
-        const wrapped = html.replace(/(\S+)/g, '<span class="tidl-word" style="display:inline-block">$1</span>');
-        headline.innerHTML = wrapped;
-      }
       const words = root.querySelectorAll<HTMLElement>(".tidl-word");
       const mainCards = cards.filter((c) => c.classList.contains("tidl-card"));
       const quickCards = cards.filter((c) => c.classList.contains("tidl-quick"));
@@ -222,7 +213,6 @@ export function HeroSection() {
       const creamCard = mainCards.find((c) => c.classList.contains("tidl-card-cream"));
 
       gsap.set(words, { yPercent: 110, opacity: 0, rotateX: -60, transformOrigin: "0% 100%" });
-      gsap.set([sub, heroVisual].filter(Boolean) as HTMLElement[], { opacity: 0, y: 24 });
       if (darkCard) {
         gsap.set(darkCard, { opacity: 0, xPercent: -120, rotateY: 18, transformOrigin: "100% 50%" });
       }
@@ -238,8 +228,6 @@ export function HeroSection() {
       const quickDur = isMobile ? 0.9 : 1.4;
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
       tl.to(words, { yPercent: 0, opacity: 1, rotateX: 0, duration: wordDur, stagger: isMobile ? 0.06 : 0.1 })
-        .to(sub, { opacity: 1, y: 0, duration: isMobile ? 0.6 : 0.9 }, "-=0.8")
-        .to(heroVisual, { opacity: 1, y: 0, duration: isMobile ? 0.7 : 1.0 }, "-=0.9")
         .to(entranceCards, { opacity: 1, xPercent: 0, rotateY: 0, duration: cardDur, ease: "expo.out", stagger: 0.18 }, "-=0.4")
         .fromTo(entranceCards, { scale: 1.03 }, { scale: 1, duration: isMobile ? 0.7 : 1.0, ease: "elastic.out(1, 0.6)" }, "-=0.6")
         .to(quickCards, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: quickDur, ease: "back.out(1.4)", stagger: { each: isMobile ? 0.12 : 0.18, from: "start" } }, "-=0.6");
@@ -324,14 +312,12 @@ export function HeroSection() {
         <div className="tidl-headline-row">
           <div>
             <h1 className="tidl-headline tidl-fraunces">
-              The longevity care <em>you deserve.</em>
+              <span className="tidl-word">The</span>{" "}
+              <span className="tidl-word">longevity</span>{" "}
+              <span className="tidl-word">care</span>{" "}
+              <span className="tidl-word">you</span>{" "}
+              <span className="tidl-word tidl-headline-accent">deserve.</span>
             </h1>
-            <p className="tidl-sub">
-              Clinical diagnostics. Physician-guided therapy. Delivered to your door.
-            </p>
-          </div>
-          <div className="tidl-hero-visual" aria-hidden="true">
-            <img src={product3} alt="" fetchPriority="high" decoding="async" />
           </div>
         </div>
 

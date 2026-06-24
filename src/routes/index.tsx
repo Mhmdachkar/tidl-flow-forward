@@ -4,7 +4,6 @@ import { useLenisScroll } from "@/lib/use-lenis";
 
 import { NavSection } from "@/components/sections/NavSection";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { TrustSection } from "@/components/sections/TrustSection";
 import { DeferredProductShowcase } from "@/components/sections/DeferredProductShowcase";
 import { AssessmentHeroSection } from "@/components/sections/AssessmentHeroSection";
 import { TIDL_BRAND_STYLES } from "@/lib/tidl-brand";
@@ -48,10 +47,6 @@ function Index() {
 
       <NavSection />
       <HeroSection />
-
-      <div className="flex flex-col gap-2 px-2 pb-2">
-        <div className="overflow-hidden bg-surface"><TrustSection /></div>
-      </div>
 
       <DeferredProductShowcase />
 

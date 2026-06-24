@@ -151,23 +151,17 @@ export function ProductShowcaseSection() {
 
       cards.forEach((card) => {
         const media = card.querySelector<HTMLElement>(".showcase-card-media");
-        const glow = card.querySelector<HTMLElement>(".showcase-card-glow");
         const tilt = createTiltQuickTo(card);
 
         const onCardMove = rafThrottle((e: PointerEvent) => {
           if (!sectionActive.current || scrollGate.isScrolling()) return;
           const r = card.getBoundingClientRect();
           const px = (e.clientX - r.left) / r.width - 0.5;
-          const py = (e.clientY - r.top) / r.height - 0.5;
           tilt.rotateY(px * 12);
-          if (glow) {
-            glow.style.background = `radial-gradient(circle at ${50 + px * 40}% ${50 + py * 40}%, color-mix(in oklab, var(--showcase-beam-core) 75%, transparent), transparent 62%)`;
-          }
         });
 
         const onEnter = () => {
           gsap.to(media, { y: -12, scale: 1.08, duration: 0.55, ease: "power3.out" });
-          gsap.to(glow, { opacity: 1, duration: 0.35, ease: "power2.out" });
           card.addEventListener("pointermove", onCardMove, { passive: true });
         };
 
@@ -175,7 +169,6 @@ export function ProductShowcaseSection() {
           card.removeEventListener("pointermove", onCardMove);
           tilt.reset();
           gsap.to(media, { y: 0, scale: 1, duration: 0.55, ease: "power3.out" });
-          gsap.to(glow, { opacity: 0, duration: 0.35, ease: "power2.out" });
         };
 
         card.addEventListener("pointerenter", onEnter);
@@ -226,78 +219,11 @@ export function ProductShowcaseSection() {
         .showcase-beam-stage {
           contain: layout style;
         }
-        .showcase-arrows-gpu,
         .showcase-product-gpu {
           transform: translate3d(0, 0, 0);
           backface-visibility: hidden;
         }
-        .showcase-arrow {
-          position: absolute;
-          width: clamp(72px, 11vw, 118px);
-          opacity: 0;
-          transform: rotate(var(--arrow-rot, 0deg)) translate3d(0, 0, 0);
-          transform-origin: center center;
-          backface-visibility: hidden;
-        }
-        .showcase-arrows {
-          color: #f3c300;
-          filter: drop-shadow(0 0 8px rgba(243, 195, 0, 0.45));
-        }
         .showcase-figure-float--on {
-          backface-visibility: hidden;
-        }
-        .showcase-arrow--visible {
-          opacity: 0.92;
-        }
-        .showcase-arrow--visible:not(.showcase-arrow--live) .showcase-arrow__shaft {
-          stroke-dashoffset: 0;
-        }
-        .showcase-arrow__svg {
-          display: block;
-          width: 100%;
-          height: auto;
-          overflow: visible;
-        }
-        .showcase-arrow__shaft {
-          stroke-dasharray: 74;
-          stroke-dashoffset: 74;
-        }
-        .showcase-arrow__trail {
-          stroke-dasharray: 6 10;
-          stroke-dashoffset: 0;
-          opacity: 0.25;
-        }
-        .showcase-arrow--live {
-          animation:
-            showcaseArrowReveal 0.85s cubic-bezier(0.16, 1, 0.3, 1) var(--arrow-delay, 0s) forwards,
-            showcaseArrowDrift 3.2s ease-in-out calc(var(--arrow-delay, 0s) + 1s) infinite,
-            showcaseArrowGlow 2.4s ease-in-out calc(var(--arrow-delay, 0s) + 0.6s) infinite;
-        }
-        .showcase-arrow--live .showcase-arrow__shaft {
-          animation: showcaseArrowDraw 1.1s cubic-bezier(0.16, 1, 0.3, 1) var(--arrow-delay, 0s) forwards;
-        }
-        .showcase-arrow--live .showcase-arrow__trail {
-          animation: showcaseArrowFlow 1.6s linear calc(var(--arrow-delay, 0s) + 0.9s) infinite;
-        }
-        @keyframes showcaseArrowReveal {
-          from { opacity: 0; transform: rotate(var(--arrow-rot, 0deg)) translate3d(18px, 12px, 0) scale(0.88); }
-          to   { opacity: 0.92; transform: rotate(var(--arrow-rot, 0deg)) translate3d(0, 0, 0) scale(1); }
-        }
-        @keyframes showcaseArrowDraw {
-          to { stroke-dashoffset: 0; }
-        }
-        @keyframes showcaseArrowDrift {
-          0%, 100% { transform: rotate(var(--arrow-rot, 0deg)) translate3d(0, 0, 0); }
-          50%      { transform: rotate(var(--arrow-rot, 0deg)) translate3d(-10px, 8px, 0); }
-        }
-        @keyframes showcaseArrowGlow {
-          0%, 100% { opacity: 0.55; }
-          50%      { opacity: 1; }
-        }
-        @keyframes showcaseArrowFlow {
-          to { stroke-dashoffset: -32; }
-        }
-        .showcase-product-float--on {
           animation: showcaseProductFloat 5.2s ease-in-out infinite;
         }
         .showcase-product-float {
@@ -427,7 +353,7 @@ export function ProductShowcaseSection() {
         }
       `}</style>
 
-      <section className="relative z-20 px-5 pt-20 md:px-10 lg:px-14">
+      <section className="relative z-20 px-5 pb-2 pt-6 md:px-10 md:pt-10 lg:px-14">
         <ShowcaseCinematicBeam>
           <div className="mx-auto max-w-7xl text-center">
             <h2
@@ -448,18 +374,6 @@ export function ProductShowcaseSection() {
               productRef={productRef}
             />
 
-            <p
-              className="showcase-body mx-auto max-w-xl px-4"
-              style={{
-                color: "var(--showcase-ink)",
-                fontSize: "0.95rem",
-                lineHeight: 1.7,
-                marginTop: "-1.5rem",
-              }}
-            >
-              Physician-supervised protocols designed to extend healthspan, with more pathways than ever.
-            </p>
-
             <button
               type="button"
               onClick={openModal}
@@ -479,38 +393,23 @@ export function ProductShowcaseSection() {
         </ShowcaseCinematicBeam>
       </section>
 
-      <section className="relative z-20 px-5 pb-8 pt-18 md:px-10 lg:px-14">
+      <section className="relative z-20 px-5 pb-8 pt-4 md:px-10 md:pt-6 lg:px-14">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <span
-                className="showcase-label inline-flex rounded-full px-4 py-2"
-                style={{
-                  background: "var(--showcase-chip-bg)",
-                  color: "var(--showcase-ink-strong)",
-                  border: "1px solid var(--showcase-chip-border)",
-                }}
-              >
-                Product lineup
-              </span>
-              <h3
-                className="showcase-headline mt-4"
-                style={{
-                  color: "var(--showcase-ink-strong)",
-                  fontSize: "clamp(2rem, 4vw, 3.25rem)",
-                }}
-              >
-                Four precision-built products.
-              </h3>
-            </div>
-            <p className="showcase-body max-w-md" style={{ color: "var(--showcase-ink)", lineHeight: 1.7 }}>
-              Each card is suspended on the same luminous field so the products feel physically lit, not simply placed.
-            </p>
+          <div className="mb-6 text-center">
+            <h3
+              className="showcase-headline"
+              style={{
+                color: "var(--showcase-ink-strong)",
+                fontSize: "clamp(2rem, 4vw, 3.25rem)",
+              }}
+            >
+              Four precision-built products.
+            </h3>
           </div>
 
           {/* Single container: swipe-scroll on mobile, 4-col grid on desktop */}
           <div ref={cardsRef} className="showcase-card-responsive">
-            {SHOWCASE_PRODUCTS.map((product, index) => (
+            {SHOWCASE_PRODUCTS.map((product) => (
               <button
                 key={product.slug}
                 type="button"
@@ -523,21 +422,7 @@ export function ProductShowcaseSection() {
                     "0 24px 70px color-mix(in oklab, var(--showcase-shadow-soft) 24%, transparent), inset 0 1px 0 color-mix(in oklab, var(--showcase-surface) 85%, transparent)",
                 }}
               >
-                <div
-                  className="showcase-card-glow absolute inset-0 opacity-0 transition-opacity duration-300"
-                  style={{ background: "radial-gradient(circle at 50% 50%, transparent, transparent 60%)" }}
-                />
-                <div className="showcase-card-badges relative z-10 flex items-center justify-between gap-1">
-                  <span
-                    className="showcase-card-badge rounded-full px-3 py-1 text-xs"
-                    style={{
-                      background: "var(--showcase-badge-bg)",
-                      color: "var(--showcase-badge-foreground)",
-                      border: "1px solid var(--showcase-badge-border)",
-                    }}
-                  >
-                    0{index + 1}
-                  </span>
+                <div className="showcase-card-badges relative z-10 flex items-center justify-end">
                   <span
                     className="showcase-card-badge rounded-full px-3 py-1 text-xs"
                     style={{
@@ -551,13 +436,6 @@ export function ProductShowcaseSection() {
                 </div>
 
                 <div className="showcase-card-media-wrap relative z-10 mt-5 flex min-h-[18rem] items-center justify-center overflow-hidden rounded-[1.6rem]">
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `radial-gradient(circle at 50% 40%, color-mix(in oklab, ${product.accent} 28%, var(--showcase-surface)) 0%, transparent 58%)`,
-                      filter: "blur(10px)",
-                    }}
-                  />
                   <img
                     className="showcase-card-media relative z-10"
                     src={product.image}
@@ -600,18 +478,8 @@ export function ProductShowcaseSection() {
       <section ref={mediaRef} className="relative z-20 px-5 pb-24 pt-10 md:px-10 lg:px-14">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 max-w-2xl">
-            <span
-              className="showcase-label inline-flex rounded-full px-4 py-2"
-              style={{
-                background: "var(--showcase-chip-bg)",
-                color: "var(--showcase-ink-strong)",
-                border: "1px solid var(--showcase-chip-border)",
-              }}
-            >
-              Clinical delivery
-            </span>
             <h3
-              className="showcase-headline mt-4"
+              className="showcase-headline"
               style={{
                 color: "var(--showcase-ink-strong)",
                 fontSize: "clamp(2rem, 4vw, 3.2rem)",
@@ -638,13 +506,7 @@ export function ProductShowcaseSection() {
                 decoding="async"
                 style={{ maxHeight: "320px" }}
               />
-              <p
-                className="showcase-label mt-6"
-                style={{ color: "var(--showcase-ink-strong)" }}
-              >
-                Clinical delivery
-              </p>
-              <p className="showcase-body mt-2 text-center text-sm" style={{ color: "var(--showcase-ink)" }}>
+              <p className="showcase-body mt-6 text-center text-sm" style={{ color: "var(--showcase-ink)" }}>
                 Cold-chain pharmacy dispatch. Every order physician-approved.
               </p>
             </article>

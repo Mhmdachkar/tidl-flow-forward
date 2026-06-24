@@ -115,25 +115,13 @@ export function EducationSection() {
     >
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
         {/* header */}
-        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="edu-head mb-4 flex items-center gap-4">
-              <span className="tidl-eyebrow" style={{ color: TIDL_BRAND.accent }}>
-                §09 — Education
-              </span>
-              <span className="h-px w-16" style={{ background: "rgba(35,31,32,0.25)" }} />
-            </div>
-            <h2 className="edu-head tidl-display text-[clamp(30px,4.4vw,58px)] tracking-[-0.025em]">
-              Your pen,{" "}
-              <span className="italic" style={{ color: TIDL_BRAND.accent }}>
-                made simple.
-              </span>
-            </h2>
-          </div>
-          <p className="edu-head tidl-body max-w-[320px] text-base leading-[1.55]" style={{ color: "rgba(35,31,32,0.62)" }}>
-            A short walkthrough on using your pen, dosing, and storage — sent to you when
-            your order ships.
-          </p>
+        <div className="mb-10 text-center">
+          <h2 className="edu-head tidl-display text-[clamp(30px,4.4vw,58px)] tracking-[-0.025em]">
+            Your pen,{" "}
+            <span className="italic" style={{ color: TIDL_BRAND.accent }}>
+              made simple.
+            </span>
+          </h2>
         </div>
 
         {/* video card */}
@@ -215,11 +203,6 @@ export function EducationSection() {
             </div>
           ))}
         </div>
-
-        <p className="mt-6 text-[11px] leading-relaxed" style={{ color: "rgba(35,31,32,0.45)" }}>
-          For education only — not medical advice. Always follow the dosing and storage
-          instructions provided by your physician and pharmacy.
-        </p>
       </div>
     </section>
   );

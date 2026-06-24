@@ -10,86 +10,15 @@ import {
 import {
   canUseHoverParallax,
   rafThrottle,
-  useSectionInView,
 } from "@/lib/section-performance";
 
 const EASE_LUX = [0.16, 1, 0.3, 1] as const;
 
-/** Arrows placed around the stage, rotated to converge on the hero product (~50% / 42%). */
-const CONVERGING_ARROWS = [
-  { id: "tr-1", left: "84%", top: "7%", rotate: 142, delay: 0 },
-  { id: "tr-2", left: "93%", top: "20%", rotate: 162, delay: 0.1 },
-  { id: "tr-3", left: "91%", top: "34%", rotate: 182, delay: 0.2 },
-  { id: "tr-4", left: "86%", top: "48%", rotate: 198, delay: 0.3 },
-  { id: "tl-1", left: "9%", top: "9%", rotate: 38, delay: 0.05 },
-  { id: "tl-2", left: "3%", top: "24%", rotate: 18, delay: 0.15 },
-  { id: "tl-3", left: "6%", top: "40%", rotate: -2, delay: 0.25 },
-  { id: "bl-1", left: "12%", top: "56%", rotate: -22, delay: 0.35 },
-  { id: "br-1", left: "80%", top: "60%", rotate: 212, delay: 0.28 },
-] as const;
-
-function ShowcaseConvergingArrows({ visible, animate }: { visible: boolean; animate: boolean }) {
-  return (
-    <div className="showcase-arrows pointer-events-none absolute inset-0 z-[1] overflow-hidden showcase-arrows-gpu" aria-hidden>
-      {CONVERGING_ARROWS.map((arrow) => (
-        <div
-          key={arrow.id}
-          className={`showcase-arrow${visible ? " showcase-arrow--visible" : ""}${animate ? " showcase-arrow--live" : ""}`}
-          style={
-            {
-              left: arrow.left,
-              top: arrow.top,
-              "--arrow-rot": `${arrow.rotate}deg`,
-              "--arrow-delay": `${arrow.delay}s`,
-            } as React.CSSProperties
-          }
-        >
-          <svg viewBox="0 0 100 22" className="showcase-arrow__svg" fill="none" aria-hidden>
-            <path
-              className="showcase-arrow__trail"
-              d="M4 11 H78"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-            <path
-              className="showcase-arrow__shaft"
-              d="M4 11 H78"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-            <path className="showcase-arrow__head" d="M78 11 L64 4.5 V17.5 Z" fill="currentColor" />
-          </svg>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 type ShowcaseCinematicBeamProps = { children: ReactNode };
 
 export function ShowcaseCinematicBeam({ children }: ShowcaseCinematicBeamProps) {
-  const stageRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
-  const inView = useSectionInView(stageRef);
-
-  const arrowsVisible = inView;
-  const arrowsAnimate = inView && !reduced;
-
   return (
-    <div
-      ref={stageRef}
-      className="showcase-beam-stage relative isolate min-h-[70svh] max-h-[52rem] md:min-h-[58rem] md:max-h-none"
-    >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: inView ? 1 : 0 }}
-        transition={{ duration: 0.9, ease: EASE_LUX }}
-      >
-        <ShowcaseConvergingArrows visible={arrowsVisible} animate={arrowsAnimate} />
-      </motion.div>
-
+    <div className="showcase-beam-stage relative isolate">
       <div className="relative z-10">{children}</div>
     </div>
   );
@@ -170,7 +99,6 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
         </div>
       </motion.div>
 
-      {/* Soft gold pool under product — no black cast shadows */}
       <div
         aria-hidden
         className="pointer-events-none absolute z-[1]"
