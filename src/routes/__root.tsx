@@ -17,7 +17,7 @@ import { AuthModalProvider } from "@/providers/auth-modal-provider";
 import { AuthModal } from "@/components/auth/AuthModal";
 
 import appCss from "../styles.css?url";
-import favicon from "@/assets/TIDL_LOGO_BLACK_WHITE.jpg?url";
+import favicon from "@/assets/favicon.ico?url";
 
 function NotFoundComponent() {
   return (
@@ -91,8 +91,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Personalised, physician-supervised longevity care." },
     ],
     links: [
-      { rel: "icon", href: favicon, type: "image/jpeg" },
-      { rel: "shortcut icon", href: favicon, type: "image/jpeg" },
+      { rel: "icon", href: favicon, type: "image/x-icon" },
+      { rel: "shortcut icon", href: favicon, type: "image/x-icon" },
       { rel: "apple-touch-icon", href: favicon },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
