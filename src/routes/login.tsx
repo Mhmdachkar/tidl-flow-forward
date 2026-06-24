@@ -10,7 +10,7 @@ const loginSearchSchema = z.object({
 export const Route = createFileRoute("/login")({
   validateSearch: (search) => loginSearchSchema.parse(search),
   head: () => ({
-    meta: [{ title: "Sign In — TIDL" }],
+    meta: [{ title: "Sign In · TIDL" }],
   }),
   component: LoginPage,
 });

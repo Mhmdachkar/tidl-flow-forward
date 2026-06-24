@@ -18,7 +18,7 @@ export const Route = createFileRoute("/quiz")({
   validateSearch: (search) => quizSearchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Start Assessment — TIDL" },
+      { title: "Start Assessment · TIDL" },
       {
         name: "description",
         content:

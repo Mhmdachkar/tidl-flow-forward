@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WeightLossRouteImport } from './routes/weight-loss'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as RecoveryRouteImport } from './routes/recovery'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as PerformanceRouteImport } from './routes/performance'
@@ -38,6 +39,11 @@ const WeightLossRoute = WeightLossRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecoveryRoute = RecoveryRouteImport.update({
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/performance': typeof PerformanceRoute
   '/quiz': typeof QuizRoute
   '/recovery': typeof RecoveryRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/weight-loss': typeof WeightLossRoute
   '/account/orders': typeof AccountOrdersRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/performance': typeof PerformanceRoute
   '/quiz': typeof QuizRoute
   '/recovery': typeof RecoveryRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/weight-loss': typeof WeightLossRoute
   '/account/orders': typeof AccountOrdersRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/performance': typeof PerformanceRoute
   '/quiz': typeof QuizRoute
   '/recovery': typeof RecoveryRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/weight-loss': typeof WeightLossRoute
   '/account/orders': typeof AccountOrdersRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/quiz'
     | '/recovery'
+    | '/search'
     | '/signup'
     | '/weight-loss'
     | '/account/orders'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/quiz'
     | '/recovery'
+    | '/search'
     | '/signup'
     | '/weight-loss'
     | '/account/orders'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/performance'
     | '/quiz'
     | '/recovery'
+    | '/search'
     | '/signup'
     | '/weight-loss'
     | '/account/orders'
@@ -277,6 +289,7 @@ export interface RootRouteChildren {
   PerformanceRoute: typeof PerformanceRoute
   QuizRoute: typeof QuizRoute
   RecoveryRoute: typeof RecoveryRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   WeightLossRoute: typeof WeightLossRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -296,6 +309,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recovery': {
@@ -461,6 +481,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerformanceRoute: PerformanceRoute,
   QuizRoute: QuizRoute,
   RecoveryRoute: RecoveryRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   WeightLossRoute: WeightLossRoute,
   ProductsSlugRoute: ProductsSlugRoute,

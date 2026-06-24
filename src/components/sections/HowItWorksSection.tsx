@@ -22,7 +22,7 @@ const STEPS = [
     title: "Receive\nPrescription",
     body: "If clinically appropriate, a personalised prescription is written to your protocol.",
     detail:
-      "Your protocol is tailored to your biology and goals — dosing, titration schedule and supporting guidance are written specifically for you, never one-size-fits-all.",
+      "Your protocol is tailored to your biology and goals. dosing, titration schedule and supporting guidance are written specifically for you, never one-size-fits-all.",
     points: ["Personalised dosing", "Clear titration schedule", "Adjusted as you progress"],
     image:
       "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=800&h=1100&q=80&fit=crop",
@@ -44,7 +44,7 @@ const STEPS = [
     title: "Delivered\nto Your Door",
     body: "Cold-chain shipped directly to your home. Ongoing physician-supervised care included.",
     detail:
-      "Temperature-controlled shipping keeps every dose stable in transit. Your care doesn't stop at delivery — ongoing physician supervision and refills are built in.",
+      "Temperature-controlled shipping keeps every dose stable in transit. Your care doesn't stop at delivery. ongoing physician supervision and refills are built in.",
     points: ["Cold-chain, tracked shipping", "Discreet to your door", "Ongoing supervision & refills"],
     image:
       "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=1100&q=80&fit=crop",
@@ -303,7 +303,7 @@ export function HowItWorksSection() {
                 className="text-[10px] font-medium uppercase"
                 style={{ letterSpacing: "0.32em", color: ACCENT }}
               >
-                §04 — How it works
+                §04. How it works
               </span>
               <span className="h-px w-16" style={{ background: "rgba(22,22,22,0.25)" }} />
             </div>
@@ -327,7 +327,7 @@ export function HowItWorksSection() {
             className="hiw-head max-w-[300px] text-[14px] leading-[1.55]"
             style={{ color: "rgba(22,22,22,0.62)" }}
           >
-            From physician review to cold-chain delivery — the journey runs on its own.
+            From physician review to cold-chain delivery, the journey runs on its own.
             Hover any card for the detail.
           </p>        </div>
       </div>

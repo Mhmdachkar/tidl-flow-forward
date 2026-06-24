@@ -21,11 +21,11 @@ export function WhyPenSection({ showPen = true }: WhyPenSectionProps) {
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
               TIDL&apos;s pre-dosed injection pens remove the complexity of traditional
-              protocols — making physician-guided care more accessible for first-time patients.
+              protocols. making physician-guided care more accessible for first-time patients.
             </p>
             <ul className="mt-8 space-y-4">
               {[
-                "Pre-measured doses — no vials or syringes to mix",
+                "Pre-measured doses. no vials or syringes to mix",
                 "Designed for easier at-home use",
                 "Safer, more consistent experience for beginners",
                 "Shipped with clear physician-approved instructions",

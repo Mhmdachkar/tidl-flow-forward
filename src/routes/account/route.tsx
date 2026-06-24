@@ -6,7 +6,7 @@ import { useAuth } from "@/providers/auth-provider";
 
 export const Route = createFileRoute("/account")({
   head: () => ({
-    meta: [{ title: "Your Account — TIDL" }],
+    meta: [{ title: "Your Account · TIDL" }],
   }),
   component: AccountRoute,
 });

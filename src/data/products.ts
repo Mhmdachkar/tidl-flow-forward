@@ -11,7 +11,7 @@ const SHARED_REVIEWS = [
     name: "Sarah M.",
     location: "Austin, TX",
     quote:
-      "The process felt clinical and thoughtful — not like ordering something online. My physician reviewed everything before anything shipped.",
+      "The process felt clinical and thoughtful, not like ordering something online. My physician reviewed everything before anything shipped.",
     rating: 5,
   },
   {
@@ -152,7 +152,7 @@ export const PRODUCTS: Product[] = [
       {
         question: "Is this a supplement?",
         answer:
-          "No. TIDL provides physician-guided prescription care — not over-the-counter supplements.",
+          "No. TIDL provides physician-guided prescription care, not over-the-counter supplements.",
       },
     ],
     reviews: SHARED_REVIEWS,
@@ -206,7 +206,7 @@ export const PRODUCTS: Product[] = [
       {
         question: "Is TIDL Core a daily supplement?",
         answer:
-          "No. TIDL Core is a physician-guided care protocol — not an over-the-counter supplement.",
+          "No. TIDL Core is a physician-guided care protocol, not an over-the-counter supplement.",
       },
       {
         question: "Who is this for?",

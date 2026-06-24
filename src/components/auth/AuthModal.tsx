@@ -360,7 +360,7 @@ export function AuthModal() {
                 Get the most out of your care
               </p>
               <p className="mt-1.5 text-[13px] leading-relaxed text-[#5C4A12]">
-                Track your treatment, message your care team, and manage refills — all in one secure place.
+                Track your treatment, message your care team, and manage refills. all in one secure place.
               </p>
             </div>
 

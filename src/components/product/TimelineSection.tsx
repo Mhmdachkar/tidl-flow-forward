@@ -11,7 +11,7 @@ const DEFAULT_TIMELINE: NonNullable<Product["timeline"]> = [
     period: "Week 5–8",
     title: "Finding your rhythm",
     description:
-      "Your physician reviews how you're responding and adjusts your plan if it's clinically appropriate — no fixed program, just personalised care.",
+      "Your physician reviews how you're responding and adjusts your plan if it's clinically appropriate. no fixed program, just personalised care.",
   },
   {
     period: "Week 9+",

@@ -20,7 +20,7 @@ const FAQS = [
   {
     id: 2,
     q: "Who reviews my assessment?",
-    a: "Every assessment is reviewed by a board-certified physician — not an algorithm, not AI, not a chatbot. Medical questions are escalated to the physician team. No automated system makes prescription decisions.",
+    a: "Every assessment is reviewed by a board-certified physician, not an algorithm, not AI, not a chatbot. Medical questions are escalated to the physician team. No automated system makes prescription decisions.",
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ const FAQS = [
   {
     id: 4,
     q: "Where is my medication prepared?",
-    a: "All medication is prepared by licensed pharmacy partners — never a third-party warehouse. Compounded treatments are produced in USP 797 and USP 795 compliant facilities under sterile conditions.",
+    a: "All medication is prepared by licensed pharmacy partners, never a third-party warehouse. Compounded treatments are produced in USP 797 and USP 795 compliant facilities under sterile conditions.",
   },
   {
     id: 5,

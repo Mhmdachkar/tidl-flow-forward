@@ -10,7 +10,7 @@ const signupSearchSchema = z.object({
 export const Route = createFileRoute("/signup")({
   validateSearch: (search) => signupSearchSchema.parse(search),
   head: () => ({
-    meta: [{ title: "Create Account — TIDL" }],
+    meta: [{ title: "Create Account · TIDL" }],
   }),
   component: SignupPage,
 });

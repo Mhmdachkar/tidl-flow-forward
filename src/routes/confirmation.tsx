@@ -13,7 +13,7 @@ const confirmationSearchSchema = z.object({
 export const Route = createFileRoute("/confirmation")({
   validateSearch: (search) => confirmationSearchSchema.parse(search),
   head: () => ({
-    meta: [{ title: "Order Confirmed — TIDL" }],
+    meta: [{ title: "Order Confirmed · TIDL" }],
   }),
   component: ConfirmationPage,
 });

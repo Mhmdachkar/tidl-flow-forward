@@ -5,7 +5,8 @@ import { observeSectionVisibility } from "@/lib/section-performance";
 import { TIDL_BRAND } from "@/lib/tidl-brand";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-// TODO: Replace with real patient reviews before launch
+// Section implementation: done (home ReviewsSection is live).
+// Content: awaiting real patient reviews, photos, and social feed from client.
 
 const REVIEWS = [
   {
@@ -13,7 +14,7 @@ const REVIEWS = [
     name: "Sarah M.", age: 34,
     tag: "Weight Loss",
     outcome: "−18 lbs in 12 weeks",
-    quote: "First time I felt a doctor was actually looking at my case — not just approving a form.",
+    quote: "First time I felt a doctor was actually looking at my case, not just approving a form.",
     stars: 5,
   },
   {

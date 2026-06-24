@@ -11,6 +11,12 @@ import { getScrollPosition, hasLenis } from "@/lib/lenis-store";
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
 
+const DISCOVER_ITEM = {
+  title: "Find your treatment",
+  description: "Describe your goal, grounded recommendations for physician-guided care",
+  to: "/search" as const,
+};
+
 const EXPLORE_ITEMS = [
   { title: "Weight Loss",      description: "Personalized treatment plans and physician-guided options", to: "/weight-loss" as const },
   { title: "Longevity",        description: "Support long-term wellness and healthy aging",              to: "/longevity"   as const },
@@ -323,7 +329,27 @@ export function NavSection() {
 
         {/* Scrollable nav links */}
         <nav data-lenis-prevent className="no-scrollbar flex-1 overflow-y-auto overscroll-contain px-7 pb-10 pt-6">
-          <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">Explore</p>
+          <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">Discover</p>
+          <ul className="space-y-3">
+            <li>
+              <Link
+                to={DISCOVER_ITEM.to}
+                onClick={() => setMenuOpen(false)}
+                className={`${CARD_BASE} border-[rgba(243,195,0,0.35)] bg-[linear-gradient(180deg,#fffdf5_0%,#ffffff_100%)] ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                style={{ transitionDelay: menuOpen ? "80ms" : "0ms" }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="pr-2">
+                    <p className="text-[15px] font-semibold leading-tight text-foreground">{DISCOVER_ITEM.title}</p>
+                    <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{DISCOVER_ITEM.description}</p>
+                  </div>
+                  <NavArrow />
+                </div>
+              </Link>
+            </li>
+          </ul>
+
+          <p className="mb-3.5 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A89C82]">Explore</p>
           <ul className="space-y-3">
             {EXPLORE_ITEMS.map((item, idx) => (
               <li key={item.to}>

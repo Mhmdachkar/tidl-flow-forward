@@ -1,4 +1,4 @@
-import { useRef, type ReactNode, type RefObject } from "react";
+import { useRef, useEffect, type ReactNode, type RefObject } from "react";
 import {
   motion,
   useMotionValue,
@@ -7,6 +7,7 @@ import {
   useTransform,
   useInView,
 } from "framer-motion";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import {
   canUseHoverParallax,
   rafThrottle,
@@ -61,7 +62,7 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
   return (
     <div
       ref={wrapRef}
-      className="relative mx-auto mt-10 overflow-visible"
+      className="relative mx-auto mt-6 overflow-visible"
       style={{ maxWidth: 1140, height: "min(60svh, 70vh, 760px)" }}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
@@ -70,7 +71,7 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
         ref={ref}
         className="absolute z-[2]"
         style={{
-          top: "8%",
+          top: "2%",
           left: "50%",
           x: "-50%",
           width: "min(680px, 78%)",
@@ -110,6 +111,118 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
           borderRadius: "50%",
           background:
             "radial-gradient(closest-side, rgba(243, 195, 0, 0.2) 0%, rgba(243, 195, 0, 0.06) 45%, transparent 100%)",
+        }}
+      />
+    </div>
+  );
+}
+
+// ─── ShowcaseHeroVideo ────────────────────────────────────────────────────────
+
+type ShowcaseHeroVideoProps = {
+  src: string;
+  videoRef?: RefObject<HTMLDivElement | null>;
+};
+
+export function ShowcaseHeroVideo({ src, videoRef: externalRef }: ShowcaseHeroVideoProps) {
+  const localRef = useRef<HTMLDivElement>(null);
+  const innerRef = externalRef ?? localRef;
+  const wrapRef  = useRef<HTMLDivElement>(null);
+  const reduced  = useReducedMotion();
+
+  useEffect(() => {
+    const wrap  = wrapRef.current;
+    const inner = innerRef.current;
+    if (!wrap || !inner) return;
+
+    const ctx = gsap.context(() => {
+      if (reduced) {
+        gsap.set(inner, { opacity: 1, y: 0 });
+        return;
+      }
+
+      // Entrance: slide up + fade in when section scrolls into view
+      gsap.set(inner, { y: 64, opacity: 0 });
+
+      const reveal = () =>
+        gsap.to(inner, { y: 0, opacity: 1, duration: 1.5, ease: "expo.out", overwrite: "auto" });
+
+      ScrollTrigger.create({
+        trigger: wrap,
+        start: "top 88%",
+        once: true,
+        onEnter: reveal,
+      });
+
+      // If already visible on mount
+      if (wrap.getBoundingClientRect().top < window.innerHeight * 0.88) {
+        reveal();
+      }
+
+      // Scroll parallax: video drifts upward as the section is scrolled past
+      gsap.to(inner, {
+        yPercent: -13,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrap,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.4,
+        },
+      });
+    }, wrap);
+
+    return () => ctx.revert();
+  }, [reduced, innerRef]);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative mx-auto mt-10 overflow-visible"
+      style={{ maxWidth: 1140, height: "min(60svh, 70vh, 760px)" }}
+    >
+      <div
+        ref={innerRef}
+        className="absolute"
+        style={{
+          top: "4%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "min(700px, 82%)",
+        }}
+      >
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          disablePictureInPicture
+          style={{
+            display: "block",
+            width: "100%",
+            height: "auto",
+            mixBlendMode: "multiply",
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+      </div>
+
+      {/* ambient glow under the product */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{
+          bottom: "6%",
+          left: "30%",
+          width: "60%",
+          height: "14%",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(closest-side, rgba(243,195,0,0.22) 0%, rgba(243,195,0,0.07) 45%, transparent 100%)",
         }}
       />
     </div>

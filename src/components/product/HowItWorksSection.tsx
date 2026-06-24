@@ -17,7 +17,7 @@ export function HowItWorksSection({ steps }: HowItWorksSectionProps) {
             How it works
           </h2>
           <p className="mt-4 text-base text-muted-foreground">
-            From assessment to ongoing care — every step is physician-guided.
+            From assessment to ongoing care. every step is physician-guided.
           </p>
         </div>
 

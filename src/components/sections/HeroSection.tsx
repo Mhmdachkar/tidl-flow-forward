@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { createTiltQuickTo } from "@/lib/gsap-tilt";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 import {
@@ -232,6 +232,23 @@ export function HeroSection() {
         .fromTo(entranceCards, { scale: 1.03 }, { scale: 1, duration: isMobile ? 0.7 : 1.0, ease: "elastic.out(1, 0.6)" }, "-=0.6")
         .to(quickCards, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: quickDur, ease: "back.out(1.4)", stagger: { each: isMobile ? 0.12 : 0.18, from: "start" } }, "-=0.6");
 
+      // ── Scroll-out: hero content drifts up + fades as user scrolls away ──────
+      const container = root.querySelector<HTMLElement>(".tidl-container");
+      if (container) {
+        gsap.to(container, {
+          opacity: 0,
+          y: -60,
+          scale: 0.97,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "bottom 72%",
+            end: "bottom 8%",
+            scrub: 2.4,
+          },
+        });
+      }
+
       if (!hoverParallax) return;
 
       cards.forEach((card) => {
@@ -305,7 +322,7 @@ export function HeroSection() {
       <style>{styles}</style>
 
       <button type="button" className="tidl-announce" onClick={openModal}>
-        Physician-supervised longevity care — start your free assessment →
+        Physician-supervised longevity care, start your free assessment →
       </button>
 
       <div className="tidl-container">

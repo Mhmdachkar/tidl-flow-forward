@@ -6,7 +6,7 @@ export const CATEGORIES: Category[] = [
     title: "Weight Loss",
     heroHeadline: "Physician-guided GLP-1 weight management.",
     heroCopy:
-      "Lose weight with prescription care reviewed by licensed physicians — not off-the-shelf products. Pre-dosed pens, pharmacy fulfillment, ongoing support.",
+      "Lose weight with prescription care reviewed by licensed physicians, not off-the-shelf products. Pre-dosed pens, pharmacy fulfillment, ongoing support.",
     focusAreas: ["GLP-1 protocols", "Metabolic support", "Physician oversight", "Pharmacy delivery"],
     featuredProductSlugs: ["lirosome"],
     defaultGoalId: "weight-loss",
@@ -30,7 +30,7 @@ export const CATEGORIES: Category[] = [
       {
         question: "What makes TIDL different?",
         answer:
-          "TIDL is telehealth — not ecommerce. Pre-dosed pens, licensed physicians, and pharmacy partners are built into every step.",
+          "TIDL is telehealth, not ecommerce. Pre-dosed pens, licensed physicians, and pharmacy partners are built into every step.",
       },
     ],
   },
@@ -39,7 +39,7 @@ export const CATEGORIES: Category[] = [
     title: "Longevity",
     heroHeadline: "Healthy aging with physician-guided care.",
     heroCopy:
-      "Prevention-focused protocols for cellular health, metabolic support, and long-term wellness — reviewed by licensed physicians.",
+      "Prevention-focused protocols for cellular health, metabolic support, and long-term wellness. reviewed by licensed physicians.",
     focusAreas: ["Healthy aging", "Cellular health", "Prevention", "Metabolic support"],
     featuredProductSlugs: ["tirosane", "tidl-core"],
     defaultGoalId: "longevity",
@@ -50,7 +50,7 @@ export const CATEGORIES: Category[] = [
       {
         question: "Is longevity care the same as anti-aging supplements?",
         answer:
-          "No. TIDL provides physician-reviewed prescription care — not over-the-counter supplements or unregulated products.",
+          "No. TIDL provides physician-reviewed prescription care, not over-the-counter supplements or unregulated products.",
       },
       {
         question: "Which product is right for me?",
@@ -64,7 +64,7 @@ export const CATEGORIES: Category[] = [
     title: "Metabolic Care",
     heroHeadline: "Support metabolism with clinical oversight.",
     heroCopy:
-      "Metabolic health protocols reviewed by licensed physicians — from GLP-1 weight management to targeted metabolic support.",
+      "Metabolic health protocols reviewed by licensed physicians. from GLP-1 weight management to targeted metabolic support.",
     focusAreas: ["Metabolism", "Insulin support", "Energy", "Weight management"],
     featuredProductSlugs: ["lirosome"],
     defaultGoalId: "metabolic-health",
@@ -87,7 +87,7 @@ export const CATEGORIES: Category[] = [
     title: "Hormonal Balance",
     heroHeadline: "Personalized hormonal care for women.",
     heroCopy:
-      "Physician-reviewed hormonal balance protocols designed with clinical rigor — assessment first, prescription only if appropriate.",
+      "Physician-reviewed hormonal balance protocols designed with clinical rigor. assessment first, prescription only if appropriate.",
     focusAreas: ["Hormone balance", "Female health", "Personalized protocols", "Ongoing care"],
     featuredProductSlugs: ["tidl-cycle"],
     defaultGoalId: "hormonal-health",
@@ -107,7 +107,7 @@ export const CATEGORIES: Category[] = [
     title: "Performance",
     heroHeadline: "Optimize recovery and physical performance.",
     heroCopy:
-      "Physician-supervised care for patients focused on recovery, resilience, and physical optimization — not unregulated enhancers.",
+      "Physician-supervised care for patients focused on recovery, resilience, and physical optimization, not unregulated enhancers.",
     focusAreas: ["Recovery", "Physical optimization", "Resilience", "Physician oversight"],
     featuredProductSlugs: ["tidl-core"],
     defaultGoalId: "performance",
@@ -127,7 +127,7 @@ export const CATEGORIES: Category[] = [
     title: "Recovery",
     heroHeadline: "Build resilience with foundational daily care.",
     heroCopy:
-      "Recovery-focused protocols reviewed by licensed physicians — designed to support resilience, healing, and everyday wellness.",
+      "Recovery-focused protocols reviewed by licensed physicians. designed to support resilience, healing, and everyday wellness.",
     focusAreas: ["Recovery science", "Resilience", "Daily support", "Physician review"],
     featuredProductSlugs: ["tidl-core"],
     defaultGoalId: "recovery",
@@ -138,7 +138,7 @@ export const CATEGORIES: Category[] = [
       {
         question: "How is recovery care different from rest?",
         answer:
-          "TIDL recovery protocols are physician-reviewed care plans that may include prescription support when clinically appropriate — not generic wellness products.",
+          "TIDL recovery protocols are physician-reviewed care plans that may include prescription support when clinically appropriate, not generic wellness products.",
       },
     ],
   },

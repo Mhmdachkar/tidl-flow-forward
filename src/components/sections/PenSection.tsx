@@ -4,9 +4,9 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import product1 from "@/assets/product 1 3d.png";
 
 const PEN_LINES = [
-  "› Pre-filled, pre-dosed — calibrated for your protocol.",
-  "› Single-step injection — click, hold, release.",
-  "› Cold-chain delivered — pharmacy to your door.",
+  "› Pre-filled, pre-dosed. calibrated for your protocol.",
+  "› Single-step injection. click, hold, release.",
+  "› Cold-chain delivered. pharmacy to your door.",
 ] as const;
 
 export function PenSection() {
@@ -57,7 +57,7 @@ export function PenSection() {
     if (line3Ref.current) typewriter(tl, line3Ref.current, PEN_LINES[2], 0.58);
 
     if (descRef.current) {
-      typewriter(tl, descRef.current, "Pharmaceutical-grade precision — engineered for consistency, comfort, and clinical confidence.", 0.76, 0.16);
+      typewriter(tl, descRef.current, "Pharmaceutical-grade precision. engineered for consistency, comfort, and clinical confidence.", 0.76, 0.16);
     }
 
     tl.to(progress, { scaleX: 1, duration: 1, ease: "none", transformOrigin: "left center" }, 0);

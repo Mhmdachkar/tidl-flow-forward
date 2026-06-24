@@ -9,10 +9,10 @@ export const Route = createFileRoute("/products/$slug")({
     return {
       meta: product
         ? [
-            { title: `${product.displayName} — TIDL` },
+            { title: `${product.displayName} · TIDL` },
             { name: "description", content: product.metaDescription },
           ]
-        : [{ title: "Product not found — TIDL" }],
+        : [{ title: "Product not found · TIDL" }],
     };
   },
   component: ProductDetailPage,

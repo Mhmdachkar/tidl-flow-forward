@@ -209,7 +209,7 @@ export function PharmacySection() {
   );
 
   const steps = [
-    { n: "01", t: "Prescription received",    d: "A licensed physician issues your prescription. It routes directly to our partner pharmacy network — no shelf, no marketplace." },
+    { n: "01", t: "Prescription received",    d: "A licensed physician issues your prescription. It routes directly to our partner pharmacy network. no shelf, no marketplace." },
     { n: "02", t: "Pharmacist verification",  d: "A registered pharmacist verifies dose, history, and clinical fit before any preparation begins." },
     { n: "03", t: "Prepared to specification", d: "Your medication is compounded or dispensed to exact clinical parameters in a sterile, regulated environment." },
     { n: "04", t: "Cold-chain sealed",        d: "Temperature-sensitive treatments are sealed with validated cold-pack insulation to preserve potency in transit." },
@@ -259,7 +259,7 @@ export function PharmacySection() {
           <SlideIn from="left" distance={40}>
             <p className="eyebrow flex items-center gap-3">
               <span className="inline-block h-px w-10 bg-clinical-deep" />
-              Chapter 04 — The Pharmacy
+              Chapter 04. The Pharmacy
             </p>
           </SlideIn>
           <SlideIn from="right" distance={40} delay={0.1}>
@@ -322,14 +322,14 @@ export function PharmacySection() {
             <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
               <span className="mt-2 inline-block h-px w-10 bg-ink/40" />
               <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-mute">
-                Fig. 01 — Sterile fulfillment station, partner pharmacy network
+                Fig. 01. Sterile fulfillment station, partner pharmacy network
               </p>
             </div>
           </SlideIn>
 
           <div className="relative lg:col-span-5">
             <SlideIn from="right" distance={80}>
-              <p className="eyebrow">The Pen — GLP-1, pre-dosed</p>
+              <p className="eyebrow">The Pen. GLP-1, pre-dosed</p>
             </SlideIn>
             <SlideIn from="right" distance={80} delay={0.1} className="mt-6">
               <h3 className="font-serif text-[clamp(2rem,4vw,3.25rem)] leading-[0.95] tracking-tight">
@@ -378,7 +378,7 @@ export function PharmacySection() {
               <ul className="space-y-3 text-[0.95rem] text-ink-soft">
                 {[
                   "Pharmacy-prepared, never pre-bottled",
-                  "Pre-dosed — no mixing, no measuring",
+                  "Pre-dosed. no mixing, no measuring",
                   "Clinically sealed, cold-chain shipped",
                 ].map((line) => (
                   <li key={line} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
@@ -400,7 +400,7 @@ export function PharmacySection() {
             <SlideIn from="left" distance={50}>
               <p className="eyebrow flex items-center gap-3">
                 <span className="inline-block h-px w-10 bg-clinical-deep" />
-                The journey — prescription to door
+                The journey. prescription to door
               </p>
             </SlideIn>
             <SlideIn from="right" distance={50} delay={0.1}>
@@ -457,7 +457,7 @@ export function PharmacySection() {
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <SlideIn from="left" distance={70}>
-              <p className="eyebrow">The Peptide — clinical longevity</p>
+              <p className="eyebrow">The Peptide. clinical longevity</p>
             </SlideIn>
             <SlideIn from="left" distance={70} delay={0.1} className="mt-6">
               <h3 className="font-serif text-[clamp(2rem,4vw,3.25rem)] leading-[0.95] tracking-tight">
@@ -496,7 +496,7 @@ export function PharmacySection() {
             <SlideIn from="up" distance={40} delay={0.2} className="mt-8 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
               <p>
                 Each peptide therapy is prepared in a 503A/503B-aligned compounding facility,
-                physician-prescribed for metabolic health, recovery, and longevity — never sold
+                physician-prescribed for metabolic health, recovery, and longevity, never sold
                 over a counter, never shipped without review.
               </p>
             </SlideIn>
@@ -527,7 +527,7 @@ export function PharmacySection() {
               <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
                 <span className="mt-2 inline-block h-px w-10 bg-ink/40" />
                 <p className="font-display text-xs uppercase tracking-[0.2em] text-ink-mute">
-                  Fig. 02 — Validated cold-pack insulation, unbranded outer parcel
+                  Fig. 02. Validated cold-pack insulation, unbranded outer parcel
                 </p>
               </div>
             </div>

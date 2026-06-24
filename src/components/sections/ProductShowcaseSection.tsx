@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { observeSectionVisibility, canUseHoverParallax, createScrollGate, rafThrottle } from "@/lib/section-performance";
 import { createTiltQuickTo } from "@/lib/gsap-tilt";
@@ -108,6 +108,27 @@ export function ProductShowcaseSection() {
 
     const ctx = gsap.context(() => {
       if (reduced) return;
+
+      // ── "Your longevity / breakthrough is here" headline: arc in + arc out ──
+      const headline = stage.querySelector<HTMLElement>(".showcase-headline");
+      if (headline) {
+        // Single scrubbed timeline: fade-in as it enters → hold → fade-out as it exits
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: headline,
+            start: "top 94%",   // headline just cresting the bottom of the viewport
+            end: "top -18%",    // headline fully gone off the top
+            scrub: 2.8,
+          },
+        });
+        tl.fromTo(
+          headline,
+          { opacity: 0, y: 52 },
+          { opacity: 1, y: 0, ease: "none", duration: 0.32 },
+        )
+          .to(headline, { opacity: 1, y: 0, duration: 0.36 })         // hold
+          .to(headline, { opacity: 0, y: -70, ease: "none", duration: 0.32 }); // exit
+      }
 
       const cards = gsap.utils.toArray<HTMLElement>(".showcase-card");
       gsap.from(cards, {
@@ -439,7 +460,7 @@ export function ProductShowcaseSection() {
                   <img
                     className="showcase-card-media relative z-10"
                     src={product.image}
-                    alt={`${product.name} — TIDL ${product.subtitle}`}
+                    alt={`${product.name} · TIDL ${product.subtitle}`}
                     loading="lazy"
                     width={1024}
                     height={1024}
@@ -513,7 +534,7 @@ export function ProductShowcaseSection() {
 
             <ShowcaseFigureStage
               src={menFigure}
-              alt="Athletic figure standing on rock — TIDL performance and longevity"
+              alt="Athletic figure standing on rock · TIDL performance and longevity"
             />
           </div>
         </div>

@@ -13,7 +13,7 @@ import { getRecommendedTreatment } from "@/lib/products";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout — TIDL" },
+      { title: "Checkout · TIDL" },
       {
         name: "description",
         content: "Secure checkout for physician-reviewed prescription treatment.",

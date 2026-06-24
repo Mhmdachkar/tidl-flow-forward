@@ -81,13 +81,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TIDL — A clinical operating system for longevity" },
-      { name: "description", content: "TIDL pairs clinical diagnostics with the next generation of metabolic, hormonal and longevity therapies — engineered for a longer, better life." },
-      { property: "og:title", content: "TIDL — A clinical operating system for longevity" },
+      { title: "TIDL. A clinical operating system for longevity" },
+      { name: "description", content: "TIDL pairs clinical diagnostics with the next generation of metabolic, hormonal and longevity therapies. engineered for a longer, better life." },
+      { property: "og:title", content: "TIDL. A clinical operating system for longevity" },
       { property: "og:description", content: "Personalised, physician-supervised longevity care." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "TIDL — A clinical operating system for longevity" },
+      { name: "twitter:title", content: "TIDL. A clinical operating system for longevity" },
       { name: "twitter:description", content: "Personalised, physician-supervised longevity care." },
     ],
     links: [

@@ -6,7 +6,7 @@ import { getCategoryBySlug, getProductsByCategory } from "@/lib/products";
 export const Route = createFileRoute("/performance")({
   head: () => ({
     meta: [
-      { title: "Performance — TIDL" },
+      { title: "Performance · TIDL" },
       {
         name: "description",
         content:

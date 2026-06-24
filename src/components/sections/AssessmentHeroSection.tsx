@@ -1,22 +1,91 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView, useReducedMotion } from "framer-motion";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import assessmentHero from "@/assets/ChatGPT Image Jun 23, 2026, 08_42_57 PM.png";
-import assessmentProduct from "@/assets/ChatGPT Image Jun 24, 2026, 01_22_06 AM.png";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const LINE_PATH = "M 40 420 C 120 320, 200 280, 280 200 S 360 80, 340 40";
 const LINE_WORDS = ["Simple.", "Secure.", "~10 min."] as const;
 
+const HEADLINE =
+  "Answer a short clinical intake in about 10 minutes, no clinic visit, no waiting room.";
+
+function HeadlineWords() {
+  return (
+    <>
+      {HEADLINE.split(" ").map((word, i) => (
+        <span key={i} className="inline-block overflow-hidden align-bottom pr-[0.22em]">
+          <span className="assessment-headline-word inline-block">{word}</span>
+        </span>
+      ))}
+    </>
+  );
+}
+
 export function AssessmentHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-8% 0px", amount: 0.2 });
   const reduced = useReducedMotion();
   const { openModal } = useQuizModal();
 
   const [linePhase, setLinePhase] = useState<"idle" | "draw" | "travel" | "word">("idle");
   const [wordIndex, setWordIndex] = useState(0);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const headline = headlineRef.current;
+    const cta = ctaRef.current;
+    if (!section || !headline || !cta) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const words = headline.querySelectorAll<HTMLElement>(".assessment-headline-word");
+
+    const ctx = gsap.context(() => {
+      if (prefersReduced) {
+        gsap.set([...words, cta], { opacity: 1, y: 0, yPercent: 0 });
+        return;
+      }
+
+      gsap.set(words, { yPercent: 115, opacity: 0 });
+      gsap.set(cta, { opacity: 0, y: 36 });
+
+      const reveal = () => {
+        gsap.to(words, {
+          yPercent: 0,
+          opacity: 1,
+          duration: 1.35,
+          ease: "expo.out",
+          stagger: 0.045,
+          overwrite: "auto",
+        });
+        gsap.to(cta, {
+          opacity: 1,
+          y: 0,
+          duration: 1.5,
+          ease: "expo.out",
+          delay: 0.55,
+          overwrite: "auto",
+        });
+      };
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 82%",
+        once: true,
+        onEnter: reveal,
+      });
+
+      if (section.getBoundingClientRect().top < window.innerHeight * 0.82) {
+        reveal();
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
 
   useEffect(() => {
     if (!inView || reduced) {
@@ -62,14 +131,6 @@ export function AssessmentHeroSection() {
           height={1080}
         />
 
-        <img
-          src={assessmentProduct}
-          alt="Enclomiphene — to elevate your T"
-          className="assessment-hero-product pointer-events-none absolute z-[3]"
-          loading="lazy"
-          decoding="async"
-        />
-
         <div
           aria-hidden
           className="absolute inset-0"
@@ -79,7 +140,6 @@ export function AssessmentHeroSection() {
           }}
         />
 
-        {/* Animated accent line + word reveal beside the subjects */}
         <svg
           className={`assessment-hero-line pointer-events-none absolute z-[2]${inView && !reduced ? " assessment-hero-line--live" : ""}`}
           viewBox="0 0 400 500"
@@ -121,7 +181,6 @@ export function AssessmentHeroSection() {
             transition={{ duration: reduced ? 0.01 : 1.85, ease: EASE, delay: 0.35 }}
           />
 
-          {/* Traveling spark along the line */}
           {inView && !reduced && (
             <circle r="5" fill="#f3c300" className="assessment-line-spark" opacity={linePhase === "travel" || linePhase === "word" ? 1 : 0}>
               <animateMotion
@@ -151,7 +210,6 @@ export function AssessmentHeroSection() {
             className={showWord && !reduced ? "assessment-line-node" : undefined}
           />
 
-          {/* Word label at line endpoint */}
           <foreignObject x="248" y="8" width="148" height="56">
             <div className="flex h-full items-center justify-end">
               <AnimatePresence mode="wait">
@@ -173,13 +231,9 @@ export function AssessmentHeroSection() {
         </svg>
 
         <div className="relative z-10 flex h-full min-h-[inherit] flex-col items-center justify-between px-6 py-12 text-center md:px-12 md:py-16">
-          <motion.div
-            className="max-w-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: reduced ? 0.01 : 0.9, ease: EASE }}
-          >
+          <div className="max-w-2xl">
             <h2
+              ref={headlineRef}
               className="font-display leading-[1.08] tracking-[-0.02em]"
               style={{
                 fontFamily: "var(--font-display)",
@@ -188,15 +242,11 @@ export function AssessmentHeroSection() {
                 color: "#ffffff",
               }}
             >
-              Answer a short clinical intake in about 10 minutes, no clinic visit, no waiting room.
+              <HeadlineWords />
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-            transition={{ duration: reduced ? 0.01 : 0.9, ease: EASE, delay: 0.2 }}
-          >
+          <div ref={ctaRef}>
             <button
               type="button"
               onClick={openModal}
@@ -210,26 +260,11 @@ export function AssessmentHeroSection() {
               <span className="assessment-cta__shine" aria-hidden />
               <span className="relative z-[1]">Start the assessment</span>
             </button>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       <style>{`
-        /* Product card — top aligns with animated line start (path M 40 420 → 84% of SVG height) */
-        .assessment-hero-product {
-          right: clamp(0.75rem, 2vw, 2rem);
-          bottom: clamp(0.75rem, 2vw, 2rem);
-          top: calc(18% + min(38vw, 280px) * 1.05);
-          width: auto;
-          height: calc(100% - 18% - min(38vw, 280px) * 1.05 - clamp(0.75rem, 2vw, 2rem));
-          max-width: min(62vw, 520px);
-          object-fit: contain;
-          object-position: bottom right;
-          border-radius: 1rem;
-          filter: drop-shadow(0 24px 48px rgba(35, 31, 32, 0.45));
-        }
-
-        /* ── CTA: always glowing / shining ── */
         .assessment-cta {
           position: relative;
           isolation: isolate;
@@ -321,7 +356,6 @@ export function AssessmentHeroSection() {
           100% { transform: scale(1.18); opacity: 0; }
         }
 
-        /* ── Line: flow + word ── */
         .assessment-line-flow {
           stroke-dasharray: 6 14;
           animation: assessmentLineFlow 1.8s linear infinite;
@@ -370,14 +404,6 @@ export function AssessmentHeroSection() {
             right: 4% !important;
             top: 22% !important;
             width: min(44vw, 200px) !important;
-          }
-          .assessment-hero-product {
-            right: 0.75rem;
-            bottom: 5.5rem;
-            top: calc(22% + min(44vw, 200px) * 1.05);
-            height: calc(100% - 22% - min(44vw, 200px) * 1.05 - 5.5rem);
-            max-width: min(68vw, 280px);
-            border-radius: 0.75rem;
           }
           .assessment-line-word {
             font-size: 0.65rem;

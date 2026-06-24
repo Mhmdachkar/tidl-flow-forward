@@ -32,7 +32,7 @@ export function StepPhysicianNotice({ acknowledged, error, onChange }: StepPhysi
     <section>
       <QuizStepIntro
         title="Reviewed by licensed physicians"
-        description="Treatment eligibility is determined by your doctor — not by an automated system."
+        description="Treatment eligibility is determined by your doctor, not by an automated system."
       />
 
       <div className="space-y-3">

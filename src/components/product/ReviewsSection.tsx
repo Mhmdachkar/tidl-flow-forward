@@ -15,7 +15,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
             Patient experiences
           </h2>
           <p className="text-xs text-muted-foreground">
-            Illustrative examples for prototype — not verified testimonials.
+            Illustrative examples for prototype, not verified testimonials.
           </p>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
