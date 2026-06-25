@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { gsap } from "@/lib/gsap";
 
-import assessmentImg from "@/assets/assessment-hero.png";
+import assessmentImg from "@/assets/ChatGPT Image Jun 23, 2026, 08_42_57 PM.png";
 import physicianImg from "@/assets/ChatGPT Image Jun 24, 2026, 11_45_01 AM.png";
 import prescriptionImg from "@/assets/tidl-prepared.png";
 import pharmacyImg from "@/assets/pharmacy-fulfillment.png";
