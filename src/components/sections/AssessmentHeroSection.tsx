@@ -80,7 +80,7 @@ export function AssessmentHeroSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="px-2 pb-2" aria-label="Start your assessment">
+    <section ref={sectionRef} data-nav-zone="assessment" className="px-2 pb-2" aria-label="Start your assessment">
       <div
         className="assessment-hero relative mx-auto w-full overflow-hidden rounded-[2.5rem] md:rounded-[3rem]"
         style={{ minHeight: "clamp(30rem, 72vw, 54rem)" }}

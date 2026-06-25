@@ -1,10 +1,5 @@
-import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { gsap } from "@/lib/gsap";
-import { createAxisQuickTo, createTiltQuickTo } from "@/lib/gsap-tilt";
-import { canUseHoverParallax } from "@/lib/section-performance";
 import { useQuizModal } from "@/providers/quiz-modal-provider";
-
 import footerLogo from "@/assets/tidl_logo.png";
 
 type FooterItem = { label: string; href: string };
@@ -35,63 +30,17 @@ function FooterLinkGroup({ title, items }: { title: string; items: readonly Foot
 }
 
 function TidlWordmark() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const moveRef = useRef<HTMLDivElement>(null);
-  const wordmarkRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    const moveEl = moveRef.current;
-    const wordmark = wordmarkRef.current;
-    if (!section || !moveEl || !wordmark) return;
-    if (!canUseHoverParallax()) return;
-
-    const tilt = createTiltQuickTo(wordmark, 1.1, "power3.out");
-    const moveX = createAxisQuickTo(moveEl, "x", 1.1, "power3.out");
-    const moveY = createAxisQuickTo(moveEl, "y", 1.1, "power3.out");
-
-    const onMove = (e: MouseEvent) => {
-      const r = section.getBoundingClientRect();
-      const cx = (e.clientX - r.left) / r.width - 0.5;
-      const cy = (e.clientY - r.top) / r.height - 0.5;
-      moveX(cx * 28);
-      moveY(cy * 18);
-      tilt.rotateY(cx * 8);
-    };
-    const onLeave = () => {
-      moveX(0);
-      moveY(0);
-      tilt.reset();
-    };
-
-    section.addEventListener("mousemove", onMove);
-    section.addEventListener("mouseleave", onLeave);
-    return () => {
-      section.removeEventListener("mousemove", onMove);
-      section.removeEventListener("mouseleave", onLeave);
-    };
-  }, []);
-
   return (
     <div
-      ref={sectionRef}
-      className="relative flex min-h-[36vh] items-center justify-center overflow-hidden [perspective:1200px] sm:min-h-screen"
+      className="relative flex min-h-[36vh] items-center justify-center overflow-hidden sm:min-h-screen"
       style={{ background: "#111111" }}
     >
-      <div ref={moveRef} className="will-change-transform">
-        <div
-          ref={wordmarkRef}
-          className="wordmark max-w-[100vw] px-4 text-center font-display font-black select-none will-change-transform"
-          style={{ color: "#F3C300", fontSize: "clamp(6rem, 38vw, 50rem)", letterSpacing: "-0.05em", lineHeight: 0.8 }}
-        >
-          {"tidl".split("").map((char, i) => (
-            <span key={i} className="wordmark-letter">
-              {char}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="absolute bottom-5 right-5 flex items-center gap-4 sm:bottom-8 sm:right-8">
+      <div
+        className="wordmark max-w-[100vw] px-4 text-center font-display font-black select-none"
+        style={{ color: "#F3C300", fontSize: "clamp(6rem, 38vw, 50rem)", letterSpacing: "-0.05em", lineHeight: 0.8 }}
+      >
+        tidl
+      </div>      <div className="absolute bottom-5 right-5 flex items-center gap-4 sm:bottom-8 sm:right-8">
         <a href="#" aria-label="Instagram" className="tidl-touch-target social-icon text-white/40">
           <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
             <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 0 2.5 1.25 1.25 0 0 1 0-2.5M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
@@ -122,7 +71,7 @@ const TREATMENT_LINKS: FooterItem[] = [
 ];
 
 const COMPANY_LINKS: FooterItem[] = [
-  { label: "How It Works", href: "/#lifestyle-reveal" },
+  { label: "How It Works", href: "/#care-journey" },
   { label: "FAQs", href: "/#faqs" },
   { label: "Find Your Treatment", href: "/search" },
   { label: "AI Discovery", href: "/#discover" },
@@ -168,7 +117,7 @@ export function FooterSection() {
   const { openModal: openQuiz } = useQuizModal();
 
   return (
-    <footer className="tidl-brand-section" style={{ background: "#ffffff" }}>
+    <footer className="tidl-brand-section" data-nav-zone="footer" style={{ background: "#ffffff" }}>
       <div
         className="px-5 pt-10 pb-8 text-white sm:px-6 sm:pt-14 sm:pb-10"
         style={{ background: "#111111", borderRadius: "2rem 2rem 0 0" }}

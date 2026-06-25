@@ -87,6 +87,7 @@ export function AiSearchSection() {
     <section
       id="discover"
       ref={rootRef}
+      data-nav-zone="discover"
       aria-label="Find your treatment"
       className="relative px-2 pb-0"
     >

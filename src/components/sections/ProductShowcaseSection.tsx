@@ -209,6 +209,7 @@ export function ProductShowcaseSection() {
     <div
       ref={stageRef}
       className="showcase-shell"
+      data-nav-zone="showcase"
       role="region"
       aria-label="TIDL product collection"
     >

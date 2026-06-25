@@ -172,6 +172,7 @@ export function ReviewsSection() {
   return (
     <section
       ref={rootRef}
+      data-nav-zone="reviews"
       aria-label="Patient outcomes"
       className="tidl-brand-section relative overflow-hidden"
       style={{ background: TIDL_BRAND.bg, color: TIDL_BRAND.ink }}

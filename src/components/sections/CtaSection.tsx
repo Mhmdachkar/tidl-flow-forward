@@ -34,7 +34,7 @@ export function CtaSection() {
   }, []);
 
   return (
-    <section ref={ref} className="tidl-brand-section relative overflow-hidden py-16 sm:py-20 lg:py-28">
+    <section ref={ref} data-nav-zone="cta" className="tidl-brand-section relative overflow-hidden py-16 sm:py-20 lg:py-28">
       <div className="absolute inset-0 bg-radial-light" />
       <div className="relative mx-auto max-w-4xl px-6 text-center">
         <h2 className="cta-headline tidl-display text-[clamp(2.2rem,6vw,5rem)] text-ink" style={{ opacity: 0 }}>

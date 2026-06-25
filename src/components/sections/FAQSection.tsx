@@ -367,6 +367,7 @@ export function FAQSection() {
     <section
       id="faqs"
       ref={rootRef}
+      data-nav-zone="faq"
       aria-label="Frequently asked questions"
       className="tidl-brand-section relative overflow-hidden"
       style={{ background: TIDL_BRAND.bg, color: TIDL_BRAND.ink }}

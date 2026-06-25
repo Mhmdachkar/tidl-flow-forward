@@ -7,8 +7,10 @@ import { NavSection } from "@/components/sections/NavSection";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AiSearchSection } from "@/components/sections/AiSearchSection";
 import { DeferredProductShowcase } from "@/components/sections/DeferredProductShowcase";
+import { TrustBridgeSection } from "@/components/sections/TrustBridgeSection";
 import { AssessmentHeroSection } from "@/components/sections/AssessmentHeroSection";
-import { LifestyleRevealSection } from "@/components/sections/LifestyleRevealSection";
+import { DoctorSection } from "@/components/sections/DoctorSection";
+import { CareJourneySection } from "@/components/sections/CareJourneySection";
 import { TIDL_BRAND_STYLES } from "@/lib/tidl-brand";
 import { ReviewsSection } from "@/components/sections/ReviewsSection";
 const EducationSection = lazy(() =>
@@ -52,9 +54,13 @@ function Index() {
 
       <DeferredProductShowcase />
 
+      <TrustBridgeSection />
+
       <AssessmentHeroSection />
 
-      <LifestyleRevealSection />
+      <DoctorSection />
+
+      <CareJourneySection />
 
       <AiSearchSection />
 

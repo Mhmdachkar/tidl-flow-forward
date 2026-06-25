@@ -325,7 +325,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="tidl-hero" ref={rootRef}>
+    <section className="tidl-hero" ref={rootRef} data-nav-zone="hero">
       <style>{styles}</style>
 
       <div className="tidl-container">

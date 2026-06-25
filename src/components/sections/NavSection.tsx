@@ -7,6 +7,7 @@ import { useQuizModal } from "@/providers/quiz-modal-provider";
 import { useAuthModal } from "@/providers/auth-modal-provider";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import { getScrollPosition, hasLenis } from "@/lib/lenis-store";
+import { useNavSectionTheme } from "@/lib/use-nav-section-theme";
 
 import tidlLogo from "@/assets/tidl_logo (2).png";
 import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
@@ -77,7 +78,7 @@ function NavAvatar({
   );
 }
 
-const ANNOUNCEMENT_HEIGHT_PX = 55;
+const ANNOUNCEMENT_HEIGHT_PX = 45;
 
 interface NavSectionProps {
   /** Homepage: header sits in page flow at top, pins + follows on scroll (Hims-style). */
@@ -86,14 +87,18 @@ interface NavSectionProps {
 
 export function NavSection({ integrateAtTop = false }: NavSectionProps) {
   const ref = useRef<HTMLElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [legacyScrolled, setLegacyScrolled] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const { openModal: openQuiz } = useQuizModal();
   const { openModal: openAuthModal } = useAuthModal();
 
-  const isPinned = integrateAtTop ? scrolled : true;
+  const sectionNav = useNavSectionTheme(integrateAtTop, headerHeight);
+  const isDark = integrateAtTop ? sectionNav.theme.variant === "dark" : legacyScrolled;
+  const isPinned = integrateAtTop ? sectionNav.isPinned : true;
+  const showHeroChrome = integrateAtTop && sectionNav.zone === "hero" && sectionNav.scrollY <= 8;
+  const navTheme = integrateAtTop ? sectionNav.theme : null;
 
   useEffect(() => {
     if (integrateAtTop || !ref.current) return;
@@ -122,19 +127,20 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
       ro?.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [scrolled, menuOpen, integrateAtTop]);
+  }, [headerHeight, menuOpen, integrateAtTop, showHeroChrome, isDark]);
 
   useEffect(() => {
+    if (integrateAtTop) return;
+
     let lastScrolled = false;
     let pendingY = getScrollPosition();
     let frame = 0;
 
     const apply = (scrollY: number) => {
-      const threshold = integrateAtTop ? 8 : 48;
-      const nextScrolled = scrollY > threshold;
+      const nextScrolled = scrollY > 48;
       if (nextScrolled !== lastScrolled) {
         lastScrolled = nextScrolled;
-        setScrolled(nextScrolled);
+        setLegacyScrolled(nextScrolled);
       }
     };
 
@@ -196,13 +202,18 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
       >
       <header
         ref={ref}
-        className={`transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          scrolled ? "bg-black shadow-[0_4px_20px_-4px_rgba(0,0,0,0.45)]" : "bg-[#FAFAF7]"
-        }`}
+        className="transition-[background-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{
+          backgroundColor: integrateAtTop ? navTheme?.headerBg : legacyScrolled ? "#000000" : "#FAFAF7",
+          boxShadow: integrateAtTop
+            ? navTheme?.shadow
+            : legacyScrolled
+              ? "0 4px 20px -4px rgba(0,0,0,0.45)"
+              : undefined,
+        }}
       >
-        {/* Announcement bar — flat 55px, yellow fills corner gaps above curved nav */}
-        {!scrolled && (
-          <div style={{ height: "55px", background: "#F3C300", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {showHeroChrome && (
+          <div style={{ height: `${ANNOUNCEMENT_HEIGHT_PX}px`, minHeight: `${ANNOUNCEMENT_HEIGHT_PX}px`, maxHeight: `${ANNOUNCEMENT_HEIGHT_PX}px`, background: "#F3C300", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", boxSizing: "border-box" }}>
             <div className="flex items-center justify-center gap-2 px-4 sm:gap-3">
               <span style={{ fontSize: "11px", lineHeight: 1, color: "#231f20" }}>
                 Personalised longevity care is here.
@@ -222,25 +233,24 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
           </div>
         )}
 
-        {/* Nav bar — yellow background shows through the rounded top corners */}
-        <div style={{ background: scrolled ? "transparent" : "#F3C300" }}>
+        <div style={{ background: showHeroChrome ? "#F3C300" : "transparent" }}>
           <nav
             className={`px-4 sm:px-6 lg:px-10 transition-[background-color,border-radius,box-shadow,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              scrolled
-                ? "rounded-none bg-transparent py-1.5 shadow-none"
-                : "bg-[#FAFAF7] py-2.5"
+              showHeroChrome ? "py-2.5" : "py-1.5"
             }`}
-            style={!scrolled ? {
-              borderTopLeftRadius: "1.75rem",
-              borderTopRightRadius: "1.75rem",
-            } : undefined}
+            style={{
+              backgroundColor: integrateAtTop ? navTheme?.navBg : legacyScrolled ? "transparent" : "#FAFAF7",
+              borderTopLeftRadius: showHeroChrome ? "1.75rem" : undefined,
+              borderTopRightRadius: showHeroChrome ? "1.75rem" : undefined,
+              boxShadow: showHeroChrome ? undefined : "none",
+            }}
           >
             <div className="mx-auto flex max-w-6xl items-center justify-between">
               <Link to="/" className="flex items-center">
                 <img
-                  src={scrolled ? tidlLogoYellow : tidlLogo}
+                  src={isDark ? tidlLogoYellow : tidlLogo}
                   alt="TIDL"
-                  className={`object-contain transition-[height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${scrolled ? "h-11" : "h-14"}`}
+                  className={`object-contain transition-[height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${showHeroChrome ? "h-14" : "h-11"}`}
                   draggable={false}
                 />
               </Link>
@@ -250,16 +260,18 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
               <div className="flex items-center gap-1.5 sm:gap-2">
                 {isAuthenticated ? (
                   <Link to="/account" aria-label="My account" className="hidden items-center gap-2 sm:flex">
-                    <NavAvatar user={user} scrolled={scrolled} />
+                    <NavAvatar user={user} scrolled={isDark} />
                   </Link>
                 ) : (
                   <button
                     type="button"
                     onClick={() => openAuthModal({ mode: "login" })}
                     className={`hidden rounded-full font-medium transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:block ${
-                      scrolled
+                      isDark
                         ? "border border-transparent bg-[#F3C300] px-2.5 py-0.5 text-[10px] text-black hover:bg-[#F9DC6B]"
-                        : "border border-ink/15 bg-white px-3 py-1 text-[11px] text-ink hover:bg-ink/[0.03] sm:px-3.5"
+                        : showHeroChrome
+                          ? "border border-ink/15 bg-white px-3 py-1 text-[11px] text-ink hover:bg-ink/[0.03] sm:px-3.5"
+                          : "border border-ink/15 bg-white px-2.5 py-0.5 text-[10px] text-ink hover:bg-ink/[0.03]"
                     }`}
                   >
                     Log in
@@ -271,12 +283,12 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
                   aria-label={menuOpen ? "Close menu" : "Open menu"}
                   onClick={() => setMenuOpen((v) => !v)}
                   className={`tidl-touch-target flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-65 ${
-                    scrolled ? "text-white" : "text-ink"
+                    isDark ? "text-white" : "text-ink"
                   }`}
                 >
                   {menuOpen
-                    ? <X width={scrolled ? 16 : 18} height={scrolled ? 16 : 18} />
-                    : <Menu width={scrolled ? 16 : 18} height={scrolled ? 16 : 18} />}
+                    ? <X width={isDark || !showHeroChrome ? 16 : 18} height={isDark || !showHeroChrome ? 16 : 18} />
+                    : <Menu width={isDark || !showHeroChrome ? 16 : 18} height={isDark || !showHeroChrome ? 16 : 18} />}
                 </button>
               </div>
             </div>

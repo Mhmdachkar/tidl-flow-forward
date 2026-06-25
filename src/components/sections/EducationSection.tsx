@@ -115,6 +115,7 @@ export function EducationSection() {
     <section
       ref={rootRef}
       id="education"
+      data-nav-zone="education"
       className="tidl-brand-section relative overflow-hidden py-16 sm:py-20 lg:py-28"
       style={{ color: TIDL_BRAND.ink }}
     >

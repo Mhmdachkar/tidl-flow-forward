@@ -15,6 +15,7 @@ export function DeferredProductShowcase() {
   return (
     <div
       ref={sentinelRef}
+      data-nav-zone="showcase"
       className="showcase-deferred-sentinel"
       style={{ minHeight: nearView ? undefined : "min(100vh, 900px)" }}
     >
