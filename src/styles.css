@@ -566,3 +566,35 @@ html.tidl-scrolling .float-y {
   width: 0;
   height: 0;
 }
+
+.tidl-nav-logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+  transform: translateZ(0);
+  transition: filter 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tidl-nav-logo__img {
+  display: block;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+.tidl-nav-logo--sm .tidl-nav-logo__img { height: 1.75rem; }
+.tidl-nav-logo--md .tidl-nav-logo__img { height: 2.75rem; }
+.tidl-nav-logo--lg .tidl-nav-logo__img { height: 3.5rem; }
+.tidl-nav-logo--light {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.85))
+    drop-shadow(0 2px 3px rgba(35, 31, 32, 0.14))
+    drop-shadow(0 6px 14px rgba(35, 31, 32, 0.1));
+}
+.tidl-nav-logo--dark {
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.12))
+    drop-shadow(0 3px 8px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))
+    drop-shadow(0 0 18px rgba(243, 195, 0, 0.16));
+}

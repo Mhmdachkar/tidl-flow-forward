@@ -8,9 +8,7 @@ import { useAuthModal } from "@/providers/auth-modal-provider";
 import { lockPageScroll, unlockPageScroll } from "@/lib/scroll-lock";
 import { getScrollPosition, hasLenis } from "@/lib/lenis-store";
 import { useNavSectionTheme } from "@/lib/use-nav-section-theme";
-
-import tidlLogo from "@/assets/tidl_logo (2).png";
-import tidlLogoYellow from "@/assets/TIDL_LOGO_YELLOW.png";
+import { TidlNavLogo } from "@/components/TidlNavLogo";
 
 const DISCOVER_ITEM = {
   title: "Find your treatment",
@@ -246,12 +244,10 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
             }}
           >
             <div className="mx-auto flex max-w-6xl items-center justify-between">
-              <Link to="/" className="flex items-center">
-                <img
-                  src={isDark ? tidlLogoYellow : tidlLogo}
-                  alt="TIDL"
-                  className={`object-contain transition-[height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${showHeroChrome ? "h-14" : "h-11"}`}
-                  draggable={false}
+              <Link to="/" className="flex items-center" aria-label="TIDL home">
+                <TidlNavLogo
+                  variant={isDark ? "dark" : "light"}
+                  size={showHeroChrome ? "lg" : "md"}
                 />
               </Link>
 
@@ -315,7 +311,7 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
         <div className="shrink-0 border-b border-border/40 px-7 pb-6 pt-7">
           <div className="flex items-start justify-between">
             <div>
-              <img src={tidlLogoYellow} alt="TIDL" className="h-7 w-auto" />
+              <TidlNavLogo variant="light" size="sm" />
               <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.22em] text-[#A89C82]">Health platform</p>
             </div>
             <button
