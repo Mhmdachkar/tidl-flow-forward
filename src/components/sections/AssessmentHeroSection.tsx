@@ -5,61 +5,33 @@ import { useQuizModal } from "@/providers/quiz-modal-provider";
 
 import assessmentHero from "@/assets/ChatGPT Image Jun 23, 2026, 08_42_57 PM.png";
 
-const HEADLINE =
-  "Answer a short clinical intake in about 10 minutes, no clinic visit, no waiting room.";
-
-function HeadlineWords() {
-  return (
-    <>
-      {HEADLINE.split(" ").map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden align-bottom pr-[0.22em]">
-          <span className="assessment-headline-word inline-block">{word}</span>
-        </span>
-      ))}
-    </>
-  );
-}
-
 export function AssessmentHeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const { openModal } = useQuizModal();
 
   useEffect(() => {
     const section = sectionRef.current;
-    const headline = headlineRef.current;
     const cta = ctaRef.current;
-    if (!section || !headline || !cta) return;
+    if (!section || !cta) return;
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const words = headline.querySelectorAll<HTMLElement>(".assessment-headline-word");
 
     const ctx = gsap.context(() => {
       if (prefersReduced) {
-        gsap.set([...words, cta], { opacity: 1, y: 0, yPercent: 0 });
+        gsap.set(cta, { opacity: 1, y: 0 });
         return;
       }
 
-      gsap.set(words, { yPercent: 115, opacity: 0 });
       gsap.set(cta, { opacity: 0, y: 36 });
 
       const reveal = () => {
-        gsap.to(words, {
-          yPercent: 0,
-          opacity: 1,
-          duration: 1.35,
-          ease: "expo.out",
-          stagger: 0.045,
-          overwrite: "auto",
-        });
         gsap.to(cta, {
           opacity: 1,
           y: 0,
           duration: 1.5,
           ease: "expo.out",
-          delay: 0.55,
           overwrite: "auto",
         });
       };
@@ -104,22 +76,7 @@ export function AssessmentHeroSection() {
           }}
         />
 
-        <div className="relative z-10 flex h-full min-h-[inherit] flex-col items-center justify-between px-6 py-12 text-center md:px-12 md:py-16">
-          <div className="max-w-2xl">
-            <h2
-              ref={headlineRef}
-              className="font-display leading-[1.08] tracking-[-0.02em]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(1.65rem, 4.2vw, 3rem)",
-                fontWeight: 700,
-                color: "#ffffff",
-              }}
-            >
-              <HeadlineWords />
-            </h2>
-          </div>
-
+        <div className="relative z-10 flex h-full min-h-[inherit] flex-col items-center justify-end px-6 py-12 md:px-12 md:py-16">
           <div ref={ctaRef}>
             <button
               type="button"
