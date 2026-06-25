@@ -17,7 +17,7 @@ const STEPS = [
     num: "01",
     title: "Complete your assessment",
     short: "Assessment",
-    body: "Short clinical intake from home — about 10 minutes.",
+    body: "Short clinical intake from home, about 10 minutes.",
     trust: "HIPAA-aligned",
     image: assessmentImg,
   },
@@ -33,7 +33,7 @@ const STEPS = [
     num: "03",
     title: "Prescription if appropriate",
     short: "Prescription",
-    body: "Prescribed only when medically suitable — never guaranteed.",
+    body: "Prescribed only when medically suitable, never guaranteed.",
     trust: "Physician-led",
     image: prescriptionImg,
   },
@@ -309,7 +309,7 @@ export function CareJourneySection() {
       id="care-journey"
       data-nav-zone="care-journey"
       className="care-journey relative px-2 py-2 md:px-3 md:py-3"
-      aria-label="How TIDL works — your care journey"
+      aria-label="How TIDL works: your care journey"
     >
       <div
         ref={panelRef}
@@ -641,7 +641,7 @@ export function CareJourneySection() {
               className="mx-auto mt-3 max-w-lg text-[0.9375rem] leading-relaxed"
               style={{ color: "rgba(35,31,32,0.72)", fontFamily: "var(--font-sans)" }}
             >
-              Tap a step on the arc — each one is a verified layer of real medical care.
+              Tap a step on the arc. Each one is a verified layer of real medical care.
             </p>
           </header>
 
@@ -731,7 +731,7 @@ export function CareJourneySection() {
               </div>
               <p className="care-journey-hill-title">Physician-guided care</p>
               <p className="care-journey-hill-sub">
-                Not a supplement order — a real medical pathway
+                Not a supplement order. A real medical pathway
               </p>
             </div>
           </div>

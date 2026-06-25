@@ -1,4 +1,4 @@
-/** TIDL brand tokens — match Hero / Showcase / Assessment sections. */
+/** TIDL brand tokens: match Hero / Showcase / Assessment sections. */
 export const TIDL_BRAND = {
   ink: "#231f20",
   inkMuted: "#6b6a6b",

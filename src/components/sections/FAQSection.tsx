@@ -226,7 +226,7 @@ export function FAQSection() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const ctx = gsap.context(() => {
-      // ── cursor spotlight — desktop only ──────────────────────────────
+      // ── cursor spotlight: desktop only ──────────────────────────────
       const cur = cursorRef.current;
       const isTouch = window.matchMedia("(max-width: 1023px)").matches;
       if (cur && !isTouch) {
@@ -389,7 +389,7 @@ export function FAQSection() {
         {/* ── header ─────────────────────────────────────────────────── */}
         <div className="mb-10 grid grid-cols-1 gap-8 lg:mb-16 lg:gap-16 lg:grid-cols-[1fr_1.6fr]">
 
-          {/* left — sticky headline */}
+          {/* left: sticky headline */}
           <div className="lg:sticky lg:top-28 lg:self-start">
             <div ref={headRef}>
               <h2 className="tidl-display text-[clamp(42px,5.5vw,80px)] tracking-[-0.025em]">
@@ -426,7 +426,7 @@ export function FAQSection() {
             </div>
           </div>
 
-          {/* right — accordion */}
+          {/* right: accordion */}
           <div
             className="overflow-hidden"
             style={{

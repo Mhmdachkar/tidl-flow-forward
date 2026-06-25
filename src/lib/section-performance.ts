@@ -68,7 +68,7 @@ export function rafThrottle<T extends unknown[]>(fn: (...args: T) => void) {
   };
 }
 
-/** Intersection only — no scroll listeners (avoids re-renders during scroll). */
+/** Intersection only: no scroll listeners (avoids re-renders during scroll). */
 export function useSectionInView(
   ref: RefObject<HTMLElement | null>,
   options?: { rootMargin?: string; threshold?: number },
@@ -93,7 +93,7 @@ export function useSectionInView(
   return inView;
 }
 
-/** Gate Framer Motion loops — pause while off-screen. Scroll pausing uses `html.tidl-scrolling` CSS. */
+/** Gate Framer Motion loops: pause while off-screen. Scroll pausing uses `html.tidl-scrolling` CSS. */
 export function useMotionActive(ref: RefObject<HTMLElement | null>) {
   const inView = useSectionInView(ref);
   return { inView, scrolling: isPageScrolling(), active: inView };

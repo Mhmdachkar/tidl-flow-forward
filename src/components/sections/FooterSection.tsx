@@ -169,7 +169,7 @@ export function FooterSection() {
             <div className="mt-5 flex items-center gap-4">{SOCIAL_ICONS}</div>
           </div>
 
-          {/* Four equal link columns — same top level */}
+          {/* Four equal link columns: same top level */}
           <div className="grid min-w-0 flex-1 grid-cols-2 items-start gap-x-8 gap-y-8 sm:grid-cols-4">
             <FooterLinkGroup title="Treatments" items={TREATMENT_LINKS} />
             <FooterLinkGroup title="Company" items={COMPANY_LINKS} />

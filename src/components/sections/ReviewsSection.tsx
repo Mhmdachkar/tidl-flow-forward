@@ -215,7 +215,7 @@ export function ReviewsSection() {
         <div className="h-px" style={{ background: "rgba(35,31,32,0.1)" }} />
       </div>
 
-      {/* ── reviews auto slider — text only, no container, no border ──────── */}
+      {/* ── reviews auto slider: text only, no container, no border ──────── */}
       {reduced ? (
         <div className="relative z-10 mx-auto max-w-[1360px] px-6 py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-16">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

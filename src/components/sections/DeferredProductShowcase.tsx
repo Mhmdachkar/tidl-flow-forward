@@ -7,7 +7,7 @@ const ProductShowcaseSection = lazy(() =>
   })),
 );
 
-/** Mount showcase only when user scrolls near — avoids jank on initial page load. */
+/** Mount showcase only when user scrolls near: avoids jank on initial page load. */
 export function DeferredProductShowcase() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const nearView = useInView(sentinelRef, { margin: "480px 0px", once: true });

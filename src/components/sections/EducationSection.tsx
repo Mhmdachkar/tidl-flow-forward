@@ -3,7 +3,7 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { TIDL_BRAND } from "@/lib/tidl-brand";
 
 import penPoster from "@/assets/tidl-pen-hero.png";
-// Placeholder education clip — swap for the real "how to use your pen" video.
+// Placeholder education clip: swap for the real "how to use your pen" video.
 import eduVideo from "@/assets/pen-how-to.mp4";
 
 const STEPS = [
@@ -216,7 +216,7 @@ export function EducationSection() {
           }
         `}</style>
 
-        {/* text steps — accessible fallback / always available */}
+        {/* text steps: accessible fallback / always available */}
         <div className="edu-steps mt-10 grid grid-cols-1 gap-px sm:grid-cols-3" style={{ background: "rgba(35,31,32,0.1)" }}>
           {STEPS.map((s) => (
             <div key={s.k} className="edu-step flex flex-col gap-2 p-6">

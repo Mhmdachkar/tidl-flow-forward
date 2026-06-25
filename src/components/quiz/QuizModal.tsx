@@ -106,7 +106,7 @@ export function QuizModal() {
         aria-hidden="true"
       />
 
-      {/* Wrapper — sheet flush to bottom */}
+      {/* Wrapper: sheet flush to bottom */}
       <div
         className="fixed inset-0 z-[91] flex items-end justify-center"
         style={{ pointerEvents: isOpen ? "auto" : "none" }}
@@ -114,7 +114,7 @@ export function QuizModal() {
         role="dialog"
         aria-label="Health assessment"
       >
-        {/* Sheet — fixed height so the middle row is always scrollable */}
+        {/* Sheet: fixed height so the middle row is always scrollable */}
         <div
           style={{
             transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
@@ -163,7 +163,7 @@ export function QuizModal() {
             </button>
           </div>
 
-          {/* Scrollable quiz body — grid row 3, minmax(0,1fr) forces overflow */}
+          {/* Scrollable quiz body: grid row 3, minmax(0,1fr) forces overflow */}
           <div
             ref={contentRef}
             className="no-scrollbar min-h-0 overflow-y-auto overscroll-y-contain px-6 pt-4 pb-6 sm:px-10"

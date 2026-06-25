@@ -339,7 +339,7 @@ export function HowItWorksSection() {
         style={{ perspective: "1500px" }}
         onMouseEnter={() => { autoPausedRef.current = true; }}
         onMouseLeave={() => { autoPausedRef.current = false; }}
-      >        {/* hidden drag proxy — single source of truth for the carousel position */}
+      >        {/* hidden drag proxy: single source of truth for the carousel position */}
         <div ref={proxyRef} className="pointer-events-none absolute h-0 w-0 opacity-0" aria-hidden />
 
         {STEPS.map((s, i) => (
@@ -543,7 +543,7 @@ export function HowItWorksSection() {
           </AnimatePresence>
         </div>
 
-        {/* progress dots — visual only, auto-advances */}
+        {/* progress dots: visual only, auto-advances */}
         <div className="mt-8 flex items-center justify-center gap-2.5">
           {STEPS.map((s, i) => (
             <motion.span

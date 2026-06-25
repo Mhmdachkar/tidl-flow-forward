@@ -33,9 +33,9 @@ const styles = `
 .tidl-card:hover .tidl-glare { opacity: 1; }
 .tidl-quick .tidl-glare { background: radial-gradient(160px circle at var(--gx, 50%) var(--gy, 50%), rgba(243,195,0,0.35), transparent 60%); mix-blend-mode: multiply; }
 .tidl-gsap-init { opacity: 0; }
-/* Archivo Narrow Bold — official TIDL primary headline font */
+/* Archivo Narrow Bold: official TIDL primary headline font */
 .tidl-fraunces { font-family: 'Archivo Narrow', sans-serif; font-weight: 400; letter-spacing: -0.01em; line-height: 1.08; }
-/* Josefin Sans — closest free match to Blair ITC (geometric all-caps secondary) */
+/* Josefin Sans: closest free match to Blair ITC (geometric all-caps secondary) */
 .tidl-label { font-family: 'Josefin Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
 
 .tidl-announce { width: 100%; background: #f3c300; color: #231f20; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 700; font-family: 'Archivo', sans-serif; letter-spacing: 0.04em; border: none; cursor: pointer; transition: filter .2s ease; }
@@ -46,10 +46,10 @@ const styles = `
 
 .tidl-headline-row { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: end; margin-bottom: 20px; }
 @media (min-width: 900px) { .tidl-headline-row { grid-template-columns: 1.6fr 1fr; gap: 32px; margin-bottom: 48px; } }
-/* Archivo Narrow Bold — official brand headline */
+/* Archivo Narrow Bold: official brand headline */
 .tidl-headline { font-size: clamp(1.52rem, 5.57vw, 2.65rem); margin: 0; color: #231f20; font-family: 'Archivo Narrow', sans-serif; font-weight: 400; letter-spacing: -0.01em; line-height: 1.08; }
 .tidl-headline-line { display: block; }
-/* em: brand gold accent — regular weight */
+/* em: brand gold accent: regular weight */
 .tidl-word { display: inline-block; }
 .tidl-headline em { font-style: normal; font-weight: 400; color: inherit; }
 .tidl-headline-accent { color: #f3c300; font-weight: 400; }
@@ -74,7 +74,7 @@ const styles = `
 @media (min-width: 640px) { .tidl-card-img img { max-height: calc(100px - 0.5cm); } }
 @media (min-width: 900px) { .tidl-card-img img { max-height: calc(200px - 1.25cm); } }
 
-/* Dark card uses Knockout #231f20 — official TIDL primary dark */
+/* Dark card uses Knockout #231f20: official TIDL primary dark */
 .tidl-card-dark { background: #231f20; color: #ffffff; }
 .tidl-card-dark .tidl-card-headline { color: #ffffff; transition: text-shadow 0.5s ease; }
 .tidl-card-dark .tidl-label { color: #f3c300; transition: letter-spacing .4s ease, filter .3s ease; }
@@ -97,7 +97,7 @@ const styles = `
 .tidl-card-dark .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-dark:hover .tidl-card-cta svg { transform: translateX(10px); }
 
-/* Cream card uses Resolve #ffffff with Cool Mist border — official brand */
+/* Cream card uses Resolve #ffffff with Cool Mist border: official brand */
 .tidl-card-cream { background: #f5f4f0; color: #231f20; }
 .tidl-card-cream .tidl-label { color: #231f20; transition: letter-spacing .4s ease; }
 .tidl-card-cream .tidl-card-cta { color: #231f20; }
@@ -116,7 +116,7 @@ const styles = `
 .tidl-card-cream .tidl-card-cta svg { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
 .tidl-card-cream:hover .tidl-card-cta svg { transform: translateX(10px); }
 
-/* Archivo Narrow Bold — official TIDL headline font for cards */
+/* Archivo Narrow Bold: official TIDL headline font for cards */
 .tidl-card-headline { font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: clamp(0.95rem, 3.8vw, 2.5rem); line-height: 1.05; letter-spacing: -0.01em; margin: 6px 0 0; max-width: none; }
 @media (min-width: 640px) { .tidl-card-headline { font-size: clamp(1.1rem, 2.8vw, 2rem); margin: 8px 0 0; } }
 @media (min-width: 900px) { .tidl-card-headline { font-size: clamp(1.45rem, 2.6vw, 2.1rem); margin: 12px 0 0; max-width: 320px; } }

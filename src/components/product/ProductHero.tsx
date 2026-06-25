@@ -16,7 +16,7 @@ export function ProductHero({ product }: ProductHeroProps) {
     <section className="relative overflow-hidden bg-background pb-8 pt-4 sm:pb-12 sm:pt-10 lg:pb-16 lg:pt-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
-          {/* Image — first on mobile, right on desktop */}
+          {/* Image: first on mobile, right on desktop */}
           <div className="order-1 relative flex items-center justify-center lg:order-2 lg:min-h-[420px]">
             {product.showPenHero ? (
               <div className="relative h-[240px] w-full sm:h-[360px] lg:h-[420px]">
@@ -41,7 +41,7 @@ export function ProductHero({ product }: ProductHeroProps) {
             )}
           </div>
 
-          {/* Text — after image on mobile, left on desktop */}
+          {/* Text: after image on mobile, left on desktop */}
           <div className="order-2 flex flex-col lg:order-1">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span className="pill-tag inline-flex w-fit">

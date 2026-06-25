@@ -124,8 +124,9 @@ export function ProductShowcaseSection() {
 
       const cards = cardsRef.current?.querySelectorAll<HTMLElement>(".showcase-card") ?? [];
       if (cards.length) {
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
         gsap.from(cards, {
-          x: 72,
+          x: isMobile ? 0 : 72,
           opacity: 0,
           stagger: 0.1,
           duration: 1,
@@ -280,7 +281,7 @@ export function ProductShowcaseSection() {
           text-transform: uppercase;
         }
         .showcase-card { transform-style: preserve-3d; }
-        /* Cream band — curved bottom edge (mirrors video top radius) */
+        /* Cream band: curved bottom edge (mirrors video top radius) */
         .showcase-cream-band {
           background: rgb(251, 251, 248);
           position: relative;
@@ -340,6 +341,17 @@ export function ProductShowcaseSection() {
           padding: 0 0 0.25rem;
         }
         .showcase-card-responsive::-webkit-scrollbar { display: none; }
+        @media (max-width: 767px) {
+          .showcase-card-lead {
+            display: none;
+            width: 0;
+            min-width: 0;
+          }
+          .showcase-card-responsive {
+            scroll-padding-inline-start: 0;
+            padding: 0 0 0.25rem;
+          }
+        }
         @media (min-width: 768px) {
           .showcase-card-responsive {
             --showcase-product-card-w: 17.75rem;
@@ -352,7 +364,7 @@ export function ProductShowcaseSection() {
             scroll-padding-inline: var(--showcase-products-gutter, 3.5rem);
           }
         }
-        /* Empty first slot — one card width before the lineup starts */
+        /* Empty first slot: one card width before the lineup starts */
         .showcase-card-lead,
         .showcase-card-trail {
           flex: 0 0 auto;

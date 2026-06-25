@@ -1,6 +1,6 @@
 import { gsap } from "@/lib/gsap";
 
-/** GSAP quickTo helper — single-axis tilt avoids rotateX/rotateY reset warnings. */
+/** GSAP quickTo helper: single-axis tilt avoids rotateX/rotateY reset warnings. */
 export function createTiltQuickTo(
   element: Element,
   duration = 0.35,
@@ -10,7 +10,7 @@ export function createTiltQuickTo(
 
   return {
     rotateY,
-    /** @deprecated Use rotateY only — kept for call-site compatibility */
+    /** @deprecated Use rotateY only: kept for call-site compatibility */
     rotateX: (_value: number) => undefined,
     reset() {
       rotateY(0);

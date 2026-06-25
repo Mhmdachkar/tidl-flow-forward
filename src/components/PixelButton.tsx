@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 /**
- * PixelButton — a button whose label materialises out of a swarm
+ * PixelButton: a button whose label materialises out of a swarm
  * of "water pixels" that gather, settle, and then resolve into
  * a real interactive button.
  *

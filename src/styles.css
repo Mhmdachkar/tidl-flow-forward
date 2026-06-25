@@ -140,7 +140,7 @@
 }
 
 /* ──────────── Typography ──────────── */
-/* Archivo Narrow Bold — TIDL official primary headline (Archivo Narrow Bold from style guide) */
+/* Archivo Narrow Bold: TIDL official primary headline (Archivo Narrow Bold from style guide) */
 .font-display,
 .font-serif {
   font-family: "Archivo Narrow", sans-serif;
@@ -354,7 +354,7 @@
   100% { transform: translateX(100%); }
 }
 
-/* Quiz option card — selected gold ring pulse */
+/* Quiz option card: selected gold ring pulse */
 .quiz-option-selected {
   animation: goldRingPulse 1.8s ease-out forwards;
 }
@@ -436,7 +436,7 @@
 }
 
 /* ──────────── TIDL section typography (Hero / Showcase / Assessment) ──────────── */
-/* Scoped like .tidl-hero — applies to Doctor → Footer without per-element patches */
+/* Scoped like .tidl-hero: applies to Doctor → Footer without per-element patches */
 .tidl-brand-section {
   font-family: "Archivo", system-ui, sans-serif;
   font-weight: 400;

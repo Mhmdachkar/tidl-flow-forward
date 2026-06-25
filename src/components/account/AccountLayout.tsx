@@ -20,7 +20,7 @@ export function AccountLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-svh bg-background pb-24 lg:pb-8">
-      {/* Shared site nav — dark mode */}
+      {/* Shared site nav: dark mode */}
       <NavSection />
 
       {/* Page title bar */}
