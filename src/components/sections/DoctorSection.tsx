@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { canUseHoverParallax, createScrollGate, rafThrottle } from "@/lib/section-performance";
+import { canUseHoverParallax, createScrollGate, prefersReducedMotion, rafThrottle } from "@/lib/section-performance";
 import { createTiltQuickTo } from "@/lib/gsap-tilt";
 
 const SCROLLER = document.documentElement;
@@ -56,79 +56,134 @@ export function DoctorSection() {
     const section = sectionRef.current;
     if (!section) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     const hoverFine = canUseHoverParallax();
     const scrollGate = createScrollGate();
     const cleanups: Array<() => void> = [scrollGate.dispose];
+    let refreshRaf = 0;
+    let disposed = false;
 
     const ctx = gsap.context(() => {
       const cards = section.querySelectorAll<HTMLElement>(".doctor-card");
       const header = section.querySelector<HTMLElement>(".doctor-section__header");
+      const mm = gsap.matchMedia();
 
-      if (!reduced) {
-        const entranceTargets: HTMLElement[] = [];
-
+      const markEntered = () => {
         cards.forEach((card) => {
-          const tilt = card.querySelector<HTMLElement>(".doctor-card__tilt");
-          const cta = card.querySelector<HTMLElement>(".doctor-card__cta");
-          if (!tilt) return;
-          entranceTargets.push(tilt);
-          gsap.set(tilt, { opacity: 0, y: 44, scale: 0.94, ...GPU });
-          if (cta) gsap.set(cta, { opacity: 0, y: 10 });
-          card.dataset.entered = "0";
+          card.dataset.entered = "1";
+        });
+      };
+
+      const runEntrance = (
+        targets: HTMLElement[],
+        options: { mobile?: boolean } = {},
+      ) => {
+        targets.forEach((tilt, index) => {
+          const card = tilt.closest<HTMLElement>(".doctor-card");
+          const cta = card?.querySelector<HTMLElement>(".doctor-card__cta");
+          if (options.mobile) {
+            gsap.set(tilt, { opacity: 0, y: 24, ...GPU });
+          } else {
+            gsap.set(tilt, { opacity: 0, y: 44, scale: 0.94, ...GPU });
+          }
+          if (cta) gsap.set(cta, { opacity: 0, y: 8 });
+          if (card) card.dataset.entered = "0";
         });
 
-        if (header) {
-          gsap.set(header, { opacity: 0, y: 28 });
-        }
+        if (header) gsap.set(header, { opacity: 0, y: options.mobile ? 16 : 28 });
 
         const entrance = gsap.timeline({
           defaults: { ease: "power3.out", immediateRender: false },
           scrollTrigger: {
             trigger: section,
             scroller: SCROLLER,
-            start: "top 82%",
+            start: options.mobile ? "top 90%" : "top 82%",
             once: true,
             invalidateOnRefresh: true,
+          },
+          onComplete: () => {
+            targets.forEach((tilt) => {
+              gsap.set(tilt, { clearProps: "willChange" });
+            });
           },
         });
 
         if (header) {
-          entrance.to(header, { opacity: 1, y: 0, duration: 0.55 }, 0);
+          entrance.to(header, { opacity: 1, y: 0, duration: options.mobile ? 0.42 : 0.55 }, 0);
         }
 
-        entranceTargets.forEach((tilt, index) => {
+        targets.forEach((tilt, index) => {
           const card = tilt.closest<HTMLElement>(".doctor-card");
           const cta = card?.querySelector<HTMLElement>(".doctor-card__cta");
-          const t = 0.08 + index * 0.09;
+          const t = options.mobile ? 0.04 + index * 0.06 : 0.08 + index * 0.09;
 
-          entrance
-            .to(
-              tilt,
-              { opacity: 1, y: 0, scale: 1, duration: 0.62, ease: "power3.out", ...GPU },
-              t,
-            )
-            .call(
-              () => {
-                if (card) card.dataset.entered = "1";
-              },
-              [],
-              t + 0.62,
-            );
+          entrance.to(
+            tilt,
+            options.mobile
+              ? { opacity: 1, y: 0, duration: 0.48, ease: "power2.out", ...GPU }
+              : { opacity: 1, y: 0, scale: 1, duration: 0.62, ease: "power3.out", ...GPU },
+            t,
+          );
 
           if (cta) {
-            entrance.to(cta, { opacity: 1, y: 0, duration: 0.38, ease: "power2.out" }, t + 0.18);
+            entrance.to(
+              cta,
+              { opacity: 1, y: 0, duration: 0.32, ease: "power2.out" },
+              t + (options.mobile ? 0.12 : 0.18),
+            );
           }
+
+          entrance.call(
+            () => {
+              if (card) card.dataset.entered = "1";
+            },
+            [],
+            t + (options.mobile ? 0.48 : 0.62),
+          );
         });
+      };
+
+      if (reduced) {
+        markEntered();
       } else {
-        cards.forEach((card) => {
-          card.dataset.entered = "1";
+        mm.add("(max-width: 1023px)", () => {
+          const targets = Array.from(cards)
+            .map((card) => card.querySelector<HTMLElement>(".doctor-card__tilt"))
+            .filter(Boolean) as HTMLElement[];
+          runEntrance(targets, { mobile: true });
+
+          cards.forEach((card) => {
+            const btn = card.querySelector<HTMLButtonElement>(".doctor-card__toggle");
+            if (!btn) return;
+
+            const onToggle = () => {
+              if (scrollGate.isScrolling() || card.dataset.entered !== "1") return;
+              const next = !card.classList.contains("doctor-card--expanded");
+              // Collapse others
+              cards.forEach((other) => {
+                if (other === card) return;
+                other.classList.remove("doctor-card--expanded");
+                const otherBtn = other.querySelector<HTMLButtonElement>(".doctor-card__toggle");
+                if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+              });
+              card.classList.toggle("doctor-card--expanded", next);
+              btn.setAttribute("aria-expanded", String(next));
+            };
+
+            btn.addEventListener("click", onToggle);
+            cleanups.push(() => btn.removeEventListener("click", onToggle));
+          });
         });
-      }
 
-      if (!hoverFine || reduced) return;
+        mm.add("(min-width: 1024px)", () => {
+          const targets = Array.from(cards)
+            .map((card) => card.querySelector<HTMLElement>(".doctor-card__tilt"))
+            .filter(Boolean) as HTMLElement[];
+          runEntrance(targets);
 
-      cards.forEach((card) => {
+          if (!hoverFine) return;
+
+          cards.forEach((card) => {
         const tilt = card.querySelector<HTMLElement>(".doctor-card__tilt");
         const shell = card.querySelector<HTMLElement>(".doctor-card__shell");
         const photo = card.querySelector<HTMLElement>(".doctor-card__photo");
@@ -231,12 +286,19 @@ export function DoctorSection() {
           shell.removeEventListener("mouseleave", onLeave);
           shell.removeEventListener("pointermove", onMove);
         });
-      });
+          });
+        });
+      }
 
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      refreshRaf = requestAnimationFrame(() => {
+        if (disposed || !section.isConnected) return;
+        ScrollTrigger.refresh();
+      });
     }, section);
 
     return () => {
+      disposed = true;
+      cancelAnimationFrame(refreshRaf);
       cleanups.forEach((fn) => fn());
       ctx.revert();
     };
@@ -250,6 +312,7 @@ export function DoctorSection() {
       aria-label="Our physician team"
     >
       <style>{`
+        /* ── Base tokens ── */
         .doctor-section {
           --doctor-gold: #e07b0a;
           --doctor-ink: #231f20;
@@ -258,36 +321,62 @@ export function DoctorSection() {
           --doctor-panel: #fafaf7;
           --doctor-ease: cubic-bezier(0.22, 1, 0.36, 1);
           position: relative;
-          padding: clamp(3.5rem, 8vw, 5rem) clamp(1.25rem, 4vw, 3.5rem);
+          padding: 2.25rem 1rem 2.75rem;
           background: linear-gradient(180deg, #ececec 0%, #e2e2e2 100%);
           color: var(--doctor-ink);
+          overflow-x: clip;
         }
 
+        @media (min-width: 640px) {
+          .doctor-section { padding: 3rem 1.5rem; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-section { padding: clamp(3.5rem, 8vw, 5rem) clamp(1.5rem, 4vw, 3.5rem); }
+        }
+
+        /* ── Inner wrap ── */
         .doctor-section__inner {
           max-width: 72rem;
           margin-inline: auto;
         }
 
+        /* ── Header ── */
         .doctor-section__header {
-          margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+          margin-bottom: 1.75rem;
           text-align: center;
         }
 
+        @media (min-width: 640px) {
+          .doctor-section__header { margin-bottom: 2.25rem; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-section__header { margin-bottom: clamp(2.5rem, 5vw, 3.5rem); }
+        }
+
         .doctor-section__eyebrow {
-          margin: 0 0 0.875rem;
+          margin: 0 0 0.625rem;
           font-family: "Josefin Sans", sans-serif;
-          font-size: 0.6875rem;
+          font-size: 0.625rem;
           font-weight: 600;
-          letter-spacing: 0.24em;
+          letter-spacing: 0.22em;
           text-transform: uppercase;
           color: var(--doctor-ink-muted);
+        }
+
+        @media (min-width: 640px) {
+          .doctor-section__eyebrow {
+            font-size: 0.6875rem;
+            margin-bottom: 0.875rem;
+          }
         }
 
         .doctor-section__title {
           margin: 0;
           font-family: var(--font-display);
-          font-size: clamp(2rem, 4.8vw, 3.25rem);
-          line-height: 1.04;
+          font-size: clamp(1.75rem, 7vw, 3.25rem);
+          line-height: 1.06;
           letter-spacing: -0.025em;
         }
 
@@ -303,65 +392,82 @@ export function DoctorSection() {
 
         .doctor-section__lede {
           max-width: 32rem;
-          margin: 1rem auto 0;
+          margin: 0.75rem auto 0;
           font-family: var(--font-sans);
-          font-size: 0.9375rem;
-          line-height: 1.65;
+          font-size: 0.875rem;
+          line-height: 1.6;
           color: var(--doctor-ink-muted);
         }
 
-        .doctor-track {
-          display: flex;
-          gap: 1.125rem;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          scrollbar-width: none;
-          padding-bottom: 0.5rem;
+        @media (min-width: 640px) {
+          .doctor-section__lede { font-size: 0.9375rem; }
         }
 
-        .doctor-track::-webkit-scrollbar { display: none; }
+        /* ── Grid track ── */
+        .doctor-track {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.625rem;
+        }
+
+        @media (min-width: 480px) {
+          .doctor-track { gap: 0.875rem; }
+        }
 
         @media (min-width: 1024px) {
           .doctor-track {
-            display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            overflow: visible;
             gap: 1.125rem;
           }
         }
 
+        /* ── Card ── */
         .doctor-card {
-          flex: 0 0 min(76vw, 16.75rem);
-          scroll-snap-align: start;
-          perspective: 1200px;
-        }
-
-        @media (min-width: 640px) {
-          .doctor-card { flex-basis: 16.75rem; }
+          min-width: 0;
         }
 
         @media (min-width: 1024px) {
-          .doctor-card { flex: unset; min-width: 0; }
+          .doctor-card {
+            perspective: 1200px;
+          }
         }
 
         .doctor-card__tilt {
-          transform-style: preserve-3d;
-          will-change: transform, opacity;
+          height: 100%;
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__tilt {
+            transform-style: preserve-3d;
+          }
         }
 
         .doctor-card__shell {
           position: relative;
           display: flex;
           flex-direction: column;
-          height: auto;
-          border-radius: 1.25rem;
+          height: 100%;
+          border-radius: 1rem;
           overflow: hidden;
           background: var(--doctor-panel);
           border: 1px solid var(--doctor-line);
           box-shadow:
             0 1px 0 rgba(255, 255, 255, 0.95) inset,
-            0 16px 40px -28px rgba(35, 31, 32, 0.22);
+            0 8px 24px -16px rgba(35, 31, 32, 0.18);
           outline: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__shell { border-radius: 1.25rem; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__shell {
+            box-shadow:
+              0 1px 0 rgba(255, 255, 255, 0.95) inset,
+              0 16px 40px -28px rgba(35, 31, 32, 0.22);
+          }
         }
 
         .doctor-card__shell::before {
@@ -374,18 +480,29 @@ export function DoctorSection() {
         }
 
         .doctor-card__shell:focus-visible {
-          box-shadow:
-            0 0 0 2px rgba(224, 123, 10, 0.5),
-            0 16px 40px -28px rgba(35, 31, 32, 0.22);
+          box-shadow: 0 0 0 2px rgba(224, 123, 10, 0.5);
         }
 
+        /* ── Photo ── */
         .doctor-card__media {
           position: relative;
           flex: 0 0 auto;
-          aspect-ratio: 4 / 4.35;
+          aspect-ratio: 3 / 2.6;
           width: 100%;
           overflow: hidden;
           background: #d4d4d4;
+        }
+
+        @media (min-width: 480px) {
+          .doctor-card__media { aspect-ratio: 3 / 3; }
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__media { aspect-ratio: 4 / 3.8; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__media { aspect-ratio: 4 / 4.35; }
         }
 
         .doctor-card__photo {
@@ -393,154 +510,303 @@ export function DoctorSection() {
           height: 100%;
           object-fit: cover;
           object-position: center 15%;
-          will-change: transform, filter;
+          display: block;
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__photo { will-change: transform, filter; }
         }
 
         .doctor-card__scrim {
           position: absolute;
           inset: 0;
-          background: linear-gradient(0deg, rgba(35, 31, 32, 0.18) 0%, transparent 45%);
-          opacity: 0;
+          background: linear-gradient(0deg, rgba(35, 31, 32, 0.12) 0%, transparent 55%);
           pointer-events: none;
         }
 
+        @media (min-width: 1024px) {
+          .doctor-card__scrim {
+            background: linear-gradient(0deg, rgba(35, 31, 32, 0.18) 0%, transparent 45%);
+            opacity: 0;
+          }
+        }
+
+        /* ── Meta bar (credential badge + index) ── */
         .doctor-card__meta-bar {
           position: absolute;
-          top: 0.875rem;
-          left: 0.875rem;
-          right: 0.875rem;
+          top: 0.625rem;
+          left: 0.625rem;
+          right: 0.625rem;
           z-index: 2;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 0.5rem;
+          gap: 0.35rem;
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__meta-bar { top: 0.875rem; left: 0.875rem; right: 0.875rem; }
         }
 
         .doctor-card__index {
           font-family: "Josefin Sans", sans-serif;
-          font-size: 0.625rem;
+          font-size: 0.5625rem;
           font-weight: 600;
-          letter-spacing: 0.18em;
-          color: rgba(255, 255, 255, 0.92);
-          text-shadow: 0 1px 8px rgba(35, 31, 32, 0.35);
+          letter-spacing: 0.16em;
+          color: rgba(255, 255, 255, 0.9);
+          text-shadow: 0 1px 6px rgba(35, 31, 32, 0.4);
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__index { font-size: 0.625rem; }
         }
 
         .doctor-card__credential {
           display: inline-flex;
           align-items: center;
-          padding: 0.28rem 0.55rem;
-          border-radius: 0.375rem;
+          padding: 0.22rem 0.45rem;
+          border-radius: 0.3rem;
           background: rgba(255, 255, 255, 0.94);
           border: 1px solid rgba(35, 31, 32, 0.08);
           font-family: "Josefin Sans", sans-serif;
-          font-size: 0.5625rem;
+          font-size: 0.5rem;
           font-weight: 700;
-          letter-spacing: 0.14em;
+          letter-spacing: 0.12em;
           text-transform: uppercase;
           color: var(--doctor-ink);
-          box-shadow: 0 4px 14px -6px rgba(35, 31, 32, 0.25);
+          box-shadow: 0 2px 8px -4px rgba(35, 31, 32, 0.2);
         }
 
+        @media (min-width: 640px) {
+          .doctor-card__credential { font-size: 0.5625rem; padding: 0.28rem 0.55rem; }
+        }
+
+        /* ── Body wrapper — always visible ── */
         .doctor-card__body {
           position: relative;
-          flex: 0 0 auto;
+          flex: 1 1 auto;
           display: flex;
           flex-direction: column;
           background: var(--doctor-panel);
-          overflow: hidden;
         }
 
         .doctor-card__hairline {
           height: 1px;
-          margin: 0 1rem;
+          flex-shrink: 0;
+          margin: 0 0.875rem;
           background: linear-gradient(90deg, var(--doctor-gold), rgba(224, 123, 10, 0.15), transparent);
         }
 
+        /* ── Front info — always visible on every breakpoint ── */
         .doctor-card__front {
-          padding: 1rem 1rem 1.125rem;
-          will-change: transform, opacity, height;
-          overflow: hidden;
+          padding: 0.625rem 0.75rem 0.5rem;
+          flex-shrink: 0;
+        }
+
+        @media (min-width: 480px) {
+          .doctor-card__front { padding: 0.75rem 0.875rem 0.625rem; }
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__front { padding: 0.875rem 1rem 0.75rem; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__front {
+            padding: 1rem 1rem 1.125rem;
+            overflow: hidden;
+            will-change: transform, opacity, height;
+          }
         }
 
         .doctor-card__department {
-          margin: 0 0 0.45rem;
+          margin: 0 0 0.2rem;
           font-family: "Josefin Sans", sans-serif;
-          font-size: 0.625rem;
+          font-size: 0.5rem;
           font-weight: 600;
-          letter-spacing: 0.16em;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: var(--doctor-ink-muted);
+          color: var(--doctor-gold);
+        }
+
+        @media (min-width: 480px) {
+          .doctor-card__department { font-size: 0.5625rem; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__department {
+            color: var(--doctor-ink-muted);
+            margin-bottom: 0.45rem;
+            font-size: 0.625rem;
+          }
         }
 
         .doctor-card__name {
-          margin: 0 0 0.3rem;
+          margin: 0 0 0.15rem;
           font-family: var(--font-display);
-          font-size: 1.0625rem;
+          font-size: 0.8125rem;
           font-weight: 700;
           line-height: 1.2;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.015em;
           color: var(--doctor-ink);
+        }
+
+        @media (min-width: 480px) {
+          .doctor-card__name { font-size: 0.9rem; }
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__name { font-size: 0.9375rem; letter-spacing: -0.02em; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__name { font-size: 1.0625rem; margin-bottom: 0.3rem; }
         }
 
         .doctor-card__role {
           margin: 0;
           font-family: var(--font-sans);
-          font-size: 0.8125rem;
-          line-height: 1.45;
+          font-size: 0.6875rem;
+          line-height: 1.4;
           color: var(--doctor-ink-muted);
         }
 
+        @media (min-width: 640px) {
+          .doctor-card__role { font-size: 0.75rem; }
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__role { font-size: 0.8125rem; line-height: 1.45; }
+        }
+
+        /* ── Mobile expand toggle — only on <1024px ── */
+        .doctor-card__toggle {
+          display: none;
+        }
+
+        @media (max-width: 1023px) {
+          .doctor-card__toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.45rem 0;
+            margin-top: 0.5rem;
+            background: none;
+            border: none;
+            border-top: 1px solid var(--doctor-line);
+            padding-top: 0.45rem;
+            cursor: pointer;
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(35, 31, 32, 0.45);
+            -webkit-tap-highlight-color: transparent;
+            transition: color 0.2s ease;
+            min-height: 2.25rem;
+          }
+
+          .doctor-card--expanded .doctor-card__toggle {
+            color: var(--doctor-gold);
+            background: rgba(224, 123, 10, 0.05);
+          }
+
+          .doctor-card__toggle-icon {
+            width: 0.75rem;
+            height: 0.75rem;
+            flex-shrink: 0;
+            transition: transform 0.3s var(--doctor-ease);
+          }
+
+          .doctor-card--expanded .doctor-card__toggle-icon {
+            transform: rotate(180deg);
+          }
+        }
+
+        /* Desktop CTA */
         .doctor-card__cta {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.35rem;
-          margin-top: 0.75rem;
-          font-family: "Josefin Sans", sans-serif;
-          font-size: 0.625rem;
-          font-weight: 600;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: rgba(35, 31, 32, 0.42);
+          display: none;
         }
 
-        .doctor-card__cta svg {
-          width: 0.7rem;
-          height: 0.7rem;
-          transition: transform 0.4s var(--doctor-ease);
+        @media (min-width: 1024px) {
+          .doctor-card__cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.75rem;
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(35, 31, 32, 0.42);
+          }
+
+          .doctor-card__cta svg {
+            width: 0.7rem;
+            height: 0.7rem;
+            transition: transform 0.4s var(--doctor-ease);
+          }
+
+          .doctor-card--active .doctor-card__cta,
+          .doctor-card__shell:hover .doctor-card__cta,
+          .doctor-card__shell:focus-within .doctor-card__cta { color: var(--doctor-ink); }
+
+          .doctor-card--active .doctor-card__cta svg,
+          .doctor-card__shell:hover .doctor-card__cta svg,
+          .doctor-card__shell:focus-within .doctor-card__cta svg { transform: translateX(2px); }
         }
 
-        .doctor-card--active .doctor-card__cta,
-        .doctor-card__shell:hover .doctor-card__cta,
-        .doctor-card__shell:focus-within .doctor-card__cta {
-          color: var(--doctor-ink);
-        }
-
-        .doctor-card--active .doctor-card__cta svg,
-        .doctor-card__shell:hover .doctor-card__cta svg,
-        .doctor-card__shell:focus-within .doctor-card__cta svg {
-          transform: translateX(2px);
-        }
-
+        /* ── Reveal panel: bio + specialties ── */
         .doctor-card__reveal {
+          flex-shrink: 0;
           overflow: hidden;
-          height: 0;
-          opacity: 0;
-          flex: 0 0 auto;
-          border-top: 0 solid transparent;
           background: #fff;
         }
 
-        .doctor-card--active .doctor-card__reveal {
-          border-top-width: 1px;
-          border-top-color: var(--doctor-line);
+        /* Mobile: collapse only the reveal (not the whole body) */
+        @media (max-width: 1023px) {
+          .doctor-card__reveal {
+            max-height: 0;
+            transition: max-height 0.42s var(--doctor-ease);
+          }
+
+          .doctor-card--expanded .doctor-card__reveal {
+            max-height: 22rem;
+          }
+        }
+
+        /* Desktop: GSAP controls height/opacity */
+        @media (min-width: 1024px) {
+          .doctor-card__reveal {
+            height: 0;
+            opacity: 0;
+            border-top: 0 solid transparent;
+          }
+
+          .doctor-card--active .doctor-card__reveal {
+            border-top-width: 1px;
+            border-top-color: var(--doctor-line);
+          }
         }
 
         .doctor-card__reveal-inner {
-          padding: 1rem 1rem 1.125rem;
+          padding: 0.875rem 0.875rem 1rem;
+        }
+
+        @media (min-width: 640px) {
+          .doctor-card__reveal-inner { padding: 1rem 1rem 1.125rem; }
         }
 
         .doctor-card__reveal-line {
-          will-change: transform, opacity;
+          transform: translateZ(0);
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__reveal-line { will-change: transform, opacity; }
         }
 
         .doctor-card__bio {
@@ -552,23 +818,26 @@ export function DoctorSection() {
         }
 
         .doctor-card__spec-list {
-          margin: 0.75rem 0 0;
+          margin: 0.65rem 0 0;
           padding: 0;
           list-style: none;
           border-top: 1px solid var(--doctor-line);
-          padding-top: 0.65rem;
+          padding-top: 0.55rem;
         }
 
         .doctor-card__spec-item {
           display: flex;
           align-items: baseline;
           gap: 0.5rem;
-          padding: 0.28rem 0;
+          padding: 0.22rem 0;
           font-family: var(--font-sans);
           font-size: 0.75rem;
           line-height: 1.4;
           color: var(--doctor-ink);
-          will-change: transform, opacity;
+        }
+
+        @media (min-width: 1024px) {
+          .doctor-card__spec-item { will-change: transform, opacity; }
         }
 
         .doctor-card__spec-item::before {
@@ -580,28 +849,7 @@ export function DoctorSection() {
           transform: translateY(-0.05em);
         }
 
-        @media (hover: none) {
-          .doctor-card__reveal {
-            height: auto !important;
-            opacity: 1 !important;
-          }
-
-          .doctor-card__reveal-line,
-          .doctor-card__spec-item {
-            opacity: 1 !important;
-            transform: none !important;
-          }
-
-          .doctor-card__bio {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-
-          .doctor-card__cta { display: none; }
-        }
-
+        /* ── Desktop hover state ── */
         @media (hover: hover) and (pointer: fine) {
           .doctor-card--active .doctor-card__front,
           .doctor-card__shell:focus-within .doctor-card__front {
@@ -628,13 +876,15 @@ export function DoctorSection() {
             <article key={doc.name} className="doctor-card">
               <div className="doctor-card__tilt">
                 <div className="doctor-card__shell" tabIndex={0}>
+                  {/* Photo */}
                   <div className="doctor-card__media">
                     <img
                       className="doctor-card__photo"
                       src={doc.photo}
-                      alt=""
+                      alt={doc.name}
                       loading="lazy"
                       decoding="async"
+                      sizes="(min-width: 1024px) 18vw, 50vw"
                     />
                     <div className="doctor-card__scrim" aria-hidden />
                     <div className="doctor-card__meta-bar">
@@ -645,27 +895,39 @@ export function DoctorSection() {
                     </div>
                   </div>
 
+                  {/* Body: ALWAYS visible */}
                   <div className="doctor-card__body">
                     <div className="doctor-card__hairline" aria-hidden />
 
+                    {/* Front info — always visible on every breakpoint */}
                     <div className="doctor-card__front">
                       <p className="doctor-card__department">{doc.department}</p>
                       <h3 className="doctor-card__name">{doc.name}</h3>
                       <p className="doctor-card__role">{doc.title}</p>
+
+                      {/* Mobile toggle — bio/specialties expand */}
+                      <button
+                        type="button"
+                        className="doctor-card__toggle"
+                        aria-expanded="false"
+                        aria-label={`View ${doc.name} credentials`}
+                      >
+                        <span>Bio &amp; specialties</span>
+                        <svg className="doctor-card__toggle-icon" viewBox="0 0 16 16" fill="none" aria-hidden>
+                          <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+
+                      {/* Desktop CTA */}
                       <span className="doctor-card__cta">
                         View credentials
                         <svg viewBox="0 0 16 16" fill="none" aria-hidden>
-                          <path
-                            d="M3 8h10M9 4l4 4-4 4"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
+                          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </span>
                     </div>
 
+                    {/* Reveal: bio + specialties (toggle on mobile, GSAP on desktop) */}
                     <div className="doctor-card__reveal">
                       <div className="doctor-card__reveal-inner">
                         <div className="doctor-card__reveal-line">

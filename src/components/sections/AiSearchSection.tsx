@@ -3,9 +3,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { getAiSearchSuggestions } from "@/lib/ai-search";
+import { prefersReducedMotion } from "@/lib/section-performance";
 import { TIDL_BRAND } from "@/lib/tidl-brand";
 
 const SCROLLER = document.documentElement;
+const GPU = { force3D: true } as const;
 
 function DiscoverLine({
   text,
@@ -40,7 +42,6 @@ export function AiSearchSection() {
   const formRef = useRef<HTMLFormElement>(null);
   const inputWrapRef = useRef<HTMLDivElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
-  const chipsRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const suggestions = getAiSearchSuggestions();
@@ -54,115 +55,150 @@ export function AiSearchSection() {
     const form = formRef.current;
     const inputWrap = inputWrapRef.current;
     const submit = submitRef.current;
-    const chips = chipsRef.current;
-    if (!root || !shell || !glow || !eyebrow || !headline || !form || !inputWrap || !submit || !chips) return;
+    if (!root || !shell || !glow || !eyebrow || !headline || !form || !inputWrap || !submit) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
     if (reduced) return;
 
     const words = headline.querySelectorAll<HTMLElement>(".ai-discover-word");
     const cleanups: Array<() => void> = [];
+    let refreshRaf = 0;
+    let disposed = false;
+
+    const finishEntrance = (targets: HTMLElement[]) => {
+      gsap.set(targets, { clearProps: "willChange,filter" });
+    };
 
     const ctx = gsap.context(() => {
-      gsap.set(glow, { opacity: 0, scale: 0.85 });
-      gsap.set(eyebrow, { opacity: 0, y: 20, filter: "blur(8px)", letterSpacing: "0.38em" });
-      gsap.set(words, { yPercent: 120, opacity: 0, rotateX: 28, transformOrigin: "50% 100%" });
-      gsap.set(form, { opacity: 0, y: 36, scale: 0.96, filter: "blur(10px)" });
-      gsap.set(inputWrap, { scaleX: 0.88, transformOrigin: "center center" });
-      gsap.set(submit, { scale: 0, opacity: 0, rotate: -90 });
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out", immediateRender: false },
-        scrollTrigger: {
-          trigger: root,
-          scroller: SCROLLER,
-          start: "top 88%",
-          end: "top 28%",
-          scrub: 0.75,
-          invalidateOnRefresh: true,
-        },
-      });
+      mm.add("(max-width: 1023px)", () => {
+        gsap.set(glow, { opacity: 0.85, scale: 1 });
+        gsap.set(eyebrow, { opacity: 0, y: 16, letterSpacing: "0.22em" });
+        gsap.set(words, { yPercent: 110, opacity: 0, ...GPU });
+        gsap.set(form, { opacity: 0, y: 20, ...GPU });
+        gsap.set(inputWrap, { scaleX: 1 });
+        gsap.set(submit, { opacity: 0, scale: 0.9, rotate: 0 });
 
-      tl.to(glow, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" }, 0)
-        .to(
-          eyebrow,
-          { opacity: 1, y: 0, filter: "blur(0px)", letterSpacing: "0.22em", duration: 0.22 },
-          0.04,
-        )
-        .to(
-          words,
-          {
-            yPercent: 0,
-            opacity: 1,
-            rotateX: 0,
-            duration: 0.28,
-            stagger: 0.035,
-            ease: "expo.out",
+        const tl = gsap.timeline({
+          defaults: { ease: "power2.out", immediateRender: false },
+          scrollTrigger: {
+            trigger: root,
+            scroller: SCROLLER,
+            start: "top 92%",
+            once: true,
+            invalidateOnRefresh: true,
           },
-          0.12,
-        )
-        .to(
-          form,
-          { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" },
-          0.38,
-        )
-        .to(
-          inputWrap,
-          { scaleX: 1, duration: 0.28, ease: "power2.inOut" },
-          0.42,
-        )
-        .to(
-          submit,
-          { scale: 1, opacity: 1, rotate: 0, duration: 0.18, ease: "back.out(2.2)" },
-          0.58,
-        );
+          onComplete: () => finishEntrance([eyebrow, form, submit, ...words]),
+        });
 
-      // Ambient glow drift
-      const glowTween = gsap.to(glow, {
-        x: 24,
-        y: -18,
-        duration: 6,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-        paused: true,
-      });
-      cleanups.push(() => glowTween.kill());
-
-      ScrollTrigger.create({
-        trigger: root,
-        scroller: SCROLLER,
-        start: "top 90%",
-        end: "bottom 10%",
-        onEnter: () => glowTween.play(),
-        onLeave: () => glowTween.pause(),
-        onEnterBack: () => glowTween.play(),
-        onLeaveBack: () => glowTween.pause(),
+        tl.to(eyebrow, { opacity: 1, y: 0, duration: 0.35 }, 0)
+          .to(words, { yPercent: 0, opacity: 1, duration: 0.3, stagger: 0.03, ...GPU }, 0.06)
+          .to(form, { opacity: 1, y: 0, duration: 0.34, ...GPU }, 0.18)
+          .to(submit, { opacity: 1, scale: 1, duration: 0.24, ease: "back.out(1.8)" }, 0.28);
       });
 
-      // Subtle parallax on shell while scrolling through section
-      gsap.to(shell, {
-        yPercent: -3,
-        ease: "none",
-        scrollTrigger: {
+      mm.add("(min-width: 1024px)", () => {
+        gsap.set(glow, { opacity: 0, scale: 0.85 });
+        gsap.set(eyebrow, { opacity: 0, y: 20, filter: "blur(8px)", letterSpacing: "0.38em" });
+        gsap.set(words, { yPercent: 120, opacity: 0, rotateX: 28, transformOrigin: "50% 100%" });
+        gsap.set(form, { opacity: 0, y: 36, scale: 0.96, filter: "blur(10px)" });
+        gsap.set(inputWrap, { scaleX: 0.88, transformOrigin: "center center" });
+        gsap.set(submit, { scale: 0, opacity: 0, rotate: -90 });
+
+        const tl = gsap.timeline({
+          defaults: { ease: "power3.out", immediateRender: false },
+          scrollTrigger: {
+            trigger: root,
+            scroller: SCROLLER,
+            start: "top 88%",
+            end: "top 28%",
+            scrub: 0.75,
+            invalidateOnRefresh: true,
+          },
+          onComplete: () => finishEntrance([eyebrow, form, submit, ...words]),
+        });
+
+        tl.to(glow, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" }, 0)
+          .to(
+            eyebrow,
+            { opacity: 1, y: 0, filter: "blur(0px)", letterSpacing: "0.22em", duration: 0.22 },
+            0.04,
+          )
+          .to(
+            words,
+            {
+              yPercent: 0,
+              opacity: 1,
+              rotateX: 0,
+              duration: 0.28,
+              stagger: 0.035,
+              ease: "expo.out",
+            },
+            0.12,
+          )
+          .to(
+            form,
+            { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" },
+            0.38,
+          )
+          .to(inputWrap, { scaleX: 1, duration: 0.28, ease: "power2.inOut" }, 0.42)
+          .to(
+            submit,
+            { scale: 1, opacity: 1, rotate: 0, duration: 0.18, ease: "back.out(2.2)" },
+            0.58,
+          );
+
+        const glowTween = gsap.to(glow, {
+          x: 24,
+          y: -18,
+          duration: 6,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          paused: true,
+        });
+        cleanups.push(() => glowTween.kill());
+
+        const glowTrigger = ScrollTrigger.create({
           trigger: root,
           scroller: SCROLLER,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.8,
-          invalidateOnRefresh: true,
-        },
+          start: "top 90%",
+          end: "bottom 10%",
+          onEnter: () => glowTween.play(),
+          onLeave: () => glowTween.pause(),
+          onEnterBack: () => glowTween.play(),
+          onLeaveBack: () => glowTween.pause(),
+        });
+        cleanups.push(() => glowTrigger.kill());
+
+        gsap.to(shell, {
+          yPercent: -3,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            scroller: SCROLLER,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.8,
+            invalidateOnRefresh: true,
+          },
+        });
       });
 
-
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      refreshRaf = requestAnimationFrame(() => {
+        if (disposed || !root.isConnected) return;
+        ScrollTrigger.refresh();
+      });
     }, root);
 
     return () => {
+      disposed = true;
+      cancelAnimationFrame(refreshRaf);
       cleanups.forEach((fn) => fn());
       ctx.revert();
     };
-  }, [suggestions.length]);
+  }, []);
 
   const goToSearch = (value: string) => {
     const trimmed = value.trim();
@@ -230,23 +266,38 @@ export function AiSearchSection() {
 
         .ai-discover-word {
           display: inline-block;
-          will-change: transform, opacity;
+        }
+
+        @media (min-width: 1024px) {
+          .ai-discover-word {
+            will-change: transform, opacity;
+          }
         }
 
         .ai-discover-word--accent {
           color: ${TIDL_BRAND.accent};
         }
 
-        .ai-discover-eyebrow {
-          will-change: transform, opacity, filter, letter-spacing;
+        .ai-discover-eyebrow,
+        .ai-discover-form,
+        .ai-discover-input-wrap,
+        .ai-discover-submit {
+          transform: translateZ(0);
         }
 
-        .ai-discover-form {
-          will-change: transform, opacity, filter;
-        }
+        @media (min-width: 1024px) {
+          .ai-discover-eyebrow {
+            will-change: transform, opacity, filter, letter-spacing;
+          }
 
-        .ai-discover-input-wrap {
-          will-change: transform;
+          .ai-discover-form {
+            will-change: transform, opacity, filter;
+          }
+
+          .ai-discover-input-wrap,
+          .ai-discover-submit {
+            will-change: transform, opacity;
+          }
         }
 
         .ai-discover-input {
@@ -256,12 +307,25 @@ export function AiSearchSection() {
           background: ${TIDL_BRAND.surface};
           color: ${TIDL_BRAND.ink};
           padding: 1rem 3.5rem 1rem 1.25rem;
-          font-size: 15px;
+          font-size: 16px;
           outline: none;
           transition:
             border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-            box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-            transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @media (min-width: 1024px) {
+          .ai-discover-input {
+            font-size: 15px;
+            transition:
+              border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          .ai-discover-input:focus {
+            transform: translateY(-1px);
+          }
         }
 
         @media (min-width: 640px) {
@@ -275,7 +339,6 @@ export function AiSearchSection() {
           box-shadow:
             0 0 0 4px rgba(224, 123, 10, 0.16),
             0 16px 40px -20px rgba(224, 123, 10, 0.35);
-          transform: translateY(-1px);
         }
 
         .ai-discover-input::placeholder {
@@ -328,22 +391,69 @@ export function AiSearchSection() {
         .ai-discover-chip {
           border-radius: 999px;
           border: 1px solid rgba(35, 31, 32, 0.12);
-          background: rgba(255, 255, 255, 0.78);
+          background: rgba(255, 255, 255, 0.92);
           color: ${TIDL_BRAND.inkMuted};
-          padding: 0.4rem 0.9rem;
+          padding: 0.55rem 0.9rem;
           font-size: 12px;
+          line-height: 1.35;
           cursor: pointer;
-          will-change: transform, opacity, filter;
-          backdrop-filter: blur(6px);
-          transition: color 0.25s ease;
+          transition: color 0.25s ease, border-color 0.25s ease;
+          -webkit-tap-highlight-color: transparent;
+          text-align: center;
+          max-width: 100%;
         }
 
         @media (min-width: 640px) {
-          .ai-discover-chip { font-size: 13px; }
+          .ai-discover-chip {
+            font-size: 13px;
+            padding: 0.4rem 0.9rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .ai-discover-chip {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(6px);
+            will-change: transform, opacity;
+          }
         }
 
         .ai-discover-chip:hover {
           color: ${TIDL_BRAND.ink};
+        }
+
+        .ai-discover-chips {
+          width: 100%;
+        }
+
+        @media (max-width: 1023px) {
+          .ai-discover-chips {
+            gap: 0.5rem;
+          }
+
+          .ai-discover-chip {
+            flex: 1 1 calc(50% - 0.5rem);
+            min-width: min(100%, 9.5rem);
+            min-height: 2.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 1023px) {
+          .ai-discover-word-wrap {
+            perspective: none;
+          }
+
+          .ai-discover-glow {
+            filter: none;
+            opacity: 0.9;
+          }
+
+          .ai-discover-shell {
+            border-radius: 1rem;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -353,7 +463,7 @@ export function AiSearchSection() {
 
       <div
         ref={shellRef}
-        className="ai-discover-shell relative px-5 py-12 sm:px-8 sm:py-16 lg:px-14 lg:py-20"
+        className="ai-discover-shell relative px-4 py-10 sm:px-8 sm:py-16 lg:px-14 lg:py-20"
       >
         <div ref={glowRef} className="ai-discover-glow" aria-hidden />
 
@@ -407,10 +517,7 @@ export function AiSearchSection() {
             </div>
           </form>
 
-          <div
-            ref={chipsRef}
-            className="mt-4 flex flex-wrap justify-center gap-2"
-          >
+          <div className="ai-discover-chips mt-4 flex flex-wrap justify-center gap-2 px-1">
             {suggestions.map((suggestion) => (
               <button
                 key={suggestion}

@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 
 import { AuthProvider } from "@/providers/auth-provider";
 import { AgeGate } from "@/components/AgeGate";
@@ -15,6 +15,7 @@ import { QuizModalProvider } from "@/providers/quiz-modal-provider";
 import { QuizModal } from "@/components/quiz/QuizModal";
 import { AuthModalProvider } from "@/providers/auth-modal-provider";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { unregisterDevServiceWorkers } from "@/lib/dev-service-worker";
 
 import appCss from "../styles.css?url";
 import favicon from "@/assets/favicon.ico?url";
@@ -122,6 +123,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    void unregisterDevServiceWorkers();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
