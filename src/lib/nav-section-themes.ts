@@ -19,15 +19,9 @@ export const NAV_THEMES = {
     variant: "light",
   },
   bridge: {
-    headerBg: "#e2e2e2",
-    navBg: "#e2e2e2",
+    headerBg: "#f6f3ec",
+    navBg: "#f6f3ec",
     variant: "light",
-  },
-  assessment: {
-    headerBg: "#231f20",
-    navBg: "#231f20",
-    variant: "dark",
-    shadow: "0 4px 20px -4px rgba(0,0,0,0.45)",
   },
   doctor: {
     headerBg: "#e2e2e2",

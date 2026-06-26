@@ -539,11 +539,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hairline-grow { animation: none !important; transform: scaleX(1); }
-  .assessment-cta--live,
-  .assessment-cta--live .assessment-cta__ring,
-  .assessment-cta--live .assessment-cta__shine::before {
-    animation: none !important;
-  }
 }
 
 /* ── Scroll perf: pause ambient loops during scroll ── */

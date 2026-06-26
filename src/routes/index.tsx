@@ -8,7 +8,6 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { AiSearchSection } from "@/components/sections/AiSearchSection";
 import { DeferredProductShowcase } from "@/components/sections/DeferredProductShowcase";
 import { TrustBridgeSection } from "@/components/sections/TrustBridgeSection";
-import { AssessmentHeroSection } from "@/components/sections/AssessmentHeroSection";
 import { DoctorSection } from "@/components/sections/DoctorSection";
 import { CareJourneySection } from "@/components/sections/CareJourneySection";
 import { TIDL_BRAND_STYLES } from "@/lib/tidl-brand";
@@ -55,8 +54,6 @@ function Index() {
       <DeferredProductShowcase />
 
       <TrustBridgeSection />
-
-      <AssessmentHeroSection />
 
       <DoctorSection />
 
