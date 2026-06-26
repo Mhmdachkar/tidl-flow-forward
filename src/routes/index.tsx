@@ -55,11 +55,11 @@ function Index() {
 
       <TrustBridgeSection />
 
-      <DoctorSection />
+      <AiSearchSection />
 
       <CareJourneySection />
 
-      <AiSearchSection />
+      <DoctorSection />
 
       <div className="tidl-brand-section flex flex-col gap-2 px-2 pb-2" style={{ marginTop: 0 }}>
         <style>{TIDL_BRAND_STYLES}</style>
