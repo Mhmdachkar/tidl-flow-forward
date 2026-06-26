@@ -38,7 +38,7 @@ export function WhyPenSection({ showPen = true }: WhyPenSectionProps) {
             </ul>
           </div>
           <div className="relative mx-auto h-[300px] w-full max-w-md sm:h-[360px]">
-            <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_50%_50%,rgba(243,195,0,0.1),transparent_70%)]" />
+            <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_50%_50%,rgba(224, 123, 10,0.1),transparent_70%)]" />
             <Pen3D className="relative z-10 h-full w-full" />
           </div>
         </div>

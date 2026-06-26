@@ -47,7 +47,7 @@ export function LoginForm({ redirectTo = "/account" }: LoginFormProps) {
           <Link
             to="/signup"
             search={{ redirect: redirectTo }}
-            className="font-medium text-foreground underline underline-offset-2 hover:text-[#C9A200] transition-colors"
+            className="font-medium text-foreground underline underline-offset-2 hover:text-[#b85c00] transition-colors"
           >
             Create one
           </Link>
@@ -68,7 +68,7 @@ export function LoginForm({ redirectTo = "/account" }: LoginFormProps) {
                     type="email"
                     autoComplete="email"
                     placeholder="you@example.com"
-                    className="h-12 rounded-xl border-border bg-background transition-shadow focus-visible:border-[#C9A200]/60 focus-visible:ring-2 focus-visible:ring-[#C9A200]/20"
+                    className="h-12 rounded-xl border-border bg-background transition-shadow focus-visible:border-[#b85c00]/60 focus-visible:ring-2 focus-visible:ring-[#b85c00]/20"
                   />
                 </FormControl>
                 <FormMessage />
@@ -90,7 +90,7 @@ export function LoginForm({ redirectTo = "/account" }: LoginFormProps) {
                     type="password"
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className="h-12 rounded-xl border-border bg-background transition-shadow focus-visible:border-[#C9A200]/60 focus-visible:ring-2 focus-visible:ring-[#C9A200]/20"
+                    className="h-12 rounded-xl border-border bg-background transition-shadow focus-visible:border-[#b85c00]/60 focus-visible:ring-2 focus-visible:ring-[#b85c00]/20"
                   />
                 </FormControl>
                 <FormMessage />

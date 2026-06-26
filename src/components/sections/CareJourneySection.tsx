@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { gsap } from "@/lib/gsap";
+import { motion, useReducedMotion } from "framer-motion";
+import { Check } from "lucide-react";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 import assessmentImg from "@/assets/ChatGPT Image Jun 23, 2026, 08_42_57 PM.png";
 import physicianImg from "@/assets/ChatGPT Image Jun 24, 2026, 11_45_01 AM.png";
@@ -9,8 +10,15 @@ import pharmacyImg from "@/assets/pharmacy-fulfillment.png";
 import deliveryImg from "@/assets/pharmacy-coldchain.png";
 import hillPharmacyImg from "@/assets/pharmacy .jpg";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 const GPU = { force3D: true } as const;
+const SCROLLER = document.documentElement;
+
+const TRUST_STRIP = [
+  "Licensed physicians",
+  "Rx required",
+  "Licensed pharmacies",
+  "Cold-chain delivery",
+] as const;
 
 const STEPS = [
   {
@@ -83,6 +91,13 @@ function HeadlineWords({ text, className }: { text: string; className?: string }
 export function CareJourneySection() {
   const sectionRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const eyebrowRef = useRef<HTMLParagraphElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
+  const stageWrapRef = useRef<HTMLDivElement>(null);
+  const arcGlowRef = useRef<SVGPathElement>(null);
+  const detailWrapRef = useRef<HTMLDivElement>(null);
   const hillRef = useRef<HTMLDivElement>(null);
   const hillIconRef = useRef<HTMLDivElement>(null);
   const arcRef = useRef<SVGPathElement>(null);
@@ -95,33 +110,60 @@ export function CareJourneySection() {
   const nodeInnerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const nodeImgRefs = useRef<(HTMLDivElement | null)[]>([]);
   const detailFloatRef = useRef<HTMLDivElement>(null);
+  const detailCardRef = useRef<HTMLDivElement>(null);
+  const detailBeamRef = useRef<HTMLDivElement>(null);
+  const detailProgressRef = useRef<HTMLDivElement>(null);
+  const detailWatermarkRef = useRef<HTMLSpanElement>(null);
+  const detailNumRef = useRef<HTMLParagraphElement>(null);
+  const detailTitleRef = useRef<HTMLHeadingElement>(null);
+  const detailBodyRef = useRef<HTMLParagraphElement>(null);
+  const detailTrustRef = useRef<HTMLSpanElement>(null);
+  const detailEnterRef = useRef(true);
+  const stepPickedRef = useRef(false);
   const floatTweens = useRef<gsap.core.Tween[]>([]);
   const arcTravelTween = useRef<gsap.core.Tween | null>(null);
 
   const reduced = useReducedMotion();
   const [active, setActive] = useState(0);
+  const [displayed, setDisplayed] = useState(0);
 
   useEffect(() => {
     const section = sectionRef.current;
     const panel = panelRef.current;
+    const glow = glowRef.current;
+    const grid = gridRef.current;
+    const eyebrow = eyebrowRef.current;
+    const sub = subRef.current;
+    const stageWrap = stageWrapRef.current;
     const hill = hillRef.current;
     const hillIcon = hillIconRef.current;
     const arc = arcRef.current;
+    const arcGlow = arcGlowRef.current;
     const arcDot = arcDotRef.current;
     const head = headRef.current;
     const strip = stripRef.current;
+    const detailWrap = detailWrapRef.current;
+    const detailCard = detailCardRef.current;
     const detailVisual = detailVisualRef.current;
     const detailImg = detailImgRef.current;
     const detailFloat = detailFloatRef.current;
     if (
       !section ||
       !panel ||
+      !glow ||
+      !grid ||
+      !eyebrow ||
+      !sub ||
+      !stageWrap ||
       !hill ||
       !hillIcon ||
       !arc ||
+      !arcGlow ||
       !arcDot ||
       !head ||
       !strip ||
+      !detailWrap ||
+      !detailCard ||
       !detailVisual ||
       !detailImg ||
       !detailFloat
@@ -132,97 +174,12 @@ export function CareJourneySection() {
     const nodeInners = nodeInnerRefs.current.filter(Boolean) as HTMLDivElement[];
     const nodeImgs = nodeImgRefs.current.filter(Boolean) as HTMLDivElement[];
     const headlineWords = head.querySelectorAll<HTMLElement>(".care-journey-headline-word");
+    const stripPills = strip.querySelectorAll<HTMLElement>(".care-journey-strip-pill");
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (prefersReduced || reduced) {
-      gsap.set([head, hill, hillIcon, ...nodeInners, ...nodeImgs, strip, arc, detailVisual, detailImg, detailFloat], {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        clipPath: "inset(0% 0% 0% 0%)",
-      });
-      gsap.set(arc, { strokeDashoffset: 0 });
-      gsap.set(arcDot, { opacity: 1 });
-      gsap.set(headlineWords, { yPercent: 0, opacity: 1, rotateX: 0 });
-      return;
-    }
-
-    const arcLen = arc.getTotalLength();
-    gsap.set(arc, { strokeDasharray: arcLen, strokeDashoffset: arcLen });
-    gsap.set(arcDot, { opacity: 0 });
-    gsap.set(headlineWords, { yPercent: 110, opacity: 0, rotateX: -52, transformOrigin: "0% 100%" });
-    gsap.set(head, { opacity: 1, y: 0 });
-    gsap.set(hill, { opacity: 0, scale: 0.82, y: 40, ...GPU });
-    gsap.set(hillIcon, { scale: 0, rotation: -30, ...GPU });
-    gsap.set(nodeInners, { opacity: 0, scale: 0.5, y: 30, ...GPU });
-    gsap.set(nodeImgs, { scale: 1.35, clipPath: "circle(0% at 50% 50%)", ...GPU });
-    gsap.set(strip, { opacity: 0, y: 20 });
-    gsap.set(detailVisual, { opacity: 0, x: 40, scale: 0.92, ...GPU });
-    gsap.set(detailImg, { scale: 1.12, ...GPU });
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: panel,
-          start: "top 82%",
-          once: true,
-        },
-      });
-
-      tl.to(
-        headlineWords,
-        {
-          yPercent: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 0.9,
-          stagger: 0.045,
-          ease: "power4.out",
-          ...GPU,
-        },
-        0,
-      );
-      tl.to(hill, { opacity: 1, scale: 1, y: 0, duration: 1.1, ease: "power3.out", ...GPU }, 0.15);
-      tl.to(
-        hillIcon,
-        { scale: 1, rotation: 0, duration: 0.75, ease: "back.out(2.2)", ...GPU },
-        0.38,
-      );
-      tl.to(arc, { strokeDashoffset: 0, duration: 1.35, ease: "power2.inOut" }, 0.28);
-      tl.to(arcDot, { opacity: 1, duration: 0.35, ease: "power2.out" }, 0.55);
-      tl.to(
-        nodeInners,
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.7,
-          stagger: 0.11,
-          ease: "back.out(2)",
-          ...GPU,
-        },
-        0.48,
-      );
-      tl.to(
-        nodeImgs,
-        {
-          clipPath: "circle(50% at 50% 50%)",
-          scale: 1,
-          duration: 0.85,
-          stagger: 0.11,
-          ease: "expo.out",
-          ...GPU,
-        },
-        0.52,
-      );
-      tl.to(
-        detailVisual,
-        { opacity: 1, x: 0, scale: 1, duration: 0.9, ease: "expo.out", ...GPU },
-        0.72,
-      );
-      tl.to(detailImg, { scale: 1, duration: 1.2, ease: "power2.out", ...GPU }, 0.78);
-      tl.to(strip, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.95);
-
+    const startArcTravel = () => {
+      if (stepPickedRef.current || arcTravelTween.current) return;
+      const arcLen = arc.getTotalLength();
       const travel = { progress: 0 };
       arcTravelTween.current = gsap.to(travel, {
         progress: 1,
@@ -233,6 +190,161 @@ export function CareJourneySection() {
           const point = arc.getPointAtLength(travel.progress * arcLen);
           arcDot.setAttribute("cx", String(point.x));
           arcDot.setAttribute("cy", String(point.y));
+        },
+      });
+    };
+
+    if (prefersReduced || reduced) {
+      gsap.set(
+        [glow, grid, eyebrow, sub, head, hill, hillIcon, stageWrap, detailWrap, detailCard, ...nodeInners, ...nodeImgs, strip, arc, arcGlow, detailVisual, detailImg, detailFloat],
+        { clearProps: "all", opacity: 1, y: 0, scale: 1, filter: "none", clipPath: "inset(0% 0% 0% 0%)" },
+      );
+      gsap.set(arc, { strokeDashoffset: 0 });
+      gsap.set(arcGlow, { strokeDashoffset: 0, opacity: 0.35 });
+      gsap.set(arcDot, { opacity: 1 });
+      gsap.set(headlineWords, { yPercent: 0, opacity: 1, rotateX: 0 });
+      gsap.set(stripPills, { opacity: 1, y: 0, scale: 1 });
+      startArcTravel();
+      return;
+    }
+
+    const arcLen = arc.getTotalLength();
+    gsap.set(glow, { opacity: 0, scale: 0.75 });
+    gsap.set(grid, { opacity: 0 });
+    gsap.set(eyebrow, { opacity: 0, y: 18, filter: "blur(8px)", letterSpacing: "0.32em" });
+    gsap.set(headlineWords, { yPercent: 115, opacity: 0, rotateX: -48, transformOrigin: "50% 100%" });
+    gsap.set(sub, { opacity: 0, y: 22, filter: "blur(8px)" });
+    gsap.set(stageWrap, { opacity: 0, y: 48, scale: 0.94, rotateX: 8, transformPerspective: 1200, transformOrigin: "50% 80%", ...GPU });
+    gsap.set(arc, { strokeDasharray: arcLen, strokeDashoffset: arcLen });
+    gsap.set(arcGlow, { strokeDasharray: arcLen, strokeDashoffset: arcLen, opacity: 0 });
+    gsap.set(arcDot, { opacity: 0 });
+    gsap.set(hill, { opacity: 0, scale: 0.78, y: 56, ...GPU });
+    gsap.set(hillIcon, { scale: 0, rotation: -36, ...GPU });
+    gsap.set(nodeInners, { opacity: 0, scale: 0.42, y: 36, ...GPU });
+    gsap.set(nodeImgs, { scale: 1.4, clipPath: "circle(0% at 50% 50%)", ...GPU });
+    gsap.set(detailWrap, { opacity: 0, y: 32, ...GPU });
+    gsap.set(detailVisual, { opacity: 0, x: 48, scale: 0.9, rotateY: -12, ...GPU });
+    gsap.set(detailImg, { scale: 1.18, ...GPU });
+    gsap.set(strip, { opacity: 0, y: 24 });
+    gsap.set(stripPills, { opacity: 0, y: 16, scale: 0.9 });
+
+    const ctx = gsap.context(() => {
+      const entrance = gsap.timeline({
+        defaults: { ease: "power3.out", immediateRender: false },
+        scrollTrigger: {
+          trigger: section,
+          scroller: SCROLLER,
+          start: "top 88%",
+          end: "top 22%",
+          scrub: 0.85,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (self.progress > 0.92) startArcTravel();
+          },
+          onLeave: startArcTravel,
+          onEnterBack: () => {
+            if (!stepPickedRef.current) {
+              arcTravelTween.current?.kill();
+              arcTravelTween.current = null;
+            }
+          },
+        },
+      });
+
+      entrance
+        .to(glow, { opacity: 1, scale: 1, duration: 0.28, ease: "power2.out" }, 0)
+        .to(grid, { opacity: 0.55, duration: 0.35 }, 0.04)
+        .to(
+          eyebrow,
+          { opacity: 1, y: 0, filter: "blur(0px)", letterSpacing: "0.18em", duration: 0.22 },
+          0.06,
+        )
+        .to(
+          headlineWords,
+          {
+            yPercent: 0,
+            opacity: 1,
+            rotateX: 0,
+            duration: 0.32,
+            stagger: 0.04,
+            ease: "expo.out",
+            ...GPU,
+          },
+          0.12,
+        )
+        .to(sub, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.24 }, 0.28)
+        .to(
+          stageWrap,
+          { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 0.42, ease: "expo.out", ...GPU },
+          0.22,
+        )
+        .to(arc, { strokeDashoffset: 0, duration: 0.48, ease: "power2.inOut" }, 0.3)
+        .to(arcGlow, { strokeDashoffset: 0, opacity: 0.42, duration: 0.5, ease: "power2.inOut" }, 0.3)
+        .to(arcDot, { opacity: 1, duration: 0.18, ease: "back.out(3)" }, 0.52)
+        .to(hill, { opacity: 1, scale: 1, y: 0, duration: 0.38, ease: "power3.out", ...GPU }, 0.34)
+        .to(
+          hillIcon,
+          { scale: 1, rotation: 0, duration: 0.28, ease: "back.out(2.4)", ...GPU },
+          0.44,
+        )
+        .to(
+          nodeInners,
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.32,
+            stagger: 0.06,
+            ease: "back.out(1.8)",
+            ...GPU,
+          },
+          0.46,
+        )
+        .to(
+          nodeImgs,
+          {
+            clipPath: "circle(50% at 50% 50%)",
+            scale: 1,
+            duration: 0.34,
+            stagger: 0.06,
+            ease: "expo.out",
+            ...GPU,
+          },
+          0.5,
+        )
+        .to(detailWrap, { opacity: 1, y: 0, duration: 0.3, ...GPU }, 0.62)
+        .to(strip, { opacity: 1, y: 0, duration: 0.22 }, 0.72)
+        .to(
+          stripPills,
+          { opacity: 1, y: 0, scale: 1, duration: 0.2, stagger: 0.04, ease: "back.out(2)" },
+          0.74,
+        );
+
+      gsap.to(stageWrap, {
+        y: -24,
+        scale: 0.985,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          scroller: SCROLLER,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.4,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.to(glow, {
+        y: -40,
+        scale: 1.08,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          scroller: SCROLLER,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.8,
+          invalidateOnRefresh: true,
         },
       });
 
@@ -276,32 +388,197 @@ export function CareJourneySection() {
   }, [reduced]);
 
   useEffect(() => {
-    const detailVisual = detailVisualRef.current;
-    const detailImg = detailImgRef.current;
+    const card = detailCardRef.current;
+    const beam = detailBeamRef.current;
+    const progress = detailProgressRef.current;
+    const watermark = detailWatermarkRef.current;
+    const num = detailNumRef.current;
+    const title = detailTitleRef.current;
+    const body = detailBodyRef.current;
+    const trust = detailTrustRef.current;
+    const visual = detailVisualRef.current;
+    const img = detailImgRef.current;
     const nodeInner = nodeInnerRefs.current[active];
-    if (!detailVisual || !detailImg || !nodeInner) return;
+    const arc = arcRef.current;
+    const arcDot = arcDotRef.current;
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced || reduced) return;
+    if (
+      prefersReduced ||
+      reduced ||
+      !card ||
+      !beam ||
+      !progress ||
+      !watermark ||
+      !num ||
+      !title ||
+      !body ||
+      !trust ||
+      !visual ||
+      !img
+    ) {
+      if (prefersReduced || reduced) setDisplayed(active);
+      return;
+    }
 
-    gsap.fromTo(
-      detailVisual,
-      { opacity: 0.4, x: 28, rotateY: -12, scale: 0.94, transformOrigin: "center center", ...GPU },
-      { opacity: 1, x: 0, rotateY: 0, scale: 1, duration: 0.65, ease: "expo.out", ...GPU },
-    );
-    gsap.fromTo(
-      detailImg,
-      { scale: 1.18, filter: "blur(6px)" },
-      { scale: 1, filter: "blur(0px)", duration: 0.75, ease: "power3.out" },
-    );
-    gsap.fromTo(
-      nodeInner,
-      { scale: 1 },
-      { scale: 1.08, duration: 0.22, ease: "power2.out", yoyo: true, repeat: 1, ...GPU },
-    );
+    const fromLeft = active % 2 === 0;
+    const fromCenter = active === 2;
+    const progressPct = (active + 1) / STEPS.length;
+    const isFirst = detailEnterRef.current;
+
+    if (nodeInner) {
+      gsap.fromTo(
+        nodeInner,
+        { scale: 1 },
+        { scale: 1.1, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1, ...GPU },
+      );
+    }
+
+    if (stepPickedRef.current && arc && arcDot) {
+      arcTravelTween.current?.pause();
+      const arcLen = arc.getTotalLength();
+      const point = arc.getPointAtLength((active / (STEPS.length - 1)) * arcLen);
+      gsap.to(arcDot, {
+        attr: { cx: point.x, cy: point.y },
+        duration: 0.75,
+        ease: "power3.inOut",
+      });
+    }
+
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out", overwrite: "auto" },
+    });
+
+    if (!isFirst) {
+      tl.to(card, {
+        opacity: 0,
+        y: -18,
+        scale: 0.97,
+        filter: "blur(4px)",
+        duration: 0.22,
+        ease: "power2.in",
+      });
+      tl.call(() => setDisplayed(active));
+    } else {
+      setDisplayed(active);
+    }
+    detailEnterRef.current = false;
+
+    tl.fromTo(
+      card,
+      {
+        opacity: 0,
+        y: fromCenter ? 52 : 40,
+        x: fromCenter ? 0 : fromLeft ? -56 : 56,
+        rotateX: fromCenter ? 14 : 6,
+        scale: fromCenter ? 0.86 : 0.94,
+        filter: "blur(12px)",
+        transformOrigin: "50% 100%",
+        ...GPU,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        x: 0,
+        rotateX: 0,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: fromCenter ? 1.05 : 0.9,
+        ease: "expo.out",
+        ...GPU,
+      },
+      isFirst ? 0 : 0.02,
+    )
+      .fromTo(
+        beam,
+        { xPercent: -130, opacity: 0 },
+        { xPercent: 130, opacity: 1, duration: 0.62, ease: "power2.inOut" },
+        "-=0.72",
+      )
+      .fromTo(
+        watermark,
+        { scale: 1.6, opacity: 0, rotate: -8 },
+        { scale: 1, opacity: 1, rotate: 0, duration: 0.85, ease: "power2.out" },
+        "-=0.82",
+      )
+      .fromTo(
+        progress,
+        { scaleX: 0, transformOrigin: "left center" },
+        { scaleX: progressPct, duration: 0.75, ease: "power2.inOut" },
+        "-=0.78",
+      )
+      .fromTo(
+        num,
+        { opacity: 0, y: 18, letterSpacing: "0.28em", filter: "blur(6px)" },
+        { opacity: 1, y: 0, letterSpacing: "0.14em", filter: "blur(0px)", duration: 0.5 },
+        "-=0.62",
+      )
+      .fromTo(
+        title,
+        {
+          opacity: 0,
+          y: fromCenter ? 28 : 22,
+          scale: fromCenter ? 0.92 : 1,
+          filter: "blur(10px)",
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: fromCenter ? 0.72 : 0.55,
+          ease: "power4.out",
+        },
+        "-=0.42",
+      )
+      .fromTo(
+        body,
+        { opacity: 0, y: 16, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.48 },
+        "-=0.38",
+      )
+      .fromTo(
+        trust,
+        { opacity: 0, scale: 0.82, x: -12 },
+        { opacity: 1, scale: 1, x: 0, duration: 0.45, ease: "back.out(2.4)" },
+        "-=0.35",
+      )
+      .fromTo(
+        visual,
+        {
+          opacity: 0,
+          x: 64,
+          scale: 0.86,
+          rotateY: -16,
+          clipPath: "inset(0 100% 0 0 round 1rem)",
+          transformOrigin: "100% 50%",
+          ...GPU,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          rotateY: 0,
+          clipPath: "inset(0 0% 0 0 round 1rem)",
+          duration: 0.85,
+          ease: "expo.out",
+          ...GPU,
+        },
+        "-=0.7",
+      )
+      .fromTo(
+        img,
+        { scale: 1.28, filter: "saturate(1.15) blur(5px)" },
+        { scale: 1, filter: "saturate(1) blur(0px)", duration: 1.05, ease: "power2.out" },
+        "-=0.75",
+      );
+
+    return () => {
+      tl.kill();
+    };
   }, [active, reduced]);
 
-  const activeStep = STEPS[active];
+  const activeStep = STEPS[displayed];
 
   return (
     <section
@@ -313,15 +590,43 @@ export function CareJourneySection() {
     >
       <div
         ref={panelRef}
-        className="care-journey-panel overflow-hidden rounded-[2.5rem] md:rounded-[3rem]"
+        className="care-journey-panel relative isolate overflow-hidden rounded-[2.5rem] border border-[rgba(35,31,32,0.06)] bg-white shadow-[0_20px_56px_rgba(35,31,32,0.07)] md:rounded-[3rem]"
       >
+        <div
+          ref={glowRef}
+          className="care-journey-glow pointer-events-none absolute -left-[20%] top-[8%] z-0 h-[min(28rem,55vw)] w-[min(28rem,55vw)] rounded-full bg-[radial-gradient(circle,rgba(224,123,10,0.22)_0%,rgba(224,123,10,0.06)_42%,transparent_68%)] blur-2xl"
+          aria-hidden
+        />
+        <div
+          ref={gridRef}
+          className="care-journey-grid pointer-events-none absolute inset-0 z-0 opacity-0"
+          aria-hidden
+        />
+
         <style>{`
-          .care-journey-panel {
-            background: #ffffff;
-            color: #231f20;
-            box-shadow: 0 20px 56px rgba(35, 31, 32, 0.07);
+          .care-journey-grid {
+            background-image:
+              linear-gradient(rgba(35, 31, 32, 0.04) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(35, 31, 32, 0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 85% 70% at 50% 38%, #000 20%, transparent 72%);
+          }
+          .care-journey-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+              165deg,
+              rgba(224, 123, 10, 0.06) 0%,
+              transparent 38%,
+              rgba(255, 255, 255, 0.9) 100%
+            );
+            pointer-events: none;
+            z-index: 0;
           }
           .care-journey-inner {
+            position: relative;
+            z-index: 1;
             padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 2.5rem)
               clamp(2rem, 5vw, 3rem);
           }
@@ -333,9 +638,13 @@ export function CareJourneySection() {
           .care-journey-headline-word {
             will-change: transform, opacity;
           }
+          .care-journey-stage-wrap {
+            margin-top: clamp(2rem, 5vw, 3rem);
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+          }
           .care-journey-stage {
             position: relative;
-            margin-top: clamp(2rem, 5vw, 3rem);
             min-height: clamp(22rem, 52vw, 28rem);
           }
           .care-journey-arc-svg {
@@ -346,8 +655,12 @@ export function CareJourneySection() {
             pointer-events: none;
             overflow: visible;
           }
+          .care-journey-arc-glow-path {
+            filter: blur(0.35px);
+            opacity: 0.5;
+          }
           .care-journey-arc-glow {
-            filter: drop-shadow(0 0 6px rgba(243, 195, 0, 0.85));
+            filter: drop-shadow(0 0 8px rgba(224, 123, 10, 0.9));
           }
           .care-journey-hill {
             position: absolute;
@@ -357,8 +670,8 @@ export function CareJourneySection() {
             height: min(38%, 200px);
             transform: translateX(-50%);
             border-radius: 520px 520px 0 0;
-            background: linear-gradient(180deg, #fff 0%, rgba(243, 195, 0, 0.07) 100%);
-            box-shadow: 0 -8px 40px rgba(243, 195, 0, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.95);
+            background: linear-gradient(180deg, #fff 0%, rgba(224, 123, 10, 0.07) 100%);
+            box-shadow: 0 -8px 40px rgba(224, 123, 10, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(35, 31, 32, 0.06);
             border-bottom: none;
             display: flex;
@@ -376,7 +689,7 @@ export function CareJourneySection() {
             height: clamp(3.5rem, 9vw, 4.75rem);
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.95);
-            border: 2px solid rgba(243, 195, 0, 0.35);
+            border: 2px solid rgba(224, 123, 10, 0.35);
             overflow: hidden;
             will-change: transform;
           }
@@ -426,8 +739,8 @@ export function CareJourneySection() {
             height: clamp(3.5rem, 9vw, 4.85rem);
             border-radius: 999px;
             background: #fff;
-            border: 2.5px solid rgba(243, 195, 0, 0.55);
-            box-shadow: 0 0 0 4px rgba(243, 195, 0, 0.12), 0 10px 28px rgba(35, 31, 32, 0.08);
+            border: 2.5px solid rgba(224, 123, 10, 0.55);
+            box-shadow: 0 0 0 4px rgba(224, 123, 10, 0.12), 0 10px 28px rgba(35, 31, 32, 0.08);
             overflow: hidden;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
           }
@@ -438,8 +751,8 @@ export function CareJourneySection() {
             transform: scale(0.96);
           }
           .care-journey-node.is-active .care-journey-node-ring {
-            border-color: #f3c300;
-            box-shadow: 0 0 0 8px rgba(243, 195, 0, 0.22), 0 16px 36px rgba(35, 31, 32, 0.12);
+            border-color: #e07b0a;
+            box-shadow: 0 0 0 8px rgba(224, 123, 10, 0.22), 0 16px 36px rgba(35, 31, 32, 0.12);
           }
           .care-journey-node-photo {
             width: 100%;
@@ -464,7 +777,7 @@ export function CareJourneySection() {
             width: 1.25rem;
             height: 1.25rem;
             border-radius: 999px;
-            background: #f3c300;
+            background: #e07b0a;
             color: #231f20;
             font-family: var(--font-sans);
             font-size: 0.5625rem;
@@ -475,12 +788,12 @@ export function CareJourneySection() {
             width: 2px;
             height: clamp(0.75rem, 2vw, 1.1rem);
             margin-top: 0.35rem;
-            background: linear-gradient(180deg, rgba(243, 195, 0, 0.7), rgba(35, 31, 32, 0.12));
+            background: linear-gradient(180deg, rgba(224, 123, 10, 0.7), rgba(35, 31, 32, 0.12));
             border-radius: 999px;
           }
           .care-journey-node.is-active .care-journey-node-connector {
             height: clamp(1rem, 2.5vw, 1.35rem);
-            background: linear-gradient(180deg, #f3c300, rgba(35, 31, 32, 0.15));
+            background: linear-gradient(180deg, #e07b0a, rgba(35, 31, 32, 0.15));
           }
           .care-journey-node-label {
             margin: 0.4rem 0 0;
@@ -489,22 +802,87 @@ export function CareJourneySection() {
             font-weight: 700;
             line-height: 1.2;
             color: #231f20;
+            transition: color 0.35s ease;
+          }
+          .care-journey-node.is-active .care-journey-node-label {
+            color: #e07b0a;
+          }
+          .care-journey-node-pulse {
+            position: absolute;
+            inset: -6px;
+            border-radius: 999px;
+            border: 2px solid rgba(224, 123, 10, 0.45);
+            pointer-events: none;
           }
           .care-journey-detail {
             margin-top: clamp(1.25rem, 3vw, 1.75rem);
-            min-height: 8rem;
+            min-height: 10rem;
+            perspective: 1200px;
           }
           .care-journey-detail-card {
+            position: relative;
             display: flex;
             flex-direction: column;
             gap: 1rem;
             align-items: stretch;
-            border-radius: 1.15rem;
-            border: 1px solid rgba(35, 31, 32, 0.07);
-            background: linear-gradient(135deg, rgba(243, 195, 0, 0.08) 0%, #fff 55%);
-            padding: 1rem 1.15rem;
-            box-shadow: 0 12px 36px rgba(35, 31, 32, 0.06);
+            border-radius: 1.35rem;
+            border: 1px solid rgba(35, 31, 32, 0.08);
+            background:
+              linear-gradient(135deg, rgba(224, 123, 10, 0.11) 0%, #fff 42%, #fff 100%);
+            padding: 1.15rem 1.25rem;
+            box-shadow:
+              0 1px 0 rgba(255, 255, 255, 0.9) inset,
+              0 20px 48px rgba(35, 31, 32, 0.09);
             overflow: hidden;
+            transform-style: preserve-3d;
+            will-change: transform, opacity, filter;
+          }
+          .care-journey-detail-beam {
+            position: absolute;
+            inset: -20% -40%;
+            pointer-events: none;
+            background: linear-gradient(
+              105deg,
+              transparent 38%,
+              rgba(255, 255, 255, 0.65) 49%,
+              rgba(224, 123, 10, 0.45) 52%,
+              transparent 64%
+            );
+            mix-blend-mode: soft-light;
+            opacity: 0;
+            z-index: 3;
+          }
+          .care-journey-detail-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(35, 31, 32, 0.06);
+            transform: scaleX(0);
+            transform-origin: left center;
+            z-index: 2;
+          }
+          .care-journey-detail-progress::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, #b85c00, #e07b0a, #f09012);
+            box-shadow: 0 0 12px rgba(224, 123, 10, 0.55);
+          }
+          .care-journey-detail-watermark {
+            position: absolute;
+            right: 0.75rem;
+            bottom: -0.35rem;
+            font-family: var(--font-display);
+            font-size: clamp(4.5rem, 14vw, 6.5rem);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            color: rgba(224, 123, 10, 0.07);
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
           }
           @media (min-width: 640px) {
             .care-journey-detail-card {
@@ -514,8 +892,25 @@ export function CareJourneySection() {
             }
           }
           .care-journey-detail-copy {
+            position: relative;
+            z-index: 1;
             flex: 1;
             min-width: 0;
+          }
+          .care-journey-detail-trust {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 0.65rem;
+            padding: 0.28rem 0.65rem;
+            border-radius: 999px;
+            background: rgba(224, 123, 10, 0.12);
+            border: 1px solid rgba(224, 123, 10, 0.22);
+            font-family: var(--font-sans);
+            font-size: 0.5625rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #9a4e00;
           }
           .care-journey-detail-visual {
             position: relative;
@@ -551,7 +946,7 @@ export function CareJourneySection() {
             inset: 0;
             background: linear-gradient(
               145deg,
-              rgba(243, 195, 0, 0.18) 0%,
+              rgba(224, 123, 10, 0.18) 0%,
               transparent 45%,
               rgba(35, 31, 32, 0.08) 100%
             );
@@ -564,41 +959,55 @@ export function CareJourneySection() {
             font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
-            color: #f3c300;
+            color: #e07b0a;
+            will-change: transform, opacity, filter;
           }
           .care-journey-detail-title {
             margin: 0;
             font-family: var(--font-display);
-            font-size: 1.05rem;
-            font-weight: 700;
+            font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
             color: #231f20;
+            will-change: transform, opacity, filter;
           }
           .care-journey-detail-body {
             margin: 0.35rem 0 0;
             font-family: var(--font-sans);
             font-size: 0.8125rem;
-            line-height: 1.5;
+            line-height: 1.55;
             color: rgba(35, 31, 32, 0.72);
+            will-change: transform, opacity, filter;
           }
           .care-journey-strip {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.45rem 0.65rem;
+            gap: 0.55rem 0.75rem;
             margin-top: clamp(1.25rem, 3vw, 1.75rem);
             padding-top: clamp(1rem, 2.5vw, 1.5rem);
             border-top: 1px solid rgba(35, 31, 32, 0.07);
           }
-          .care-journey-strip span {
+          .care-journey-strip-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
             font-family: var(--font-sans);
             font-size: 0.6875rem;
             font-weight: 600;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            color: rgba(35, 31, 32, 0.55);
-            background: rgba(226, 226, 226, 0.5);
+            color: rgba(35, 31, 32, 0.72);
+            background: linear-gradient(180deg, #fff 0%, #f5f4f0 100%);
+            border: 1px solid rgba(35, 31, 32, 0.08);
             border-radius: 999px;
-            padding: 0.35rem 0.75rem;
+            padding: 0.45rem 0.85rem;
+            box-shadow: 0 4px 14px rgba(35, 31, 32, 0.06);
+            will-change: transform, opacity;
+          }
+          .care-journey-strip-pill svg {
+            flex-shrink: 0;
+            color: #e07b0a;
           }
           @media (max-width: 640px) {
             .care-journey-node {
@@ -609,16 +1018,13 @@ export function CareJourneySection() {
 
         <div className="care-journey-inner">
           <header ref={headRef} className="care-journey-head">
-            <motion.p
-              className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em]"
-              style={{ color: "rgba(35,31,32,0.5)", fontFamily: "var(--font-sans)" }}
-              initial={reduced ? false : { opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: EASE }}
+            <p
+              ref={eyebrowRef}
+              className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(35,31,32,0.5)]"
+              style={{ fontFamily: "var(--font-sans)" }}
             >
               How TIDL works
-            </motion.p>
+            </p>
             <h2
               className="leading-[1.08] tracking-[-0.02em]"
               style={{ fontSize: "clamp(1.5rem, 4vw, 2.35rem)" }}
@@ -631,21 +1037,23 @@ export function CareJourneySection() {
                   fontFamily: "var(--font-display)",
                   fontStyle: "italic",
                   fontWeight: 400,
-                  color: "#f3c300",
+                  color: "#e07b0a",
                 }}
               >
                 <HeadlineWords text={HEADLINE_AFTER} />
               </span>
             </h2>
             <p
-              className="mx-auto mt-3 max-w-lg text-[0.9375rem] leading-relaxed"
-              style={{ color: "rgba(35,31,32,0.72)", fontFamily: "var(--font-sans)" }}
+              ref={subRef}
+              className="mx-auto mt-3 max-w-lg text-[0.9375rem] leading-relaxed text-[rgba(35,31,32,0.72)]"
+              style={{ fontFamily: "var(--font-sans)" }}
             >
               Tap a step on the arc. Each one is a verified layer of real medical care.
             </p>
           </header>
 
-          <div className="care-journey-stage">
+          <div ref={stageWrapRef} className="care-journey-stage-wrap">
+            <div className="care-journey-stage">
             <svg
               className="care-journey-arc-svg"
               viewBox="0 0 100 55"
@@ -653,18 +1061,27 @@ export function CareJourneySection() {
               aria-hidden
             >
               <path
+                ref={arcGlowRef}
+                className="care-journey-arc-glow-path"
+                d={ARC_PATH}
+                fill="none"
+                stroke="rgba(224, 123, 10, 0.28)"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+              />
+              <path
                 ref={arcRef}
                 d={ARC_PATH}
                 fill="none"
-                stroke="rgba(243,195,0,0.45)"
-                strokeWidth="0.6"
+                stroke="rgba(224, 123, 10,0.55)"
+                strokeWidth="0.65"
                 strokeLinecap="round"
               />
               <circle
                 ref={arcDotRef}
                 className="care-journey-arc-glow"
                 r="1.1"
-                fill="#f3c300"
+                fill="#e07b0a"
                 opacity="0"
               />
             </svg>
@@ -681,7 +1098,10 @@ export function CareJourneySection() {
                   type="button"
                   className={`care-journey-node${isActive ? " is-active" : ""}`}
                   style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-                  onClick={() => setActive(i)}
+                  onClick={() => {
+                    stepPickedRef.current = true;
+                    setActive(i);
+                  }}
                   aria-pressed={isActive}
                   aria-label={`${step.title}. ${step.body}`}
                 >
@@ -692,20 +1112,31 @@ export function CareJourneySection() {
                     className="care-journey-node-inner"
                   >
                     <motion.div
-                      className="care-journey-node-ring"
+                      className="care-journey-node-ring relative"
+                      whileHover={reduced ? undefined : { scale: 1.06 }}
+                      whileTap={reduced ? undefined : { scale: 0.96 }}
                       animate={
                         isActive && !reduced
                           ? {
                               boxShadow: [
-                                "0 0 0 8px rgba(243,195,0,0.22), 0 16px 36px rgba(35,31,32,0.12)",
-                                "0 0 0 12px rgba(243,195,0,0.14), 0 16px 36px rgba(35,31,32,0.12)",
-                                "0 0 0 8px rgba(243,195,0,0.22), 0 16px 36px rgba(35,31,32,0.12)",
+                                "0 0 0 8px rgba(224, 123, 10,0.22), 0 16px 36px rgba(35,31,32,0.12)",
+                                "0 0 0 12px rgba(224, 123, 10,0.14), 0 16px 36px rgba(35,31,32,0.12)",
+                                "0 0 0 8px rgba(224, 123, 10,0.22), 0 16px 36px rgba(35,31,32,0.12)",
                               ],
                             }
                           : undefined
                       }
                       transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                     >
+                      {isActive && !reduced ? (
+                        <motion.span
+                          className="care-journey-node-pulse"
+                          aria-hidden
+                          initial={{ scale: 0.85, opacity: 0.7 }}
+                          animate={{ scale: 1.4, opacity: 0 }}
+                          transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                        />
+                      ) : null}
                       <span className="care-journey-node-num" aria-hidden>
                         {step.num}
                       </span>
@@ -719,7 +1150,16 @@ export function CareJourneySection() {
                       </div>
                     </motion.div>
                     <div className="care-journey-node-connector" aria-hidden />
-                    <span className="care-journey-node-label">{step.short}</span>
+                    <motion.span
+                      className="care-journey-node-label"
+                      animate={
+                        isActive && !reduced
+                          ? { y: [0, -2, 0], transition: { duration: 2.4, repeat: Infinity } }
+                          : { y: 0 }
+                      }
+                    >
+                      {step.short}
+                    </motion.span>
                   </div>
                 </button>
               );
@@ -735,61 +1175,57 @@ export function CareJourneySection() {
               </p>
             </div>
           </div>
+          </div>
 
-          <div className="care-journey-detail">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeStep.num}
-                className="care-journey-detail-card"
-                initial={reduced ? false : { opacity: 0, y: 20, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={reduced ? undefined : { opacity: 0, y: -12, scale: 0.98 }}
-                transition={{ duration: 0.45, ease: EASE }}
-              >
-                <div className="care-journey-detail-copy">
-                  <p className="care-journey-detail-num">
-                    Step {activeStep.num} · {activeStep.trust}
-                  </p>
-                  <h3 className="care-journey-detail-title">{activeStep.title}</h3>
-                  <p className="care-journey-detail-body">{activeStep.body}</p>
+          <div ref={detailWrapRef} className="care-journey-detail">
+            <div ref={detailCardRef} className="care-journey-detail-card">
+              <div ref={detailBeamRef} className="care-journey-detail-beam" aria-hidden />
+              <div ref={detailProgressRef} className="care-journey-detail-progress" aria-hidden />
+              <span ref={detailWatermarkRef} className="care-journey-detail-watermark" aria-hidden>
+                {activeStep.num}
+              </span>
+
+              <div className="care-journey-detail-copy">
+                <p ref={detailNumRef} className="care-journey-detail-num">
+                  Step {activeStep.num} · {activeStep.trust}
+                </p>
+                <h3 ref={detailTitleRef} className="care-journey-detail-title">
+                  {activeStep.title}
+                </h3>
+                <p ref={detailBodyRef} className="care-journey-detail-body">
+                  {activeStep.body}
+                </p>
+                <span ref={detailTrustRef} className="care-journey-detail-trust">
+                  {activeStep.trust} pathway
+                </span>
+              </div>
+
+              <div ref={detailVisualRef} className="care-journey-detail-visual">
+                <div ref={detailFloatRef} className="care-journey-detail-visual-float">
+                  <img
+                    ref={detailImgRef}
+                    src={activeStep.image}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
-                <div ref={detailVisualRef} className="care-journey-detail-visual">
-                  <div ref={detailFloatRef} className="care-journey-detail-visual-float">
-                    <img
-                      ref={detailImgRef}
-                      key={activeStep.image}
-                      src={activeStep.image}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+              </div>
+            </div>
           </div>
 
           <div ref={stripRef} className="care-journey-strip">
-            {["Licensed physicians", "Rx required", "Licensed pharmacies", "Cold-chain delivery"].map(
-              (label, i) => (
-                <motion.span
-                  key={label}
-                  whileHover={reduced ? undefined : { scale: 1.06 }}
-                  initial={reduced ? false : { opacity: 0, y: 8 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    delay: 0.4 + i * 0.06,
-                    duration: 0.4,
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 20,
-                  }}
-                >
-                  {label}
-                </motion.span>
-              ),
-            )}
+            {TRUST_STRIP.map((label) => (
+              <motion.span
+                key={label}
+                className="care-journey-strip-pill"
+                whileHover={reduced ? undefined : { y: -3, scale: 1.04 }}
+                whileTap={reduced ? undefined : { scale: 0.98 }}
+              >
+                <Check size={12} strokeWidth={2.5} aria-hidden />
+                {label}
+              </motion.span>
+            ))}
           </div>
         </div>
       </div>

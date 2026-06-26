@@ -49,10 +49,12 @@
   --muted:      oklch(0.94  0.005 95);
   --muted-foreground: oklch(0.50 0.01 250);
   --border:     oklch(0.88  0.01  250 / 0.55);
-  --clinical:   #F3C300;                    /* gold accent */
-  --mint:       #F9DC6B;                    /* light gold */
+  --clinical:   #E07B0A;                    /* aggressive amber-orange accent */
+  --mint:       #F09012;                    /* warm orange highlight */
   --sand:       oklch(0.86  0.06  85);      /* warm metal accent */
-  --accent:     #F3C300;
+  --accent:     #E07B0A;
+  --accent-deep: #B85C00;
+  --accent-rgb: 224, 123, 10;
   --radius: 1.25rem;
 
   /* ── Pharmacy section palette ── */
@@ -67,7 +69,7 @@
   /* ── Product showcase (TIDL brand: Knockout, Recover, Cool Mist, Resolve) ── */
   --showcase-bg: #fafaf7;
   --showcase-bg-soft: #f5f4f0;
-  --showcase-bg-glow: rgba(243, 195, 0, 0.08);
+  --showcase-bg-glow: rgba(224, 123, 10, 0.08);
   --showcase-bg-deep: #eeede8;
   --showcase-panel: #ffffff;
   --showcase-panel-strong: #f5f4f0;
@@ -78,13 +80,13 @@
   --showcase-ink-strong: #231f20;
   --showcase-ink: #6b6a6b;
   --showcase-ink-muted: #c4c6c7;
-  --showcase-accent: #f3c300;
+  --showcase-accent: #e07b0a;
   --showcase-accent-strong: #231f20;
   --showcase-beam-core: oklch(0.98 0.04 90);
   --showcase-beam-soft: oklch(0.92 0.06 85);
   --showcase-shadow-soft: oklch(0.35 0.03 40);
   --showcase-shadow-strong: #231f20;
-  --showcase-button-bg: #f3c300;
+  --showcase-button-bg: #e07b0a;
   --showcase-button-foreground: #231f20;
   --showcase-button-border: rgba(35, 31, 32, 0.08);
   --showcase-chip-bg: color-mix(in oklab, var(--showcase-surface) 78%, transparent);
@@ -162,7 +164,7 @@
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .text-gradient-clinical {
-  background: linear-gradient(120deg, #C9A200 0%, #F3C300 100%);
+  background: linear-gradient(120deg, #b85c00 0%, #e07b0a 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
@@ -174,18 +176,18 @@
   box-shadow:
     0 1px 0 #fff inset,
     0 1px 2px rgba(0,0,0,0.04),
-    0 10px 40px -20px rgba(243,195,0,0.15);
+    0 10px 40px -20px rgba(224, 123, 10,0.15);
 }
 
 .glass-light {
   background: oklch(1 0 0 / 0.7);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(243,195,0,0.25);
+  border: 1px solid rgba(224, 123, 10,0.25);
 }
 
 .hairline {
-  background: linear-gradient(90deg, transparent, rgba(243,195,0,0.35), transparent);
+  background: linear-gradient(90deg, transparent, rgba(224, 123, 10,0.35), transparent);
   height: 1px;
 }
 
@@ -198,7 +200,7 @@
 }
 
 .bg-radial-light {
-  background: radial-gradient(60% 50% at 50% 30%, rgba(243,195,0,0.12) 0%, transparent 70%);
+  background: radial-gradient(60% 50% at 50% 30%, rgba(224, 123, 10,0.12) 0%, transparent 70%);
 }
 
 /* ──────────── Buttons ──────────── */
@@ -295,7 +297,7 @@
 .pill-tag .dot {
   width: 6px; height: 6px; border-radius: 999px;
   background: var(--clinical);
-  box-shadow: 0 0 12px rgba(243,195,0,0.7);
+  box-shadow: 0 0 12px rgba(224, 123, 10,0.7);
 }
 
 .chip-data {
@@ -310,7 +312,7 @@
 /* ──────────── Scroll progress ──────────── */
 .scroll-progress {
   position: fixed; top: 0; left: 0; height: 2px; width: 100%;
-  background: linear-gradient(90deg, transparent, #F3C300, transparent);
+  background: linear-gradient(90deg, transparent, #e07b0a, transparent);
   transform-origin: 0 50%; transform: scaleX(0); z-index: 100;
   will-change: transform;
 }
@@ -318,21 +320,21 @@
 /* ──────────── Gold / clinical accent utilities ──────────── */
 .gold-glow {
   box-shadow:
-    0 0 0 1px rgba(243,195,0,0.35),
-    0 4px 24px -6px rgba(243,195,0,0.30),
-    0 0 40px -12px rgba(243,195,0,0.20);
+    0 0 0 1px rgba(224, 123, 10,0.35),
+    0 4px 24px -6px rgba(224, 123, 10,0.30),
+    0 0 40px -12px rgba(224, 123, 10,0.20);
 }
 .gold-glow-sm {
-  box-shadow: 0 0 0 1px rgba(243,195,0,0.30), 0 2px 12px -4px rgba(243,195,0,0.22);
+  box-shadow: 0 0 0 1px rgba(224, 123, 10,0.30), 0 2px 12px -4px rgba(224, 123, 10,0.22);
 }
 .gold-border {
-  border-color: rgba(243,195,0,0.55);
+  border-color: rgba(224, 123, 10,0.55);
 }
 .bg-gold-subtle {
-  background: linear-gradient(135deg, rgba(243,195,0,0.07) 0%, rgba(249,220,107,0.04) 100%);
+  background: linear-gradient(135deg, rgba(224, 123, 10, 0.07) 0%, rgba(240, 144, 18, 0.04) 100%);
 }
 .text-gold {
-  color: #C9A200;
+  color: #b85c00;
 }
 
 .gold-shimmer {
@@ -343,7 +345,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgba(243,195,0,0.18) 50%, transparent 60%);
+  background: linear-gradient(105deg, transparent 40%, rgba(224, 123, 10,0.18) 50%, transparent 60%);
   transform: translateX(-100%);
   animation: goldShimmer 3.5s ease-in-out infinite;
   pointer-events: none;
@@ -359,9 +361,9 @@
   animation: goldRingPulse 1.8s ease-out forwards;
 }
 @keyframes goldRingPulse {
-  0%   { box-shadow: 0 0 0 1px #C9A200, 0 4px 24px -6px rgba(243,195,0,0.25), 0 0 0 4px rgba(243,195,0,0.18); }
-  60%  { box-shadow: 0 0 0 1px #C9A200, 0 4px 24px -6px rgba(243,195,0,0.25), 0 0 0 7px rgba(243,195,0,0.05); }
-  100% { box-shadow: 0 0 0 1px #C9A200, 0 4px 24px -6px rgba(243,195,0,0.25), 0 0 0 0px rgba(243,195,0,0); }
+  0%   { box-shadow: 0 0 0 1px #b85c00, 0 4px 24px -6px rgba(224, 123, 10,0.25), 0 0 0 4px rgba(224, 123, 10,0.18); }
+  60%  { box-shadow: 0 0 0 1px #b85c00, 0 4px 24px -6px rgba(224, 123, 10,0.25), 0 0 0 7px rgba(224, 123, 10,0.05); }
+  100% { box-shadow: 0 0 0 1px #b85c00, 0 4px 24px -6px rgba(224, 123, 10,0.25), 0 0 0 0px rgba(224, 123, 10,0); }
 }
 
 /* ──────────── FX ──────────── */
@@ -374,7 +376,7 @@
   position: absolute;
   inset: -14%;
   border-radius: 28px;
-  background: radial-gradient(closest-side, rgba(243,195,0,0.3), rgba(243,195,0,0) 70%);
+  background: radial-gradient(closest-side, rgba(224, 123, 10,0.3), rgba(224, 123, 10,0) 70%);
   filter: blur(14px);
   z-index: -1;
   opacity: 0.55;
@@ -591,5 +593,5 @@ html.tidl-scrolling .float-y {
     drop-shadow(0 1px 0 rgba(255, 255, 255, 0.12))
     drop-shadow(0 3px 8px rgba(0, 0, 0, 0.42))
     drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28))
-    drop-shadow(0 0 18px rgba(243, 195, 0, 0.16));
+    drop-shadow(0 0 18px rgba(224, 123, 10, 0.16));
 }

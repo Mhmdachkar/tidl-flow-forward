@@ -175,8 +175,8 @@ export function AiSearchSection() {
           gsap.to(chip, {
             y: -3,
             scale: 1.04,
-            boxShadow: "0 12px 28px -8px rgba(243,195,0,0.35)",
-            borderColor: "rgba(243,195,0,0.55)",
+            boxShadow: "0 12px 28px -8px rgba(224, 123, 10,0.35)",
+            borderColor: "rgba(224, 123, 10,0.55)",
             duration: 0.35,
             ease: "power2.out",
             overwrite: "auto",
@@ -186,7 +186,7 @@ export function AiSearchSection() {
           gsap.to(chip, {
             y: 0,
             scale: 1,
-            boxShadow: "0 0 0 rgba(243,195,0,0)",
+            boxShadow: "0 0 0 rgba(224, 123, 10,0)",
             borderColor: "rgba(35,31,32,0.12)",
             duration: 0.4,
             ease: "power2.out",
@@ -248,8 +248,8 @@ export function AiSearchSection() {
           border-radius: 50%;
           background: radial-gradient(
             ellipse at center,
-            rgba(243, 195, 0, 0.16) 0%,
-            rgba(243, 195, 0, 0.04) 45%,
+            rgba(224, 123, 10, 0.16) 0%,
+            rgba(224, 123, 10, 0.04) 45%,
             transparent 72%
           );
           pointer-events: none;
@@ -317,10 +317,10 @@ export function AiSearchSection() {
         }
 
         .ai-discover-input:focus {
-          border-color: rgba(243, 195, 0, 0.65);
+          border-color: rgba(224, 123, 10, 0.65);
           box-shadow:
-            0 0 0 4px rgba(243, 195, 0, 0.16),
-            0 16px 40px -20px rgba(243, 195, 0, 0.35);
+            0 0 0 4px rgba(224, 123, 10, 0.16),
+            0 16px 40px -20px rgba(224, 123, 10, 0.35);
           transform: translateY(-1px);
         }
 

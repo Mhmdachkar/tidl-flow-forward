@@ -71,7 +71,7 @@ function PlusMinusIcon({ open }: { open: boolean }) {
           borderRadius: 4,
           color: open ? TIDL_BRAND.accent : TIDL_BRAND.ink,
           transition: "color 0.3s, border-color 0.3s",
-          borderColor: open ? "rgba(243,195,0,0.35)" : "rgba(35,31,32,0.15)",
+          borderColor: open ? "rgba(224, 123, 10,0.35)" : "rgba(35,31,32,0.15)",
         }}
       >
       {/* horizontal bar always visible */}
@@ -379,7 +379,7 @@ export function FAQSection() {
         className="pointer-events-none absolute left-0 top-0 z-0"
         style={{
           width: 440, height: 440,
-          background: "radial-gradient(circle, rgba(243,195,0,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(224, 123, 10,0.06) 0%, transparent 70%)",
           filter: "blur(8px)",
         }}
       />

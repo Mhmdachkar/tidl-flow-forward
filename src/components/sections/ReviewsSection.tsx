@@ -286,7 +286,7 @@ export function ReviewsSection() {
         .rv-cursor {
           width: 400px;
           height: 400px;
-          background: radial-gradient(circle, rgba(243,195,0,0.07) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(224, 123, 10,0.07) 0%, transparent 70%);
           filter: blur(6px);
         }
 
@@ -433,7 +433,7 @@ export function ReviewsSection() {
           gap: 0.2rem;
           padding: 0.15rem 0.45rem;
           border-radius: 999px;
-          background: rgba(243, 195, 0, 0.14);
+          background: rgba(224, 123, 10, 0.14);
           color: #8a7200;
           font-family: "Josefin Sans", sans-serif;
           font-size: 0.5625rem;
@@ -489,7 +489,6 @@ export function ReviewsSection() {
           font-size: 0.8125rem;
           font-weight: 700;
           color: ${TIDL_BRAND.accent};
-          filter: brightness(0.72);
         }
 
         .rv-card__tenure {
@@ -552,7 +551,7 @@ export function ReviewsSection() {
       <div className="relative z-10 mx-auto max-w-[1360px] px-6 pt-12 pb-8 sm:px-10 sm:pt-16 lg:px-16 lg:pt-24 lg:pb-10">
         <div ref={headRef} className="rv-header">
           <div>
-            <p className="tidl-eyebrow mb-4" style={{ color: TIDL_BRAND.accent, filter: "brightness(0.72)" }}>
+            <p className="tidl-eyebrow mb-4" style={{ color: TIDL_BRAND.accent }}>
               Patient stories
             </p>
             <h2 className="tidl-display text-[clamp(44px,6vw,88px)] tracking-[-0.025em]">

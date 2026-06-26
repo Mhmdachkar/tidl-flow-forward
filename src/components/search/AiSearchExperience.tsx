@@ -56,7 +56,7 @@ export function AiSearchExperience({ initialQuery = "", compact = false }: AiSea
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Describe your goal. e.g. lose weight with GLP-1 care"
-          className="w-full rounded-full border px-5 py-4 pr-14 text-[15px] outline-none transition-[border-color,box-shadow] duration-300 focus:shadow-[0_0_0_4px_rgba(243,195,0,0.18)] sm:px-6 sm:py-[1.15rem] sm:text-base"
+          className="w-full rounded-full border px-5 py-4 pr-14 text-[15px] outline-none transition-[border-color,box-shadow] duration-300 focus:shadow-[0_0_0_4px_rgba(224, 123, 10,0.18)] sm:px-6 sm:py-[1.15rem] sm:text-base"
           style={{
             borderColor: "rgba(35,31,32,0.14)",
             background: TIDL_BRAND.surface,
@@ -85,7 +85,7 @@ export function AiSearchExperience({ initialQuery = "", compact = false }: AiSea
               setQuery(suggestion);
               runSearch(suggestion);
             }}
-            className="rounded-full border px-3.5 py-1.5 text-left text-[12px] transition-colors duration-200 hover:border-[rgba(243,195,0,0.55)] sm:text-[13px]"
+            className="rounded-full border px-3.5 py-1.5 text-left text-[12px] transition-colors duration-200 hover:border-[rgba(224, 123, 10,0.55)] sm:text-[13px]"
             style={{
               borderColor: "rgba(35,31,32,0.12)",
               background: "rgba(255,255,255,0.72)",
@@ -116,7 +116,7 @@ export function AiSearchExperience({ initialQuery = "", compact = false }: AiSea
             <div className="flex items-start gap-3">
               <span
                 className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{ background: "rgba(243,195,0,0.16)", color: TIDL_BRAND.ink }}
+                style={{ background: "rgba(224, 123, 10,0.16)", color: TIDL_BRAND.ink }}
                 aria-hidden
               >
                 <Sparkles size={16} />
@@ -173,7 +173,7 @@ export function AiSearchExperience({ initialQuery = "", compact = false }: AiSea
                   style={{
                     background: TIDL_BRAND.accent,
                     color: TIDL_BRAND.ink,
-                    boxShadow: "0 12px 28px rgba(243,195,0,0.28)",
+                    boxShadow: "0 12px 28px rgba(224, 123, 10,0.28)",
                   }}
                 >
                   View treatment

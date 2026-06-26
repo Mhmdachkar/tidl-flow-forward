@@ -129,7 +129,7 @@ export function QuizModal() {
           {/* Progress */}
           <div className="h-1 w-full bg-[#E8E5DF]">
             <div
-              className="h-full bg-gradient-to-r from-[#C9A200] to-[#F3C300] transition-all duration-500 ease-out"
+              className="h-full bg-gradient-to-r from-[#b85c00] to-[#e07b0a] transition-all duration-500 ease-out"
               style={{ width: `${quiz.progress}%` }}
             />
           </div>

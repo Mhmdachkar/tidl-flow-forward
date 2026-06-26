@@ -16,7 +16,7 @@ import {
 } from "@/lib/auth-schema";
 
 const INPUT_CLASS =
-  "h-12 w-full rounded-xl border border-border bg-white px-4 text-[15px] text-foreground transition-shadow placeholder:text-muted-foreground/60 focus:border-[#C9A200]/60 focus:outline-none focus:ring-2 focus:ring-[#C9A200]/20";
+  "h-12 w-full rounded-xl border border-border bg-white px-4 text-[15px] text-foreground transition-shadow placeholder:text-muted-foreground/60 focus:border-[#b85c00]/60 focus:outline-none focus:ring-2 focus:ring-[#b85c00]/20";
 
 const FIELD_ERROR = "mt-1.5 text-[12px] font-medium text-red-500";
 
@@ -196,7 +196,7 @@ export function AuthModal() {
                 <div className="flex justify-end">
                   <button
                     type="button"
-                    className="text-[13px] font-medium text-[#B28B00] transition-colors hover:text-[#C9A200]"
+                    className="text-[13px] font-medium text-[#9a4e00] transition-colors hover:text-[#b85c00]"
                   >
                     Forgot your password?
                   </button>
@@ -221,7 +221,7 @@ export function AuthModal() {
                   <button
                     type="button"
                     onClick={() => setMode("signup")}
-                    className="font-semibold text-[#B28B00] transition-colors hover:text-[#C9A200]"
+                    className="font-semibold text-[#9a4e00] transition-colors hover:text-[#b85c00]"
                   >
                     Create an account
                   </button>
@@ -321,7 +321,7 @@ export function AuthModal() {
                   <button
                     type="button"
                     onClick={() => setMode("login")}
-                    className="font-semibold text-[#B28B00] transition-colors hover:text-[#C9A200]"
+                    className="font-semibold text-[#9a4e00] transition-colors hover:text-[#b85c00]"
                   >
                     Log in
                   </button>

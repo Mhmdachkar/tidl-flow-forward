@@ -17,9 +17,9 @@ export function OrderSummary({
   compact = false,
 }: OrderSummaryProps) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_2px_24px_-8px_rgba(0,0,0,0.10),0_0_0_1px_rgba(243,195,0,0.07)]">
+    <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_2px_24px_-8px_rgba(0,0,0,0.10),0_0_0_1px_rgba(224, 123, 10,0.07)]">
       {/* Gold top accent line */}
-      <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#F3C300] to-transparent opacity-60" />
+      <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#e07b0a] to-transparent opacity-60" />
 
       <div className={compact ? "p-5" : "p-6 sm:p-8"}>
         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Order summary</p>
@@ -47,9 +47,9 @@ export function OrderSummary({
           </div>
 
           {/* Gold total row */}
-          <div className="flex justify-between gap-4 rounded-xl bg-gradient-to-r from-[rgba(243,195,0,0.07)] to-[rgba(243,195,0,0.03)] px-3 py-2.5 text-base font-medium">
+          <div className="flex justify-between gap-4 rounded-xl bg-gradient-to-r from-[rgba(224, 123, 10,0.07)] to-[rgba(224, 123, 10,0.03)] px-3 py-2.5 text-base font-medium">
             <span>Total due today</span>
-            <span className="tabular-nums text-[#C9A200]">{formatCurrency(pricing.total)}</span>
+            <span className="tabular-nums text-[#b85c00]">{formatCurrency(pricing.total)}</span>
           </div>
         </div>
 
@@ -57,7 +57,7 @@ export function OrderSummary({
           <p>Recurring monthly billing after physician approval.</p>
           <p>Cancel anytime before your next refill.</p>
           <p className="flex items-center gap-1.5 pt-0.5">
-            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#C9A200]" />
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#b85c00]" />
             HSA / FSA cards may be accepted.
           </p>
         </div>

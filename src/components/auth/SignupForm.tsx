@@ -21,7 +21,7 @@ interface SignupFormProps {
 }
 
 const INPUT_CLASS =
-  "h-12 rounded-xl border-border bg-background transition-shadow focus-visible:border-[#C9A200]/60 focus-visible:ring-2 focus-visible:ring-[#C9A200]/20";
+  "h-12 rounded-xl border-border bg-background transition-shadow focus-visible:border-[#b85c00]/60 focus-visible:ring-2 focus-visible:ring-[#b85c00]/20";
 
 export function SignupForm({ redirectTo = "/account", defaultValues }: SignupFormProps) {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export function SignupForm({ redirectTo = "/account", defaultValues }: SignupFor
           <Link
             to="/login"
             search={{ redirect: redirectTo }}
-            className="font-medium text-foreground underline underline-offset-2 hover:text-[#C9A200] transition-colors"
+            className="font-medium text-foreground underline underline-offset-2 hover:text-[#b85c00] transition-colors"
           >
             Sign in
           </Link>

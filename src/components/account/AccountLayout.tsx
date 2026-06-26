@@ -31,7 +31,7 @@ export function AccountLayout({ children }: { children: ReactNode }) {
           </p>
           <h1 className="mt-1 font-display text-2xl font-medium">
             Good {getGreeting()},{" "}
-            <span className="text-[#C9A200]">{user?.firstName}</span>
+            <span className="text-[#b85c00]">{user?.firstName}</span>
           </h1>
         </div>
       </div>
@@ -51,7 +51,7 @@ export function AccountLayout({ children }: { children: ReactNode }) {
                     className={cn(
                       "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition-colors",
                       active
-                        ? "bg-surface font-medium text-foreground shadow-[0_0_0_1px_rgba(243,195,0,0.15)] [&_svg]:text-[#C9A200]"
+                        ? "bg-surface font-medium text-foreground shadow-[0_0_0_1px_rgba(224, 123, 10,0.15)] [&_svg]:text-[#b85c00]"
                         : "text-muted-foreground hover:bg-surface/70 hover:text-foreground",
                     )}
                   >
@@ -80,7 +80,7 @@ export function AccountLayout({ children }: { children: ReactNode }) {
                   to={item.to}
                   className={cn(
                     "flex flex-col items-center gap-1 px-2 py-3 text-[11px] transition-colors",
-                    active ? "text-[#C9A200]" : "text-muted-foreground",
+                    active ? "text-[#b85c00]" : "text-muted-foreground",
                   )}
                 >
                   <item.icon className="h-4 w-4" />

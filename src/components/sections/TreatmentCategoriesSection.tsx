@@ -155,14 +155,14 @@ export function TreatmentCategoriesSection() {
               <div className="relative h-44 sm:h-72 mb-4 sm:mb-6 flex items-end justify-center overflow-visible [perspective:900px]">
                 <div
                   className="absolute inset-x-8 bottom-4 h-5 rounded-full blur-2xl opacity-60 transition-all duration-500 group-hover:opacity-100 group-hover:scale-125"
-                  style={{ background: "radial-gradient(closest-side, rgba(243,195,0,0.35), transparent 70%)" }}
+                  style={{ background: "radial-gradient(closest-side, rgba(224, 123, 10,0.35), transparent 70%)" }}
                 />
                 <img
                   src={c.img}
                   alt={c.name}
                   loading="lazy"
                   decoding="async"
-                  className="pc-img relative z-10 max-h-full w-auto max-w-full origin-bottom object-contain transition-[filter] duration-500 group-hover:drop-shadow-[0_28px_36px_rgba(243,195,0,0.25)]"
+                  className="pc-img relative z-10 max-h-full w-auto max-w-full origin-bottom object-contain transition-[filter] duration-500 group-hover:drop-shadow-[0_28px_36px_rgba(224, 123, 10,0.25)]"
                   style={{
                     background: "transparent",
                     filter: c.lightProduct

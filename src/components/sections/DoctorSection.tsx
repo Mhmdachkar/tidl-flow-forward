@@ -62,17 +62,52 @@ export function DoctorSection() {
       const cards = section.querySelectorAll<HTMLElement>(".doctor-card");
 
       if (!reduced) {
-        gsap.from(cards, {
-          y: 48,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.09,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 82%",
-            once: true,
-          },
+        cards.forEach((card, index) => {
+          const cta = card.querySelector<HTMLElement>(".doctor-card__cta");
+          const fromLeft = index % 2 === 0;
+          const fromCenter = index === 2;
+
+          gsap.set(card, {
+            opacity: 0,
+            x: fromCenter ? 0 : fromLeft ? -64 : 64,
+            y: fromCenter ? 36 : 24,
+            scale: fromCenter ? 0.88 : 1,
+            filter: fromCenter ? "blur(8px)" : "blur(4px)",
+          });
+          if (cta) {
+            gsap.set(cta, { opacity: 0, scale: 0.72, y: 10 });
+          }
+
+          gsap.to(card, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: fromCenter ? 1.05 : 0.95,
+            ease: fromCenter ? "back.out(1.35)" : "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 88%",
+              once: true,
+            },
+          });
+
+          if (cta) {
+            gsap.to(cta, {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              duration: 0.55,
+              ease: "back.out(2.4)",
+              delay: fromCenter ? 0.22 : 0.14,
+              scrollTrigger: {
+                trigger: card,
+                start: "top 88%",
+                once: true,
+              },
+            });
+          }
         });
       }
 
@@ -127,7 +162,7 @@ export function DoctorSection() {
             })
             .to(photo, { scale: 1.05, filter: "saturate(1) contrast(1)", duration: 0.95 }, 0)
             .to(scrim, { opacity: 0.35, duration: 0.65 }, 0)
-            .to(front, { opacity: 0, y: 8, duration: 0.45 }, 0)
+            .to(front, { opacity: 0, height: 0, paddingTop: 0, paddingBottom: 0, marginTop: 0, duration: 0.4, ease: "power2.inOut" }, 0)
             .to(reveal, { height: openHeight, opacity: 1, duration: 0.72, ease: "power3.inOut" }, 0.08)
             .to(revealLines, { y: 0, opacity: 1, stagger: 0.06, duration: 0.55 }, 0.16)
             .to(specItems, { x: 0, opacity: 1, stagger: 0.05, duration: 0.5 }, 0.24);
@@ -143,7 +178,7 @@ export function DoctorSection() {
             .to(specItems, { x: -10, opacity: 0, stagger: 0.03, duration: 0.3 }, 0)
             .to(revealLines, { y: 14, opacity: 0, stagger: 0.03, duration: 0.3 }, 0)
             .to(reveal, { height: 0, opacity: 0, duration: 0.55, ease: "power3.inOut" }, 0.04)
-            .to(front, { opacity: 1, y: 0, duration: 0.45 }, 0.12)
+            .to(front, { opacity: 1, y: 0, height: "auto", paddingTop: "1rem", paddingBottom: "1.125rem", marginTop: 0, duration: 0.45 }, 0.12)
             .to(scrim, { opacity: 0, duration: 0.45 }, 0.12)
             .to(photo, { scale: 1, filter: "saturate(0.88) contrast(1.02)", duration: 0.65 }, 0.12)
             .to(
@@ -193,7 +228,7 @@ export function DoctorSection() {
     >
       <style>{`
         .doctor-section {
-          --doctor-gold: #f3c300;
+          --doctor-gold: #e07b0a;
           --doctor-ink: #231f20;
           --doctor-ink-muted: rgba(35, 31, 32, 0.58);
           --doctor-line: rgba(35, 31, 32, 0.1);
@@ -294,7 +329,7 @@ export function DoctorSection() {
           position: relative;
           display: flex;
           flex-direction: column;
-          min-height: 24.5rem;
+          height: auto;
           border-radius: 1.25rem;
           overflow: hidden;
           background: var(--doctor-panel);
@@ -311,20 +346,21 @@ export function DoctorSection() {
           position: absolute;
           inset: 0 auto 0 0;
           width: 3px;
-          background: linear-gradient(180deg, var(--doctor-gold) 0%, rgba(243, 195, 0, 0.35) 100%);
+          background: linear-gradient(180deg, var(--doctor-gold) 0%, rgba(224, 123, 10, 0.35) 100%);
           z-index: 8;
         }
 
         .doctor-card__shell:focus-visible {
           box-shadow:
-            0 0 0 2px rgba(243, 195, 0, 0.5),
+            0 0 0 2px rgba(224, 123, 10, 0.5),
             0 16px 40px -28px rgba(35, 31, 32, 0.22);
         }
 
         .doctor-card__media {
           position: relative;
-          flex: 0 0 58%;
-          min-height: 13.5rem;
+          flex: 0 0 auto;
+          aspect-ratio: 4 / 4.35;
+          width: 100%;
           overflow: hidden;
           background: #d4d4d4;
         }
@@ -385,22 +421,23 @@ export function DoctorSection() {
 
         .doctor-card__body {
           position: relative;
-          flex: 1;
+          flex: 0 0 auto;
           display: flex;
           flex-direction: column;
-          min-height: 0;
           background: var(--doctor-panel);
+          overflow: hidden;
         }
 
         .doctor-card__hairline {
           height: 1px;
           margin: 0 1rem;
-          background: linear-gradient(90deg, var(--doctor-gold), rgba(243, 195, 0, 0.15), transparent);
+          background: linear-gradient(90deg, var(--doctor-gold), rgba(224, 123, 10, 0.15), transparent);
         }
 
         .doctor-card__front {
           padding: 1rem 1rem 1.125rem;
-          will-change: transform, opacity;
+          will-change: transform, opacity, height;
+          overflow: hidden;
         }
 
         .doctor-card__department {
@@ -443,6 +480,7 @@ export function DoctorSection() {
           text-transform: uppercase;
           color: rgba(35, 31, 32, 0.42);
           transition: color 0.4s var(--doctor-ease);
+          will-change: transform, opacity;
         }
 
         .doctor-card__cta svg {
@@ -467,12 +505,18 @@ export function DoctorSection() {
           overflow: hidden;
           height: 0;
           opacity: 0;
-          border-top: 1px solid var(--doctor-line);
+          flex: 0 0 auto;
+          border-top: 0 solid transparent;
           background: #fff;
         }
 
+        .doctor-card--active .doctor-card__reveal {
+          border-top-width: 1px;
+          border-top-color: var(--doctor-line);
+        }
+
         .doctor-card__reveal-inner {
-          padding: 0.875rem 1rem 1.125rem;
+          padding: 1rem 1rem 1.125rem;
         }
 
         .doctor-card__reveal-line {
@@ -539,8 +583,9 @@ export function DoctorSection() {
         }
 
         @media (hover: hover) and (pointer: fine) {
+          .doctor-card--active .doctor-card__front,
           .doctor-card__shell:focus-within .doctor-card__front {
-            opacity: 0;
+            pointer-events: none;
           }
         }
       `}</style>

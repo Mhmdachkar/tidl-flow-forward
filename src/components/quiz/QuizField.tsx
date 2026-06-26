@@ -60,7 +60,7 @@ export function QuizYesNo({ value, onChange, error }: QuizYesNoProps) {
             type="button"
             onClick={() => onChange(option.id)}
             className={cn(
-              "min-h-[56px] rounded-2xl border px-4 py-3 text-[15px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A200]/40",
+              "min-h-[56px] rounded-2xl border px-4 py-3 text-[15px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b85c00]/40",
               value === option.id
                 ? "border-[#1A1816] bg-[#1A1816] text-white shadow-sm"
                 : "border-[#DDD9D1] bg-white text-[#1A1816] hover:border-[#BFBBAF] hover:shadow-sm",

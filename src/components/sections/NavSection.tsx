@@ -53,7 +53,7 @@ function Avatar({ user }: { user: { firstName: string; lastName?: string } | nul
   const initials = `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
   return (
     <span
-      className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] text-[11px] font-bold text-black shadow-[0_0_0_2px_rgba(243,195,0,0.3)]"
+      className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#b85c00] to-[#e07b0a] text-[11px] font-bold text-black shadow-[0_0_0_2px_rgba(224, 123, 10,0.3)]"
       aria-label={`${user.firstName} ${user.lastName ?? ""}`}
     >
       {initials}
@@ -68,7 +68,7 @@ function NavAvatar({
   const dim = size === "md" ? "h-9 w-9 text-sm" : "h-7 w-7 text-[11px]";
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] font-bold text-black shadow-[0_0_0_2px_rgba(243,195,0,0.35)] transition-shadow hover:shadow-[0_0_0_3px_rgba(243,195,0,0.5)] ${dim} ${scrolled === false ? "shadow-[0_0_0_2px_rgba(0,0,0,0.15)]" : ""}`}
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b85c00] to-[#e07b0a] font-bold text-black shadow-[0_0_0_2px_rgba(224, 123, 10,0.35)] transition-shadow hover:shadow-[0_0_0_3px_rgba(224, 123, 10,0.5)] ${dim} ${scrolled === false ? "shadow-[0_0_0_2px_rgba(0,0,0,0.15)]" : ""}`}
       aria-label={user ? `${user.firstName} ${user.lastName ?? ""}` : "Account"}
     >
       {initials}
@@ -211,7 +211,7 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
         }}
       >
         {showHeroChrome && (
-          <div style={{ height: `${ANNOUNCEMENT_HEIGHT_PX}px`, minHeight: `${ANNOUNCEMENT_HEIGHT_PX}px`, maxHeight: `${ANNOUNCEMENT_HEIGHT_PX}px`, background: "#F3C300", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", boxSizing: "border-box" }}>
+          <div style={{ height: `${ANNOUNCEMENT_HEIGHT_PX}px`, minHeight: `${ANNOUNCEMENT_HEIGHT_PX}px`, maxHeight: `${ANNOUNCEMENT_HEIGHT_PX}px`, background: "#e07b0a", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", boxSizing: "border-box" }}>
             <div className="flex items-center justify-center gap-2 px-4 sm:gap-3">
               <span style={{ fontSize: "11px", lineHeight: 1, color: "#231f20" }}>
                 Personalised longevity care is here.
@@ -231,7 +231,7 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
           </div>
         )}
 
-        <div style={{ background: showHeroChrome ? "#F3C300" : "transparent" }}>
+        <div style={{ background: showHeroChrome ? "#e07b0a" : "transparent" }}>
           <nav
             className={`px-4 sm:px-6 lg:px-10 transition-[background-color,border-radius,box-shadow,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
               showHeroChrome ? "py-2.5" : "py-1.5"
@@ -264,7 +264,7 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
                     onClick={() => openAuthModal({ mode: "login" })}
                     className={`hidden rounded-full font-medium transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:block ${
                       isDark
-                        ? "border border-transparent bg-[#F3C300] px-2.5 py-0.5 text-[10px] text-black hover:bg-[#F9DC6B]"
+                        ? "border border-transparent bg-[#e07b0a] px-2.5 py-0.5 text-[10px] text-black hover:bg-[#f09012]"
                         : showHeroChrome
                           ? "border border-ink/15 bg-white px-3 py-1 text-[11px] text-ink hover:bg-ink/[0.03] sm:px-3.5"
                           : "border border-ink/15 bg-white px-2.5 py-0.5 text-[10px] text-ink hover:bg-ink/[0.03]"
@@ -365,7 +365,7 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
               <Link
                 to={DISCOVER_ITEM.to}
                 onClick={() => setMenuOpen(false)}
-                className={`${CARD_BASE} border-[rgba(243,195,0,0.35)] bg-[linear-gradient(180deg,#fffdf5_0%,#ffffff_100%)] ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
+                className={`${CARD_BASE} border-[rgba(224, 123, 10,0.35)] bg-[linear-gradient(180deg,#fffdf5_0%,#ffffff_100%)] ${menuOpen ? "translate-x-0 opacity-100" : "translate-x-5 opacity-0"}`}
                 style={{ transitionDelay: menuOpen ? "80ms" : "0ms" }}
               >
                 <div className="flex items-start justify-between">
@@ -476,7 +476,7 @@ export function NavSection({ integrateAtTop = false }: NavSectionProps) {
             <button
               type="button"
               onClick={() => { openQuiz(); setMenuOpen(false); }}
-              className="flex w-full items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-[#C9A200] to-[#F3C300] py-4 text-[14px] font-semibold text-black shadow-[0_8px_22px_rgba(243,195,0,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(243,195,0,0.45)] active:translate-y-0"
+              className="flex w-full items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-[#b85c00] to-[#e07b0a] py-4 text-[14px] font-semibold text-black shadow-[0_8px_22px_rgba(224, 123, 10,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(224, 123, 10,0.45)] active:translate-y-0"
             >
               Start Assessment
             </button>

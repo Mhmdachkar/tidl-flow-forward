@@ -70,12 +70,12 @@ export function PenSection() {
       <div className="relative flex h-[100svh] flex-col overflow-hidden">
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 60% 50% at 40% 45%, rgba(243,195,0,0.08), transparent 70%)" }}
+          style={{ background: "radial-gradient(ellipse 60% 50% at 40% 45%, rgba(224, 123, 10,0.08), transparent 70%)" }}
         />
 
         <div ref={headerRef} className="relative z-20 px-6 pt-16 lg:px-10 lg:pt-20">
-          <span className="pill-tag mb-4 inline-flex !border-[#F3C300]/25 !bg-[#F3C300]/10 !text-white/85">
-            <span className="dot !bg-[#F3C300]" /> The injector
+          <span className="pill-tag mb-4 inline-flex !border-[#e07b0a]/25 !bg-[#e07b0a]/10 !text-white/85">
+            <span className="dot !bg-[#e07b0a]" /> The injector
           </span>
           <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-normal leading-snug text-white">
             Pharmaceutical-grade, designed.
@@ -86,7 +86,7 @@ export function PenSection() {
           <div className="relative flex h-[42vh] w-full items-center justify-center [perspective:1200px] lg:h-auto lg:flex-1">
             <div
               className="pointer-events-none absolute inset-x-10 bottom-6 h-10 rounded-full blur-3xl"
-              style={{ background: "radial-gradient(closest-side, rgba(243,195,0,0.25), transparent 70%)" }}
+              style={{ background: "radial-gradient(closest-side, rgba(224, 123, 10,0.25), transparent 70%)" }}
             />
             <img
               ref={penRef}
@@ -94,7 +94,7 @@ export function PenSection() {
               alt="TIDL auto-injector"
               className="relative z-10 max-h-full max-w-[min(72vw,420px)] object-contain will-change-transform"
               style={{
-                filter: "drop-shadow(0 40px 50px rgba(243,195,0,0.15)) drop-shadow(0 20px 30px rgba(0,0,0,0.5))",
+                filter: "drop-shadow(0 40px 50px rgba(224, 123, 10,0.15)) drop-shadow(0 20px 30px rgba(0,0,0,0.5))",
                 opacity: 0,
               }}
             />
@@ -113,7 +113,7 @@ export function PenSection() {
         </div>
 
         <div className="absolute inset-x-0 bottom-8 z-20 px-6 lg:px-10">
-          <div className="h-px w-full origin-left scale-x-0 bg-[#F3C300]/60" ref={progressRef} />
+          <div className="h-px w-full origin-left scale-x-0 bg-[#e07b0a]/60" ref={progressRef} />
           <p className="mt-3 text-[10px] uppercase tracking-[0.22em] text-white/35">Scroll to explore the injector</p>
         </div>
       </div>

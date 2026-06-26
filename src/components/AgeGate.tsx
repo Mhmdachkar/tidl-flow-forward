@@ -212,7 +212,7 @@ export function AgeGate() {
           inset: 0;
           background: radial-gradient(
             ellipse 55% 45% at 50% 52%,
-            rgba(243, 195, 0, 0.1) 0%,
+            rgba(224, 123, 10, 0.1) 0%,
             transparent 70%
           );
           pointer-events: none;
@@ -229,7 +229,7 @@ export function AgeGate() {
           position: absolute;
           width: 18px;
           height: 18px;
-          border-color: rgba(243, 195, 0, 0.35);
+          border-color: rgba(224, 123, 10, 0.35);
         }
         .age-gate-corner--tl { top: 24px; left: 24px; border-top: 1px solid; border-left: 1px solid; }
         .age-gate-corner--tr { top: 24px; right: 24px; border-top: 1px solid; border-right: 1px solid; }
@@ -264,7 +264,7 @@ export function AgeGate() {
           display: block;
           width: 28px;
           height: 1px;
-          background: rgba(243, 195, 0, 0.55);
+          background: rgba(224, 123, 10, 0.55);
         }
         .age-gate-eyebrow-text {
           font-family: 'Josefin Sans', sans-serif;
@@ -272,7 +272,7 @@ export function AgeGate() {
           font-weight: 600;
           letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: rgba(243, 195, 0, 0.82);
+          color: rgba(224, 123, 10, 0.82);
         }
         .age-gate-heading {
           font-family: 'Archivo Narrow', sans-serif;
@@ -316,7 +316,7 @@ export function AgeGate() {
           background: ${TIDL_BRAND.accent};
           color: ${TIDL_BRAND.ink};
           border: none;
-          box-shadow: 0 8px 28px rgba(243, 195, 0, 0.28);
+          box-shadow: 0 8px 28px rgba(224, 123, 10, 0.28);
         }
         .age-gate-btn--primary:hover {
           filter: brightness(1.05);

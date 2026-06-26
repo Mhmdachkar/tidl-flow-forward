@@ -69,7 +69,7 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
       >
         <div className="relative flex min-h-[200px] items-stretch sm:min-h-[220px]">
           <div className="relative z-10 flex flex-1 flex-col justify-center px-5 py-6 sm:px-6 sm:py-7">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#F3C300]/90">
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#e07b0a]/90">
               Your match
             </p>
             <h2 className="text-[22px] font-bold leading-[1.15] text-white sm:text-[24px]">
@@ -78,8 +78,8 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
             <ul className="mt-4 space-y-2">
               {bullets.map((b) => (
                 <li key={b} className="flex items-start gap-2">
-                  <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-[#F3C300]/25">
-                    <Check className="h-2 w-2 text-[#F3C300]" strokeWidth={3} />
+                  <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-[#e07b0a]/25">
+                    <Check className="h-2 w-2 text-[#e07b0a]" strokeWidth={3} />
                   </span>
                   <span className="text-[12px] leading-snug text-white/85">{b}</span>
                 </li>
@@ -131,13 +131,13 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
                     {product.tag}
                   </span>
                 )}
-                <span className="rounded-full border border-[#C9A200]/40 bg-[#FFF9E0] px-2.5 py-0.5 text-[10px] font-semibold text-[#8A6D00]">
+                <span className="rounded-full border border-[#b85c00]/40 bg-[#FFF9E0] px-2.5 py-0.5 text-[10px] font-semibold text-[#8A6D00]">
                   Rx
                 </span>
               </div>
               <h4 className="mt-1.5 text-[18px] font-semibold text-[#1A1816]">{treatment.name}</h4>
               {product?.tagline && (
-                <p className="mt-0.5 text-[12px] font-medium text-[#C9A200]">{product.tagline}</p>
+                <p className="mt-0.5 text-[12px] font-medium text-[#b85c00]">{product.tagline}</p>
               )}
               <p className="mt-2 text-[13px] leading-relaxed text-[#7A766D]">{treatment.description}</p>
             </div>
@@ -176,7 +176,7 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
                     className="flex items-start gap-3 rounded-xl border border-[#E8E5DF] bg-white px-3.5 py-3"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF9E0]">
-                      <Icon className="h-4 w-4 text-[#C9A200]" />
+                      <Icon className="h-4 w-4 text-[#b85c00]" />
                     </span>
                     <div>
                       <p className="text-[13px] font-semibold text-[#1A1816]">{item.title}</p>
@@ -234,7 +234,7 @@ export function StepRecommendation({ goal, productSlug }: StepRecommendationProp
 
         {/* Physician notice */}
         <div className="flex items-start gap-3 rounded-xl border border-[#E8E5DF] bg-white px-4 py-3.5">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#C9A200]" />
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#b85c00]" />
           <p className="text-[12px] leading-relaxed text-[#7A766D]">
             <span className="font-semibold text-[#1A1816]">Physician review required.</span>{" "}
             A licensed physician must review and approve your assessment before any prescription is

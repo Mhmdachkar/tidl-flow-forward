@@ -9,7 +9,7 @@ export function QuizProgress({ value }: QuizProgressProps) {
     <div className="px-4 pb-3 sm:px-6">
       <Progress
         value={value}
-        className="h-1 rounded-full bg-surface-2 [&>div]:rounded-full [&>div]:bg-gradient-to-r [&>div]:[background:linear-gradient(90deg,#C9A200,#F3C300,#F9DC6B)]"
+        className="h-1 rounded-full bg-surface-2 [&>div]:rounded-full [&>div]:bg-gradient-to-r [&>div]:[background:linear-gradient(90deg,#b85c00,#e07b0a,#f09012)]"
         aria-label="Assessment progress"
       />
     </div>

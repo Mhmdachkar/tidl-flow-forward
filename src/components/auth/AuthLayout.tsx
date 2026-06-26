@@ -17,7 +17,7 @@ export function AuthLayout({ title, description, children, footer }: AuthLayoutP
         className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[640px] -translate-x-1/2 -translate-y-1/4 opacity-50"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 30%, rgba(243,195,0,0.10) 0%, transparent 70%)",
+            "radial-gradient(ellipse at 50% 30%, rgba(224, 123, 10,0.10) 0%, transparent 70%)",
         }}
       />
 
@@ -29,13 +29,13 @@ export function AuthLayout({ title, description, children, footer }: AuthLayoutP
           ← Back to home
         </Link>
 
-        <div className="mt-8 overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_4px_40px_-12px_rgba(0,0,0,0.12),0_0_0_1px_rgba(243,195,0,0.08)]">
+        <div className="mt-8 overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_4px_40px_-12px_rgba(0,0,0,0.12),0_0_0_1px_rgba(224, 123, 10,0.08)]">
           {/* Gold accent stripe at top */}
-          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#F3C300] to-transparent opacity-70" />
+          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#e07b0a] to-transparent opacity-70" />
 
           <div className="p-6 sm:p-8">
             <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F3C300] shadow-[0_0_8px_rgba(243,195,0,0.7)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#e07b0a] shadow-[0_0_8px_rgba(224, 123, 10,0.7)]" />
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 TIDL Account
               </p>
@@ -54,7 +54,7 @@ export function AuthLayout({ title, description, children, footer }: AuthLayoutP
                 { icon: Lock, label: "HIPAA-aligned" },
               ].map(({ icon: Icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Icon className="h-3.5 w-3.5 text-[#C9A200]" />
+                  <Icon className="h-3.5 w-3.5 text-[#b85c00]" />
                   {label}
                 </span>
               ))}

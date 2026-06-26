@@ -94,7 +94,7 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
             decoding="async"
             className="relative z-[2] block h-auto w-full"
             style={{
-              filter: "drop-shadow(0 28px 48px rgba(243, 195, 0, 0.22)) drop-shadow(0 12px 32px rgba(35, 31, 32, 0.08))",
+              filter: "drop-shadow(0 28px 48px rgba(224, 123, 10, 0.22)) drop-shadow(0 12px 32px rgba(35, 31, 32, 0.08))",
             }}
           />
         </div>
@@ -110,7 +110,7 @@ export function ShowcaseHeroProduct({ src, alt, productRef }: ShowcaseHeroProduc
           height: "14%",
           borderRadius: "50%",
           background:
-            "radial-gradient(closest-side, rgba(243, 195, 0, 0.2) 0%, rgba(243, 195, 0, 0.06) 45%, transparent 100%)",
+            "radial-gradient(closest-side, rgba(224, 123, 10, 0.2) 0%, rgba(224, 123, 10, 0.06) 45%, transparent 100%)",
         }}
       />
     </div>

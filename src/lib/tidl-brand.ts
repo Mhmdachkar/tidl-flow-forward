@@ -2,7 +2,10 @@
 export const TIDL_BRAND = {
   ink: "#231f20",
   inkMuted: "#6b6a6b",
-  accent: "#f3c300",
+  accent: "#e07b0a",
+  accentDeep: "#b85c00",
+  accentBright: "#f09012",
+  accentRgb: "224, 123, 10",
   bg: "#FAFAF7",
   bgSoft: "#f5f4f0",
   surface: "#ffffff",

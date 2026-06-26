@@ -331,49 +331,36 @@ export function ProductShowcaseSection() {
           display: flex;
           flex-direction: row;
           align-items: stretch;
-          gap: 1rem;
+          gap: 1.5rem;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
           scroll-padding-inline: var(--showcase-products-gutter, 1.25rem);
           scrollbar-width: none;
-          padding: 0 0 0.25rem;
+          padding: 0 var(--showcase-products-gutter, 1.25rem) 0.25rem;
         }
         .showcase-card-responsive::-webkit-scrollbar { display: none; }
-        @media (max-width: 767px) {
-          .showcase-card-lead {
-            display: none;
-            width: 0;
-            min-width: 0;
-          }
-          .showcase-card-responsive {
-            scroll-padding-inline-start: 0;
-            padding: 0 0 0.25rem;
-          }
-        }
         @media (min-width: 768px) {
           .showcase-card-responsive {
             --showcase-product-card-w: 17.75rem;
-            gap: 1.125rem;
+            gap: 2rem;
             scroll-padding-inline: var(--showcase-products-gutter, 2.5rem);
+            padding-inline: var(--showcase-products-gutter, 2.5rem);
           }
         }
         @media (min-width: 1024px) {
           .showcase-card-responsive {
+            gap: 2.25rem;
             scroll-padding-inline: var(--showcase-products-gutter, 3.5rem);
+            padding-inline: var(--showcase-products-gutter, 3.5rem);
           }
         }
-        /* Empty first slot: one card width before the lineup starts */
-        .showcase-card-lead,
         .showcase-card-trail {
           flex: 0 0 auto;
-          width: var(--showcase-product-card-w);
+          width: max(var(--showcase-products-gutter, 1.25rem), 1rem);
           scroll-snap-align: start;
           pointer-events: none;
-        }
-        .showcase-card-trail {
-          width: max(var(--showcase-products-gutter, 1.25rem), 1rem);
         }
         .showcase-card-responsive .showcase-card {
           flex: 0 0 auto;
@@ -451,7 +438,7 @@ export function ProductShowcaseSection() {
               background: "var(--showcase-button-bg)",
               color: "var(--showcase-button-foreground)",
               border: "1px solid var(--showcase-button-border)",
-              boxShadow: "0 16px 40px rgba(243, 195, 0, 0.28)",
+              boxShadow: "0 16px 40px rgba(224, 123, 10, 0.28)",
               fontWeight: 700,
               letterSpacing: "0.04em",
             }}
@@ -487,7 +474,6 @@ export function ProductShowcaseSection() {
           </div>
 
           <div ref={cardsRef} className="showcase-card-responsive">
-            <div className="showcase-card-lead" aria-hidden="true" />
             {SHOWCASE_PRODUCTS.map((product) => (
                 <button
                   key={product.slug}

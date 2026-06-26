@@ -43,7 +43,7 @@ export function ShowcaseFigureStage({ src, alt }: ShowcaseFigureStageProps) {
             fontFamily: "var(--font-display)",
             color: "#231f20",
             background: "rgba(255, 255, 255, 0.88)",
-            border: "1px solid rgba(243, 195, 0, 0.45)",
+            border: "1px solid rgba(224, 123, 10, 0.45)",
             boxShadow: "0 8px 24px rgba(35, 31, 32, 0.10), 0 1px 0 rgba(255,255,255,0.8) inset",
           }}
           initial={{ opacity: 0, x: 48 }}

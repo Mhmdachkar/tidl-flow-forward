@@ -20,7 +20,7 @@ export function ProductHero({ product }: ProductHeroProps) {
           <div className="order-1 relative flex items-center justify-center lg:order-2 lg:min-h-[420px]">
             {product.showPenHero ? (
               <div className="relative h-[240px] w-full sm:h-[360px] lg:h-[420px]">
-                <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_50%_50%,rgba(243,195,0,0.12),transparent_70%)]" />
+                <div className="absolute inset-0 rounded-[2rem] bg-[radial-gradient(circle_at_50%_50%,rgba(224, 123, 10,0.12),transparent_70%)]" />
                 <Pen3D className="relative z-10 h-full w-full" />
               </div>
             ) : (
@@ -28,7 +28,7 @@ export function ProductHero({ product }: ProductHeroProps) {
                 <div
                   className="absolute inset-x-12 bottom-6 h-6 rounded-full blur-2xl opacity-60"
                   style={{
-                    background: "radial-gradient(closest-side, rgba(243,195,0,0.35), transparent 70%)",
+                    background: "radial-gradient(closest-side, rgba(224, 123, 10,0.35), transparent 70%)",
                   }}
                 />
                 <img

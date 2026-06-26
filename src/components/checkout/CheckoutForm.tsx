@@ -72,11 +72,11 @@ export function CheckoutForm({ quiz, defaultValues }: CheckoutFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
-        <section className="overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_0_0_1px_rgba(243,195,0,0.08)]">
-          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#F3C300] to-transparent opacity-60" />
+        <section className="overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_0_0_1px_rgba(224, 123, 10,0.08)]">
+          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#e07b0a] to-transparent opacity-60" />
           <div className="p-6 sm:p-8">
             <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F3C300] shadow-[0_0_8px_rgba(243,195,0,0.7)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#e07b0a] shadow-[0_0_8px_rgba(224, 123, 10,0.7)]" />
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Treatment</p>
             </div>
             <h1 className="mt-3 font-display text-3xl font-medium sm:text-4xl">Complete your order</h1>
@@ -89,7 +89,7 @@ export function CheckoutForm({ quiz, defaultValues }: CheckoutFormProps) {
 
         <section className="space-y-5">
           <div className="flex items-start gap-3">
-            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] text-xs font-semibold text-white shadow-[0_2px_8px_rgba(243,195,0,0.35)]">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b85c00] to-[#e07b0a] text-xs font-semibold text-white shadow-[0_2px_8px_rgba(224, 123, 10,0.35)]">
               1
             </span>
             <div>
@@ -222,7 +222,7 @@ export function CheckoutForm({ quiz, defaultValues }: CheckoutFormProps) {
 
         <section className="space-y-5">
           <div className="flex items-start gap-3">
-            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] text-xs font-semibold text-white shadow-[0_2px_8px_rgba(243,195,0,0.35)]">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b85c00] to-[#e07b0a] text-xs font-semibold text-white shadow-[0_2px_8px_rgba(224, 123, 10,0.35)]">
               2
             </span>
             <div>
@@ -250,8 +250,8 @@ export function CheckoutForm({ quiz, defaultValues }: CheckoutFormProps) {
                       onClick={() => field.onChange(option.id)}
                       className={`min-h-[56px] rounded-2xl border px-4 py-3 text-sm font-medium transition-all ${
                         field.value === option.id
-                          ? "border-[#C9A200] bg-gradient-to-br from-[rgba(243,195,0,0.07)] to-[rgba(243,195,0,0.03)] text-foreground shadow-[0_0_0_1px_rgba(243,195,0,0.4),0_2px_12px_-4px_rgba(243,195,0,0.20)]"
-                          : "border-border bg-surface/70 text-muted-foreground hover:border-[#C9A200]/40 hover:bg-surface"
+                          ? "border-[#b85c00] bg-gradient-to-br from-[rgba(224, 123, 10,0.07)] to-[rgba(224, 123, 10,0.03)] text-foreground shadow-[0_0_0_1px_rgba(224, 123, 10,0.4),0_2px_12px_-4px_rgba(224, 123, 10,0.20)]"
+                          : "border-border bg-surface/70 text-muted-foreground hover:border-[#b85c00]/40 hover:bg-surface"
                       }`}
                     >
                       {option.label}
@@ -328,10 +328,10 @@ export function CheckoutForm({ quiz, defaultValues }: CheckoutFormProps) {
         </section>
 
         <section className="overflow-hidden rounded-3xl border border-border bg-surface-2/80">
-          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#F3C300] to-transparent opacity-50" />
+          <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#e07b0a] to-transparent opacity-50" />
           <div className="p-6">
             <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F3C300] shadow-[0_0_6px_rgba(243,195,0,0.6)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#e07b0a] shadow-[0_0_6px_rgba(224, 123, 10,0.6)]" />
               <h2 className="text-base font-medium">What happens next</h2>
             </div>
             <ol className="mt-5 space-y-3">
@@ -343,7 +343,7 @@ export function CheckoutForm({ quiz, defaultValues }: CheckoutFormProps) {
                 "Your order ships with tracking updates.",
               ].map((step, i) => (
                 <li key={step} className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#C9A200] to-[#F3C300] text-[10px] font-semibold text-white">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b85c00] to-[#e07b0a] text-[10px] font-semibold text-white">
                     {i + 1}
                   </span>
                   {step}
