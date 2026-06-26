@@ -3,6 +3,9 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { canUseHoverParallax, createScrollGate, rafThrottle } from "@/lib/section-performance";
 import { createTiltQuickTo } from "@/lib/gsap-tilt";
 
+const SCROLLER = document.documentElement;
+const GPU = { force3D: true } as const;
+
 const DOCTORS = [
   {
     name: "Dr. Lena Marsh, MD",
@@ -60,54 +63,66 @@ export function DoctorSection() {
 
     const ctx = gsap.context(() => {
       const cards = section.querySelectorAll<HTMLElement>(".doctor-card");
+      const header = section.querySelector<HTMLElement>(".doctor-section__header");
 
       if (!reduced) {
-        cards.forEach((card, index) => {
+        const entranceTargets: HTMLElement[] = [];
+
+        cards.forEach((card) => {
+          const tilt = card.querySelector<HTMLElement>(".doctor-card__tilt");
           const cta = card.querySelector<HTMLElement>(".doctor-card__cta");
-          const fromLeft = index % 2 === 0;
-          const fromCenter = index === 2;
+          if (!tilt) return;
+          entranceTargets.push(tilt);
+          gsap.set(tilt, { opacity: 0, y: 44, scale: 0.94, ...GPU });
+          if (cta) gsap.set(cta, { opacity: 0, y: 10 });
+          card.dataset.entered = "0";
+        });
 
-          gsap.set(card, {
-            opacity: 0,
-            x: fromCenter ? 0 : fromLeft ? -64 : 64,
-            y: fromCenter ? 36 : 24,
-            scale: fromCenter ? 0.88 : 1,
-            filter: fromCenter ? "blur(8px)" : "blur(4px)",
-          });
-          if (cta) {
-            gsap.set(cta, { opacity: 0, scale: 0.72, y: 10 });
-          }
+        if (header) {
+          gsap.set(header, { opacity: 0, y: 28 });
+        }
 
-          gsap.to(card, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: fromCenter ? 1.05 : 0.95,
-            ease: fromCenter ? "back.out(1.35)" : "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 88%",
-              once: true,
-            },
-          });
+        const entrance = gsap.timeline({
+          defaults: { ease: "power3.out", immediateRender: false },
+          scrollTrigger: {
+            trigger: section,
+            scroller: SCROLLER,
+            start: "top 82%",
+            once: true,
+            invalidateOnRefresh: true,
+          },
+        });
 
-          if (cta) {
-            gsap.to(cta, {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              duration: 0.55,
-              ease: "back.out(2.4)",
-              delay: fromCenter ? 0.22 : 0.14,
-              scrollTrigger: {
-                trigger: card,
-                start: "top 88%",
-                once: true,
+        if (header) {
+          entrance.to(header, { opacity: 1, y: 0, duration: 0.55 }, 0);
+        }
+
+        entranceTargets.forEach((tilt, index) => {
+          const card = tilt.closest<HTMLElement>(".doctor-card");
+          const cta = card?.querySelector<HTMLElement>(".doctor-card__cta");
+          const t = 0.08 + index * 0.09;
+
+          entrance
+            .to(
+              tilt,
+              { opacity: 1, y: 0, scale: 1, duration: 0.62, ease: "power3.out", ...GPU },
+              t,
+            )
+            .call(
+              () => {
+                if (card) card.dataset.entered = "1";
               },
-            });
+              [],
+              t + 0.62,
+            );
+
+          if (cta) {
+            entrance.to(cta, { opacity: 1, y: 0, duration: 0.38, ease: "power2.out" }, t + 0.18);
           }
+        });
+      } else {
+        cards.forEach((card) => {
+          card.dataset.entered = "1";
         });
       }
 
@@ -148,7 +163,7 @@ export function DoctorSection() {
         cleanups.push(() => window.removeEventListener("resize", measureReveal));
 
         const onEnter = () => {
-          if (scrollGate.isScrolling()) return;
+          if (scrollGate.isScrolling() || card.dataset.entered !== "1") return;
           measureReveal();
           card.classList.add("doctor-card--active");
 
@@ -194,7 +209,13 @@ export function DoctorSection() {
         };
 
         const onMove = rafThrottle((event: PointerEvent) => {
-          if (!card.classList.contains("doctor-card--active") || scrollGate.isScrolling()) return;
+          if (
+            card.dataset.entered !== "1" ||
+            !card.classList.contains("doctor-card--active") ||
+            scrollGate.isScrolling()
+          ) {
+            return;
+          }
           const rect = card.getBoundingClientRect();
           const px = (event.clientX - rect.left) / rect.width - 0.5;
           cardTilt.rotateY(px * 6);
@@ -211,6 +232,8 @@ export function DoctorSection() {
           shell.removeEventListener("pointermove", onMove);
         });
       });
+
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     }, section);
 
     return () => {
@@ -323,6 +346,7 @@ export function DoctorSection() {
 
         .doctor-card__tilt {
           transform-style: preserve-3d;
+          will-change: transform, opacity;
         }
 
         .doctor-card__shell {
@@ -338,7 +362,6 @@ export function DoctorSection() {
             0 1px 0 rgba(255, 255, 255, 0.95) inset,
             0 16px 40px -28px rgba(35, 31, 32, 0.22);
           outline: none;
-          transition: box-shadow 0.75s var(--doctor-ease), transform 0.75s var(--doctor-ease);
         }
 
         .doctor-card__shell::before {
@@ -378,7 +401,6 @@ export function DoctorSection() {
           inset: 0;
           background: linear-gradient(0deg, rgba(35, 31, 32, 0.18) 0%, transparent 45%);
           opacity: 0;
-          transition: opacity 0.65s var(--doctor-ease);
           pointer-events: none;
         }
 
@@ -479,8 +501,6 @@ export function DoctorSection() {
           letter-spacing: 0.12em;
           text-transform: uppercase;
           color: rgba(35, 31, 32, 0.42);
-          transition: color 0.4s var(--doctor-ease);
-          will-change: transform, opacity;
         }
 
         .doctor-card__cta svg {

@@ -88,6 +88,30 @@ function HeadlineWords({ text, className }: { text: string; className?: string }
   );
 }
 
+function DetailKnockoutChars({ text }: { text: string }) {
+  return (
+    <>
+      {text.split("").map((char, i) => (
+        <span key={`${char}-${i}`} className="cj-detail-char-wrap inline-block overflow-hidden align-bottom">
+          <span className="cj-detail-char inline-block">{char === " " ? "\u00A0" : char}</span>
+        </span>
+      ))}
+    </>
+  );
+}
+
+function DetailBodyWords({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(" ").map((word, i) => (
+        <span key={`${word}-${i}`} className="inline-block overflow-hidden align-bottom pr-[0.2em]">
+          <span className="cj-detail-word inline-block">{word}</span>
+        </span>
+      ))}
+    </>
+  );
+}
+
 export function CareJourneySection() {
   const sectionRef = useRef<HTMLElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -114,7 +138,8 @@ export function CareJourneySection() {
   const detailBeamRef = useRef<HTMLDivElement>(null);
   const detailProgressRef = useRef<HTMLDivElement>(null);
   const detailWatermarkRef = useRef<HTMLSpanElement>(null);
-  const detailNumRef = useRef<HTMLParagraphElement>(null);
+  const detailEyebrowRef = useRef<HTMLParagraphElement>(null);
+  const detailNumDisplayRef = useRef<HTMLParagraphElement>(null);
   const detailTitleRef = useRef<HTMLHeadingElement>(null);
   const detailBodyRef = useRef<HTMLParagraphElement>(null);
   const detailTrustRef = useRef<HTMLSpanElement>(null);
@@ -392,7 +417,8 @@ export function CareJourneySection() {
     const beam = detailBeamRef.current;
     const progress = detailProgressRef.current;
     const watermark = detailWatermarkRef.current;
-    const num = detailNumRef.current;
+    const eyebrow = detailEyebrowRef.current;
+    const numDisplay = detailNumDisplayRef.current;
     const title = detailTitleRef.current;
     const body = detailBodyRef.current;
     const trust = detailTrustRef.current;
@@ -410,7 +436,8 @@ export function CareJourneySection() {
       !beam ||
       !progress ||
       !watermark ||
-      !num ||
+      !eyebrow ||
+      !numDisplay ||
       !title ||
       !body ||
       !trust ||
@@ -421,8 +448,9 @@ export function CareJourneySection() {
       return;
     }
 
-    const fromLeft = active % 2 === 0;
-    const fromCenter = active === 2;
+    const numChars = numDisplay.querySelectorAll<HTMLElement>(".cj-detail-char");
+    const titleChars = title.querySelectorAll<HTMLElement>(".cj-detail-char");
+    const bodyWords = body.querySelectorAll<HTMLElement>(".cj-detail-word");
     const progressPct = (active + 1) / STEPS.length;
     const isFirst = detailEnterRef.current;
 
@@ -468,22 +496,18 @@ export function CareJourneySection() {
       card,
       {
         opacity: 0,
-        y: fromCenter ? 52 : 40,
-        x: fromCenter ? 0 : fromLeft ? -56 : 56,
-        rotateX: fromCenter ? 14 : 6,
-        scale: fromCenter ? 0.86 : 0.94,
-        filter: "blur(12px)",
+        y: 28,
+        scale: 0.97,
+        filter: "blur(8px)",
         transformOrigin: "50% 100%",
         ...GPU,
       },
       {
         opacity: 1,
         y: 0,
-        x: 0,
-        rotateX: 0,
         scale: 1,
         filter: "blur(0px)",
-        duration: fromCenter ? 1.05 : 0.9,
+        duration: 0.55,
         ease: "expo.out",
         ...GPU,
       },
@@ -492,85 +516,106 @@ export function CareJourneySection() {
       .fromTo(
         beam,
         { xPercent: -130, opacity: 0 },
-        { xPercent: 130, opacity: 1, duration: 0.62, ease: "power2.inOut" },
-        "-=0.72",
+        { xPercent: 130, opacity: 1, duration: 0.55, ease: "power2.inOut" },
+        "-=0.48",
       )
       .fromTo(
         watermark,
-        { scale: 1.6, opacity: 0, rotate: -8 },
-        { scale: 1, opacity: 1, rotate: 0, duration: 0.85, ease: "power2.out" },
-        "-=0.82",
+        { scale: 1.35, opacity: 0, rotate: -6 },
+        { scale: 1, opacity: 1, rotate: 0, duration: 0.7, ease: "power2.out" },
+        "-=0.5",
       )
       .fromTo(
         progress,
         { scaleX: 0, transformOrigin: "left center" },
-        { scaleX: progressPct, duration: 0.75, ease: "power2.inOut" },
-        "-=0.78",
+        { scaleX: progressPct, duration: 0.65, ease: "power2.inOut" },
+        "-=0.55",
       )
       .fromTo(
-        num,
-        { opacity: 0, y: 18, letterSpacing: "0.28em", filter: "blur(6px)" },
-        { opacity: 1, y: 0, letterSpacing: "0.14em", filter: "blur(0px)", duration: 0.5 },
-        "-=0.62",
-      )
-      .fromTo(
-        title,
-        {
-          opacity: 0,
-          y: fromCenter ? 28 : 22,
-          scale: fromCenter ? 0.92 : 1,
-          filter: "blur(10px)",
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          filter: "blur(0px)",
-          duration: fromCenter ? 0.72 : 0.55,
-          ease: "power4.out",
-        },
+        eyebrow,
+        { opacity: 0, x: -16, filter: "blur(4px)" },
+        { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.35, ease: "power2.out" },
         "-=0.42",
       )
       .fromTo(
-        body,
-        { opacity: 0, y: 16, filter: "blur(6px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.48 },
-        "-=0.38",
+        numChars,
+        {
+          yPercent: 115,
+          opacity: 0,
+          rotateX: -68,
+          scale: 0.82,
+          transformOrigin: "50% 100%",
+          ...GPU,
+        },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+          scale: 1,
+          duration: 0.42,
+          stagger: 0.055,
+          ease: "back.out(1.6)",
+          ...GPU,
+        },
+        "-=0.28",
+      )
+      .fromTo(
+        titleChars,
+        {
+          yPercent: 110,
+          opacity: 0,
+          rotateX: -52,
+          transformOrigin: "50% 100%",
+          ...GPU,
+        },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 0.32,
+          stagger: 0.018,
+          ease: "expo.out",
+          ...GPU,
+        },
+        "-=0.22",
+      )
+      .fromTo(
+        bodyWords,
+        { yPercent: 105, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 0.28, stagger: 0.022, ease: "power2.out" },
+        "-=0.18",
       )
       .fromTo(
         trust,
-        { opacity: 0, scale: 0.82, x: -12 },
-        { opacity: 1, scale: 1, x: 0, duration: 0.45, ease: "back.out(2.4)" },
-        "-=0.35",
+        { opacity: 0, scale: 0.86, y: 8 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.38, ease: "back.out(2.2)" },
+        "-=0.12",
       )
       .fromTo(
         visual,
         {
           opacity: 0,
-          x: 64,
-          scale: 0.86,
-          rotateY: -16,
-          clipPath: "inset(0 100% 0 0 round 1rem)",
-          transformOrigin: "100% 50%",
+          x: 40,
+          scale: 0.92,
+          clipPath: "inset(8% 100% 8% 0 round 0.95rem)",
           ...GPU,
         },
         {
           opacity: 1,
           x: 0,
           scale: 1,
-          rotateY: 0,
-          clipPath: "inset(0 0% 0 0 round 1rem)",
-          duration: 0.85,
+          clipPath: "inset(0% 0% 0% 0 round 0.95rem)",
+          duration: 0.62,
           ease: "expo.out",
           ...GPU,
         },
-        "-=0.7",
+        "-=0.55",
       )
       .fromTo(
         img,
-        { scale: 1.28, filter: "saturate(1.15) blur(5px)" },
-        { scale: 1, filter: "saturate(1) blur(0px)", duration: 1.05, ease: "power2.out" },
-        "-=0.75",
+        { scale: 1.14 },
+        { scale: 1, duration: 0.75, ease: "power2.out" },
+        "-=0.58",
       );
 
     return () => {
@@ -872,13 +917,14 @@ export function CareJourneySection() {
           }
           .care-journey-detail-watermark {
             position: absolute;
-            right: 0.75rem;
-            bottom: -0.35rem;
-            font-family: var(--font-display);
+            right: 0.5rem;
+            bottom: -0.5rem;
+            font-family: "Archivo Narrow", sans-serif;
             font-size: clamp(4.5rem, 14vw, 6.5rem);
-            font-weight: 800;
-            line-height: 1;
-            letter-spacing: -0.05em;
+            font-weight: 700;
+            line-height: 0.88;
+            letter-spacing: -0.045em;
+            text-transform: uppercase;
             color: rgba(224, 123, 10, 0.07);
             pointer-events: none;
             user-select: none;
@@ -896,6 +942,44 @@ export function CareJourneySection() {
             z-index: 1;
             flex: 1;
             min-width: 0;
+          }
+          .care-journey-detail-step-block {
+            margin-bottom: 0.35rem;
+          }
+          .care-journey-detail-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 0 0.15rem;
+            font-family: "Archivo Narrow", sans-serif;
+            font-size: clamp(0.5625rem, 1.2vw, 0.6875rem);
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(35, 31, 32, 0.72);
+            will-change: transform, opacity, filter;
+          }
+          .care-journey-detail-dash {
+            display: block;
+            width: 1.25rem;
+            height: 3px;
+            flex-shrink: 0;
+            background: #231f20;
+          }
+          .care-journey-detail-num-display {
+            margin: 0;
+            font-family: "Archivo Narrow", sans-serif;
+            font-size: clamp(3.25rem, 11vw, 5.25rem);
+            font-weight: 700;
+            line-height: 0.88;
+            letter-spacing: -0.045em;
+            text-transform: uppercase;
+            color: #231f20;
+            will-change: transform, opacity;
+          }
+          .cj-detail-char-wrap,
+          .cj-detail-word {
+            will-change: transform, opacity;
           }
           .care-journey-detail-trust {
             display: inline-flex;
@@ -953,23 +1037,18 @@ export function CareJourneySection() {
             pointer-events: none;
           }
           .care-journey-detail-num {
-            margin: 0 0 0.15rem;
-            font-family: var(--font-sans);
-            font-size: 0.625rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: #e07b0a;
-            will-change: transform, opacity, filter;
+            display: none;
           }
           .care-journey-detail-title {
             margin: 0;
-            font-family: var(--font-display);
-            font-size: clamp(1.05rem, 2.4vw, 1.25rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
+            font-family: "Archivo Narrow", sans-serif;
+            font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+            font-weight: 700;
+            line-height: 0.92;
+            letter-spacing: -0.035em;
+            text-transform: uppercase;
             color: #231f20;
-            will-change: transform, opacity, filter;
+            will-change: transform, opacity;
           }
           .care-journey-detail-body {
             margin: 0.35rem 0 0;
@@ -1186,14 +1265,24 @@ export function CareJourneySection() {
               </span>
 
               <div className="care-journey-detail-copy">
-                <p ref={detailNumRef} className="care-journey-detail-num">
-                  Step {activeStep.num} · {activeStep.trust}
-                </p>
+                <div className="care-journey-detail-step-block">
+                  <p ref={detailEyebrowRef} className="care-journey-detail-eyebrow">
+                    <span className="care-journey-detail-dash" aria-hidden />
+                    <span>Step {activeStep.num} · {activeStep.trust}</span>
+                  </p>
+                  <p
+                    ref={detailNumDisplayRef}
+                    className="care-journey-detail-num-display"
+                    aria-hidden
+                  >
+                    <DetailKnockoutChars text={activeStep.num} />
+                  </p>
+                </div>
                 <h3 ref={detailTitleRef} className="care-journey-detail-title">
-                  {activeStep.title}
+                  <DetailKnockoutChars text={activeStep.title} />
                 </h3>
                 <p ref={detailBodyRef} className="care-journey-detail-body">
-                  {activeStep.body}
+                  <DetailBodyWords text={activeStep.body} />
                 </p>
                 <span ref={detailTrustRef} className="care-journey-detail-trust">
                   {activeStep.trust} pathway

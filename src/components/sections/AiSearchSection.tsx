@@ -61,7 +61,6 @@ export function AiSearchSection() {
     if (reduced) return;
 
     const words = headline.querySelectorAll<HTMLElement>(".ai-discover-word");
-    const chipEls = chips.querySelectorAll<HTMLElement>(".ai-discover-chip");
     const cleanups: Array<() => void> = [];
 
     const ctx = gsap.context(() => {
@@ -71,7 +70,6 @@ export function AiSearchSection() {
       gsap.set(form, { opacity: 0, y: 36, scale: 0.96, filter: "blur(10px)" });
       gsap.set(inputWrap, { scaleX: 0.88, transformOrigin: "center center" });
       gsap.set(submit, { scale: 0, opacity: 0, rotate: -90 });
-      gsap.set(chipEls, { opacity: 0, y: 28, scale: 0.88, filter: "blur(6px)" });
 
       const tl = gsap.timeline({
         defaults: { ease: "power3.out", immediateRender: false },
@@ -117,19 +115,6 @@ export function AiSearchSection() {
           submit,
           { scale: 1, opacity: 1, rotate: 0, duration: 0.18, ease: "back.out(2.2)" },
           0.58,
-        )
-        .to(
-          chipEls,
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 0.2,
-            stagger: 0.06,
-            ease: "power2.out",
-          },
-          0.62,
         );
 
       // Ambient glow drift
@@ -169,37 +154,6 @@ export function AiSearchSection() {
         },
       });
 
-      // Chip hover micro-interactions
-      chipEls.forEach((chip) => {
-        const onEnter = () => {
-          gsap.to(chip, {
-            y: -3,
-            scale: 1.04,
-            boxShadow: "0 12px 28px -8px rgba(224, 123, 10,0.35)",
-            borderColor: "rgba(224, 123, 10,0.55)",
-            duration: 0.35,
-            ease: "power2.out",
-            overwrite: "auto",
-          });
-        };
-        const onLeave = () => {
-          gsap.to(chip, {
-            y: 0,
-            scale: 1,
-            boxShadow: "0 0 0 rgba(224, 123, 10,0)",
-            borderColor: "rgba(35,31,32,0.12)",
-            duration: 0.4,
-            ease: "power2.out",
-            overwrite: "auto",
-          });
-        };
-        chip.addEventListener("mouseenter", onEnter);
-        chip.addEventListener("mouseleave", onLeave);
-        cleanups.push(() => {
-          chip.removeEventListener("mouseenter", onEnter);
-          chip.removeEventListener("mouseleave", onLeave);
-        });
-      });
 
       requestAnimationFrame(() => ScrollTrigger.refresh());
     }, root);
